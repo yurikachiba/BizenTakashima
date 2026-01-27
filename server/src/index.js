@@ -16,8 +16,26 @@ const PORT = process.env.PORT || 3001;
 const DEFAULT_ADMIN_PASSWORD = 'Qh7A.(LDu%P-';
 
 // Middleware
+const allowedOrigins = process.env.FRONTEND_URL
+  ? [process.env.FRONTEND_URL]
+  : [
+      'http://localhost:5500',
+      'http://localhost:5173',  // Vite dev server
+      'http://localhost:4173',  // Vite preview
+      'http://localhost:3000',
+    ];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5500',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (curl, server-to-server)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // In development, allow any localhost origin
+    if (process.env.NODE_ENV !== 'production' && /^http:\/\/localhost:\d+$/.test(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true
 }));
 app.use(express.json({ limit: '1mb' }));
