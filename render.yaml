@@ -23,6 +23,6 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: FRONTEND_URL
-        value: https://www.sohei-portfolio.com
+        value: https://bizen-takashima.vercel.app
       - key: NODE_ENV
         value: production
