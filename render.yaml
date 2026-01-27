@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: bizen-takashima
+    runtime: static
+    buildCommand: ""
+    staticPublishPath: ./sohei.site
+    headers:
+      - path: /sohei-kiln-room-m7x9.html
+        name: X-Robots-Tag
+        value: noindex, nofollow
+      - path: /sohei-kiln-room-m7x9.html
+        name: Cache-Control
+        value: no-store
+      - path: /aseets/admin/*
+        name: X-Robots-Tag
+        value: noindex, nofollow
+      - path: /aseets/admin/*
+        name: Cache-Control
+        value: no-store
