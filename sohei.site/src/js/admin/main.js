@@ -75,16 +75,23 @@ async function authenticate(password) {
             body: JSON.stringify({ password })
         });
 
-        if (!res.ok) return false;
+        if (!res.ok) {
+            try {
+                const errData = await res.json();
+                return { success: false, error: errData.error || 'ログインに失敗しました' };
+            } catch {
+                return { success: false, error: 'ログインに失敗しました（ステータス: ' + res.status + '）' };
+            }
+        }
 
         const data = await res.json();
         authToken = data.token;
         sessionStorage.setItem('sohei-admin-token', authToken);
         sessionStorage.setItem('sohei-admin-activity', Date.now().toString());
-        return true;
+        return { success: true };
     } catch (e) {
         console.error('Auth error:', e);
-        return false;
+        return { success: false, error: 'サーバーに接続できません。APIサーバーが起動しているか確認してください。' };
     }
 }
 
@@ -473,15 +480,17 @@ function bindEvents() {
     document.getElementById('auth-form').addEventListener('submit', function (e) {
         e.preventDefault();
         const password = document.getElementById('auth-password').value;
-        authenticate(password).then(function (success) {
-            if (success) {
+        authenticate(password).then(function (result) {
+            if (result.success) {
                 document.getElementById('auth-overlay').hidden = true;
                 document.getElementById('admin-app').hidden = false;
                 document.getElementById('auth-error').hidden = true;
                 document.getElementById('auth-password').value = '';
                 updateDashboardStats();
             } else {
-                document.getElementById('auth-error').hidden = false;
+                const errorEl = document.getElementById('auth-error');
+                errorEl.textContent = result.error;
+                errorEl.hidden = false;
             }
         });
     });
