@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
 const { PrismaClient } = require('@prisma/client');
 
 const authRoutes = require('./routes/auth');
@@ -10,6 +11,9 @@ const analyticsRoutes = require('./routes/analytics');
 const prisma = new PrismaClient();
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// デフォルト管理者パスワード
+const DEFAULT_ADMIN_PASSWORD = 'Qh7A.(LDu%P-';
 
 // Middleware
 app.use(cors({
@@ -34,8 +38,23 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-app.listen(PORT, () => {
+// サーバー起動時にデフォルト管理者を自動作成
+async function seedAdmin() {
+  try {
+    const existing = await prisma.admin.findFirst();
+    if (!existing) {
+      const passwordHash = await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, 12);
+      await prisma.admin.create({ data: { passwordHash } });
+      console.log('Default admin created');
+    }
+  } catch (err) {
+    console.error('Admin seed error:', err);
+  }
+}
+
+app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
+  await seedAdmin();
 });
 
 module.exports = { app, prisma };
