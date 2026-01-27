@@ -74,42 +74,64 @@ function escapeHtml(str) {
 // 認証 (JWT + バックエンドAPI)
 // ============================================
 
-async function authenticate(password) {
-    var MAX_RETRIES = 2;
-    for (var attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+// サーバー起動待ち（Render.com Free tierのコールドスタート対策）
+async function waitForServer(onStatus) {
+    var MAX_ATTEMPTS = 10;
+    for (var i = 0; i < MAX_ATTEMPTS; i++) {
         try {
-            var res = await fetch(apiUrl('/api/auth/login'), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password })
-            });
-
-            if (!res.ok) {
-                try {
-                    var errData = await res.json();
-                    return { success: false, error: errData.error || 'ログインに失敗しました' };
-                } catch {
-                    return { success: false, error: 'ログインに失敗しました（ステータス: ' + res.status + '）' };
-                }
-            }
-
-            var data = await res.json();
-            authToken = data.token;
-            sessionStorage.setItem('sohei-admin-token', authToken);
-            sessionStorage.setItem('sohei-admin-activity', Date.now().toString());
-            return { success: true };
-        } catch (e) {
-            console.error('Auth error (attempt ' + (attempt + 1) + '):', e);
-            if (isNetworkError(e) && attempt < MAX_RETRIES) {
-                // Render.com Free tierのコールドスタート対策: リトライ
-                await new Promise(function (r) { setTimeout(r, 3000); });
-                continue;
-            }
-            if (isNetworkError(e)) {
-                return { success: false, error: 'サーバーに接続できません。サーバーが起動中の可能性があります。しばらく待ってから再度お試しください。' };
-            }
-            return { success: false, error: 'サーバーとの通信中にエラーが発生しました: ' + e.message };
+            var res = await fetch(apiUrl('/api/health'));
+            if (res.ok) return true;
+        } catch {
+            // サーバーがまだ起動中
         }
+        if (onStatus) onStatus(i + 1, MAX_ATTEMPTS);
+        await new Promise(function (r) { setTimeout(r, 5000); });
+    }
+    return false;
+}
+
+async function authenticate(password, onStatus) {
+    // まずヘルスチェックでサーバーの起動を確認
+    try {
+        var healthRes = await fetch(apiUrl('/api/health'));
+        if (!healthRes.ok) throw new Error('not ready');
+    } catch {
+        // サーバーが応答しない場合、起動を待つ
+        if (onStatus) onStatus('waking');
+        var ready = await waitForServer(onStatus);
+        if (!ready) {
+            return { success: false, error: 'サーバーが応答しません。Render.comのダッシュボードでサービスの状態を確認してください。' };
+        }
+    }
+
+    // サーバー起動確認後にログイン
+    try {
+        var res = await fetch(apiUrl('/api/auth/login'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+        });
+
+        if (!res.ok) {
+            try {
+                var errData = await res.json();
+                return { success: false, error: errData.error || 'ログインに失敗しました' };
+            } catch {
+                return { success: false, error: 'ログインに失敗しました（ステータス: ' + res.status + '）' };
+            }
+        }
+
+        var data = await res.json();
+        authToken = data.token;
+        sessionStorage.setItem('sohei-admin-token', authToken);
+        sessionStorage.setItem('sohei-admin-activity', Date.now().toString());
+        return { success: true };
+    } catch (e) {
+        console.error('Auth error:', e);
+        if (isNetworkError(e)) {
+            return { success: false, error: 'サーバーに接続できません。ブラウザのコンソールでCORSエラーを確認してください。' };
+        }
+        return { success: false, error: 'サーバーとの通信中にエラーが発生しました: ' + e.message };
     }
 }
 
@@ -521,7 +543,16 @@ function bindEvents() {
         }
         errorEl.hidden = true;
 
-        authenticate(password).then(function (result) {
+        function onStatus(status, max) {
+            if (!submitBtn) return;
+            if (status === 'waking') {
+                submitBtn.textContent = 'サーバー起動待ち...';
+            } else {
+                submitBtn.textContent = 'サーバー起動待ち... (' + status + '/' + max + ')';
+            }
+        }
+
+        authenticate(password, onStatus).then(function (result) {
             if (submitBtn) {
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalText;
