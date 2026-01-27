@@ -16,14 +16,25 @@ const PORT = process.env.PORT || 3001;
 const DEFAULT_ADMIN_PASSWORD = 'Qh7A.(LDu%P-';
 
 // Middleware
-const allowedOrigins = process.env.FRONTEND_URL
-  ? [process.env.FRONTEND_URL]
-  : [
-      'http://localhost:5500',
-      'http://localhost:5173',  // Vite dev server
-      'http://localhost:4173',  // Vite preview
-      'http://localhost:3000',
-    ];
+const allowedOrigins = [];
+if (process.env.FRONTEND_URL) {
+  // FRONTEND_URL が指定されている場合、www有り/無し両方を許可
+  allowedOrigins.push(process.env.FRONTEND_URL);
+  const url = process.env.FRONTEND_URL;
+  if (url.includes('://www.')) {
+    allowedOrigins.push(url.replace('://www.', '://'));
+  } else {
+    allowedOrigins.push(url.replace('://', '://www.'));
+  }
+}
+if (process.env.NODE_ENV !== 'production') {
+  allowedOrigins.push(
+    'http://localhost:5500',
+    'http://localhost:5173',  // Vite dev server
+    'http://localhost:4173',  // Vite preview
+    'http://localhost:3000',
+  );
+}
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -32,6 +43,10 @@ app.use(cors({
     if (allowedOrigins.includes(origin)) return callback(null, true);
     // In development, allow any localhost origin
     if (process.env.NODE_ENV !== 'production' && /^http:\/\/localhost:\d+$/.test(origin)) {
+      return callback(null, true);
+    }
+    // Allow Vercel preview/deployment URLs
+    if (/^https:\/\/[\w-]+\.vercel\.app$/.test(origin)) {
       return callback(null, true);
     }
     callback(new Error('Not allowed by CORS'));

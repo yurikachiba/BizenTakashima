@@ -75,33 +75,41 @@ function escapeHtml(str) {
 // ============================================
 
 async function authenticate(password) {
-    try {
-        const res = await fetch(apiUrl('/api/auth/login'), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password })
-        });
+    var MAX_RETRIES = 2;
+    for (var attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        try {
+            var res = await fetch(apiUrl('/api/auth/login'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
 
-        if (!res.ok) {
-            try {
-                const errData = await res.json();
-                return { success: false, error: errData.error || 'ログインに失敗しました' };
-            } catch {
-                return { success: false, error: 'ログインに失敗しました（ステータス: ' + res.status + '）' };
+            if (!res.ok) {
+                try {
+                    var errData = await res.json();
+                    return { success: false, error: errData.error || 'ログインに失敗しました' };
+                } catch {
+                    return { success: false, error: 'ログインに失敗しました（ステータス: ' + res.status + '）' };
+                }
             }
-        }
 
-        const data = await res.json();
-        authToken = data.token;
-        sessionStorage.setItem('sohei-admin-token', authToken);
-        sessionStorage.setItem('sohei-admin-activity', Date.now().toString());
-        return { success: true };
-    } catch (e) {
-        console.error('Auth error:', e);
-        if (isNetworkError(e)) {
-            return { success: false, error: 'サーバーに接続できません。APIサーバー（ポート3001）が起動しているか確認してください。\nCORSエラーの可能性もあります。ブラウザのコンソールを確認してください。' };
+            var data = await res.json();
+            authToken = data.token;
+            sessionStorage.setItem('sohei-admin-token', authToken);
+            sessionStorage.setItem('sohei-admin-activity', Date.now().toString());
+            return { success: true };
+        } catch (e) {
+            console.error('Auth error (attempt ' + (attempt + 1) + '):', e);
+            if (isNetworkError(e) && attempt < MAX_RETRIES) {
+                // Render.com Free tierのコールドスタート対策: リトライ
+                await new Promise(function (r) { setTimeout(r, 3000); });
+                continue;
+            }
+            if (isNetworkError(e)) {
+                return { success: false, error: 'サーバーに接続できません。サーバーが起動中の可能性があります。しばらく待ってから再度お試しください。' };
+            }
+            return { success: false, error: 'サーバーとの通信中にエラーが発生しました: ' + e.message };
         }
-        return { success: false, error: 'サーバーとの通信中にエラーが発生しました: ' + e.message };
     }
 }
 
@@ -502,15 +510,29 @@ function bindEvents() {
     document.getElementById('auth-form').addEventListener('submit', function (e) {
         e.preventDefault();
         const password = document.getElementById('auth-password').value;
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const errorEl = document.getElementById('auth-error');
+        const originalText = submitBtn ? submitBtn.textContent : '';
+
+        // ボタンを無効化して接続中であることを表示
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'サーバーに接続中...';
+        }
+        errorEl.hidden = true;
+
         authenticate(password).then(function (result) {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
             if (result.success) {
                 document.getElementById('auth-overlay').hidden = true;
                 document.getElementById('admin-app').hidden = false;
-                document.getElementById('auth-error').hidden = true;
+                errorEl.hidden = true;
                 document.getElementById('auth-password').value = '';
                 updateDashboardStats();
             } else {
-                const errorEl = document.getElementById('auth-error');
                 errorEl.textContent = result.error;
                 errorEl.hidden = false;
             }
