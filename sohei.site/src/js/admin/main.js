@@ -17,6 +17,13 @@ function apiUrl(path) {
     return SOHEI_API.getUrl(path);
 }
 
+function isNetworkError(e) {
+    if (!(e instanceof TypeError)) return false;
+    const msg = e.message;
+    // Chrome/Firefox: "Failed to fetch", Safari: "Load failed"
+    return msg === 'Failed to fetch' || msg === 'Load failed';
+}
+
 async function apiFetch(path, options) {
     const opts = options || {};
     if (!opts.headers) opts.headers = {};
@@ -91,7 +98,7 @@ async function authenticate(password) {
         return { success: true };
     } catch (e) {
         console.error('Auth error:', e);
-        if (e instanceof TypeError && e.message === 'Failed to fetch') {
+        if (isNetworkError(e)) {
             return { success: false, error: 'サーバーに接続できません。APIサーバー（ポート3001）が起動しているか確認してください。\nCORSエラーの可能性もあります。ブラウザのコンソールを確認してください。' };
         }
         return { success: false, error: 'サーバーとの通信中にエラーが発生しました: ' + e.message };
@@ -166,8 +173,12 @@ async function savePageContent(pageId) {
         } else {
             showToast('保存に失敗しました', 'error');
         }
-    } catch {
-        showToast('サーバーとの通信に失敗しました', 'error');
+    } catch (e) {
+        if (isNetworkError(e)) {
+            showToast('サーバーに接続できません。APIサーバーが起動しているか確認してください。', 'error');
+        } else {
+            showToast('サーバーとの通信に失敗しました', 'error');
+        }
     }
 }
 
@@ -279,8 +290,12 @@ async function clearAllContent() {
         } else {
             showToast('削除に失敗しました', 'error');
         }
-    } catch {
-        showToast('サーバーとの通信に失敗しました', 'error');
+    } catch (e) {
+        if (isNetworkError(e)) {
+            showToast('サーバーに接続できません。APIサーバーが起動しているか確認してください。', 'error');
+        } else {
+            showToast('サーバーとの通信に失敗しました', 'error');
+        }
     }
 }
 
@@ -321,8 +336,12 @@ async function changePassword() {
             const data = await res.json();
             showToast(data.error || 'パスワード変更に失敗しました', 'error');
         }
-    } catch {
-        showToast('サーバーとの通信に失敗しました', 'error');
+    } catch (e) {
+        if (isNetworkError(e)) {
+            showToast('サーバーに接続できません。APIサーバーが起動しているか確認してください。', 'error');
+        } else {
+            showToast('サーバーとの通信に失敗しました', 'error');
+        }
     }
 }
 
