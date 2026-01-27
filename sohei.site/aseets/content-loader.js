@@ -1,18 +1,10 @@
 'use strict';
 
 /* コンテンツローダー - 公開ページ用
-   content.json が存在すれば、data-content-key 属性の要素のテキストを差し替える。
-   content.json が無ければ静的HTMLのまま表示される。 */
+   バックエンドAPIからコンテンツを取得し、data-content-key 属性の要素のテキストを差し替える。
+   APIが利用不可の場合は静的HTMLのまま表示される。 */
 
 (function () {
-    var PAGE_MAP = {
-        'top': 'index',
-        'workIntroduction': 'workIntroduction',
-        'interview': 'interview',
-        'artistIntroduction': 'artistIntroduction',
-        'productionProcess': 'productionProcess'
-    };
-
     function getPageId() {
         var body = document.body;
         if (body.classList.contains('top')) return 'index';
@@ -30,8 +22,7 @@
         return div.innerHTML;
     }
 
-    function applyContent(pageId, allData) {
-        var pageData = allData[pageId];
+    function applyContent(pageId, pageData) {
         if (!pageData) return;
 
         document.querySelectorAll('[data-content-key]').forEach(function (el) {
@@ -44,17 +35,15 @@
     }
 
     function logVisit(pageId) {
-        try {
-            var key = 'sohei-visitor-log';
-            var raw = localStorage.getItem(key);
-            var logs = raw ? JSON.parse(raw) : [];
-            logs.push({ page: pageId, time: Date.now() });
-            // 最新1000件のみ保持
-            if (logs.length > 1000) logs = logs.slice(-1000);
-            localStorage.setItem(key, JSON.stringify(logs));
-        } catch (e) {
-            // storage full or disabled - ignore
-        }
+        if (typeof SOHEI_API === 'undefined') return;
+
+        fetch(SOHEI_API.getUrl('/api/analytics/log'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ page: pageId })
+        }).catch(function () {
+            // API不可の場合は無視
+        });
     }
 
     function load() {
@@ -63,17 +52,19 @@
 
         logVisit(pageId);
 
-        // content.json を取得（同一ディレクトリ）
-        fetch('content.json')
+        if (typeof SOHEI_API === 'undefined') return;
+
+        // バックエンドAPIからコンテンツを取得
+        fetch(SOHEI_API.getUrl('/api/content/' + pageId))
             .then(function (res) {
-                if (!res.ok) throw new Error('not found');
+                if (!res.ok) throw new Error('API error');
                 return res.json();
             })
             .then(function (data) {
                 applyContent(pageId, data);
             })
             .catch(function () {
-                // content.json が無い場合は静的HTMLのまま - 何もしない
+                // APIが利用不可の場合は静的HTMLのまま - 何もしない
             });
     }
 
