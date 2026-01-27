@@ -2,32 +2,44 @@
 
 /* ============================================
    管理者パネル メインスクリプト
+   バックエンドAPI対応版 (Prisma + Render.com)
    ============================================ */
 
 (function () {
 
-    // デフォルトパスワードハッシュ (SHA-256 of "bizen2024")
-    const DEFAULT_HASH = 'a366309df45c65a4bd64c27ac666294b13ec69180c013dfbc8d67956b59bdf2d';
-    const STORAGE_KEYS = {
-        content: 'sohei-admin-content',
-        hash: 'sohei-admin-hash',
-        session: 'sohei-admin-session',
-        lastActivity: 'sohei-admin-activity',
-        firebase: 'sohei-admin-firebase',
-        visitors: 'sohei-visitor-log'
-    };
     const SESSION_TIMEOUT = 30 * 60 * 1000; // 30分
+    let authToken = null;
+
+    // ============================================
+    // API通信
+    // ============================================
+
+    function apiUrl(path) {
+        if (typeof SOHEI_API !== 'undefined') {
+            return SOHEI_API.getUrl(path);
+        }
+        return 'http://localhost:3001' + path;
+    }
+
+    async function apiFetch(path, options) {
+        var opts = options || {};
+        if (!opts.headers) opts.headers = {};
+        opts.headers['Content-Type'] = 'application/json';
+        if (authToken) {
+            opts.headers['Authorization'] = 'Bearer ' + authToken;
+        }
+        var res = await fetch(apiUrl(path), opts);
+        if (res.status === 401 || res.status === 403) {
+            logout();
+            showToast('セッションが無効です。再ログインしてください', 'error');
+            throw new Error('Unauthorized');
+        }
+        return res;
+    }
 
     // ============================================
     // ユーティリティ
     // ============================================
-
-    async function sha256(message) {
-        const msgBuffer = new TextEncoder().encode(message);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
 
     function showToast(message, type) {
         var toast = document.getElementById('toast');
@@ -49,27 +61,44 @@
             String(d.getMinutes()).padStart(2, '0');
     }
 
-    // ============================================
-    // 認証
-    // ============================================
-
-    function getPasswordHash() {
-        return localStorage.getItem(STORAGE_KEYS.hash) || DEFAULT_HASH;
+    function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
     }
 
+    // ============================================
+    // 認証 (JWT + バックエンドAPI)
+    // ============================================
+
     async function authenticate(password) {
-        var hash = await sha256(password);
-        if (hash === getPasswordHash()) {
-            sessionStorage.setItem(STORAGE_KEYS.session, 'true');
-            sessionStorage.setItem(STORAGE_KEYS.lastActivity, Date.now().toString());
+        try {
+            var res = await fetch(apiUrl('/api/auth/login'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: password })
+            });
+
+            if (!res.ok) return false;
+
+            var data = await res.json();
+            authToken = data.token;
+            sessionStorage.setItem('sohei-admin-token', authToken);
+            sessionStorage.setItem('sohei-admin-activity', Date.now().toString());
             return true;
+        } catch (e) {
+            console.error('Auth error:', e);
+            return false;
         }
-        return false;
     }
 
     function isAuthenticated() {
-        if (sessionStorage.getItem(STORAGE_KEYS.session) !== 'true') return false;
-        var lastActivity = parseInt(sessionStorage.getItem(STORAGE_KEYS.lastActivity) || '0');
+        if (!authToken) {
+            authToken = sessionStorage.getItem('sohei-admin-token');
+        }
+        if (!authToken) return false;
+
+        var lastActivity = parseInt(sessionStorage.getItem('sohei-admin-activity') || '0');
         if (Date.now() - lastActivity > SESSION_TIMEOUT) {
             logout();
             return false;
@@ -78,36 +107,32 @@
     }
 
     function refreshActivity() {
-        sessionStorage.setItem(STORAGE_KEYS.lastActivity, Date.now().toString());
+        sessionStorage.setItem('sohei-admin-activity', Date.now().toString());
     }
 
     function logout() {
-        sessionStorage.removeItem(STORAGE_KEYS.session);
-        sessionStorage.removeItem(STORAGE_KEYS.lastActivity);
+        authToken = null;
+        sessionStorage.removeItem('sohei-admin-token');
+        sessionStorage.removeItem('sohei-admin-activity');
         document.getElementById('auth-overlay').hidden = false;
         document.getElementById('admin-app').hidden = true;
     }
 
     // ============================================
-    // コンテンツ管理
+    // コンテンツ管理 (バックエンドAPI)
     // ============================================
 
-    function loadAllContent() {
+    async function loadAllContent() {
         try {
-            var raw = localStorage.getItem(STORAGE_KEYS.content);
-            return raw ? JSON.parse(raw) : {};
+            var res = await apiFetch('/api/content');
+            if (!res.ok) return {};
+            return await res.json();
         } catch (e) {
             return {};
         }
     }
 
-    function saveAllContent(data) {
-        data._lastUpdated = new Date().toISOString();
-        localStorage.setItem(STORAGE_KEYS.content, JSON.stringify(data));
-    }
-
-    function savePageContent(pageId) {
-        var data = loadAllContent();
+    async function savePageContent(pageId) {
         var textareas = document.querySelectorAll('#tab-' + pageId + ' .editor-textarea');
         var pageData = {};
         textareas.forEach(function (ta) {
@@ -116,31 +141,47 @@
                 pageData[key] = ta.value;
             }
         });
-        data[pageId] = pageData;
-        saveAllContent(data);
-        updateDashboardStats();
-        showToast(getPageLabel(pageId) + ' を保存しました', 'success');
 
-        // 変更マーカーをリセット
-        textareas.forEach(function (ta) {
-            ta.classList.remove('modified');
-            ta.setAttribute('data-original', ta.value);
-        });
+        try {
+            var res = await apiFetch('/api/content/' + pageId, {
+                method: 'PUT',
+                body: JSON.stringify(pageData)
+            });
+
+            if (res.ok) {
+                updateDashboardStats();
+                showToast(getPageLabel(pageId) + ' を保存しました', 'success');
+
+                // 変更マーカーをリセット
+                textareas.forEach(function (ta) {
+                    ta.classList.remove('modified');
+                    ta.setAttribute('data-original', ta.value);
+                });
+            } else {
+                showToast('保存に失敗しました', 'error');
+            }
+        } catch (e) {
+            showToast('サーバーとの通信に失敗しました', 'error');
+        }
     }
 
-    function loadPageContent(pageId) {
-        var data = loadAllContent();
-        var pageData = data[pageId];
-        if (!pageData) return;
+    async function loadPageContent(pageId) {
+        try {
+            var res = await apiFetch('/api/content/' + pageId);
+            if (!res.ok) return;
+            var pageData = await res.json();
 
-        var textareas = document.querySelectorAll('#tab-' + pageId + ' .editor-textarea');
-        textareas.forEach(function (ta) {
-            var key = ta.getAttribute('data-key');
-            if (key && pageData[key] !== undefined) {
-                ta.value = pageData[key];
-            }
-            ta.setAttribute('data-original', ta.value);
-        });
+            var textareas = document.querySelectorAll('#tab-' + pageId + ' .editor-textarea');
+            textareas.forEach(function (ta) {
+                var key = ta.getAttribute('data-key');
+                if (key && pageData[key] !== undefined) {
+                    ta.value = pageData[key];
+                }
+                ta.setAttribute('data-original', ta.value);
+            });
+        } catch (e) {
+            // API不可の場合はローカルの初期値のまま
+        }
     }
 
     function resetPageContent(pageId) {
@@ -170,37 +211,49 @@
     // エクスポート / インポート
     // ============================================
 
-    function exportJSON() {
-        var data = loadAllContent();
-        if (Object.keys(data).length === 0) {
-            showToast('保存済みのコンテンツがありません', 'error');
-            return;
+    async function exportJSON() {
+        try {
+            var data = await loadAllContent();
+            if (Object.keys(data).length === 0) {
+                showToast('保存済みのコンテンツがありません', 'error');
+                return;
+            }
+            var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'content.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('content.json をダウンロードしました', 'success');
+        } catch (e) {
+            showToast('エクスポートに失敗しました', 'error');
         }
-        var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = 'content.json';
-        a.click();
-        URL.revokeObjectURL(url);
-        showToast('content.json をダウンロードしました', 'success');
     }
 
-    function importJSON(file) {
+    async function importJSON(file) {
         var reader = new FileReader();
-        reader.onload = function (e) {
+        reader.onload = async function (e) {
             try {
                 var data = JSON.parse(e.target.result);
-                saveAllContent(data);
 
-                // 現在表示中のタブを再読み込み
-                var activeTab = document.querySelector('.nav-item.active');
-                if (activeTab) {
-                    var tabId = activeTab.getAttribute('data-tab');
-                    loadPageContent(tabId);
+                var res = await apiFetch('/api/content/import', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    // 現在表示中のタブを再読み込み
+                    var activeTab = document.querySelector('.nav-item.active');
+                    if (activeTab) {
+                        var tabId = activeTab.getAttribute('data-tab');
+                        await loadPageContent(tabId);
+                    }
+                    updateDashboardStats();
+                    showToast('コンテンツをインポートしました', 'success');
+                } else {
+                    showToast('インポートに失敗しました', 'error');
                 }
-                updateDashboardStats();
-                showToast('コンテンツをインポートしました', 'success');
             } catch (err) {
                 showToast('JSONファイルの読み込みに失敗しました', 'error');
             }
@@ -208,13 +261,21 @@
         reader.readAsText(file);
     }
 
-    function clearAllContent() {
+    async function clearAllContent() {
         if (!confirm('全てのコンテンツ編集データを削除しますか？\nこの操作は取り消せません。')) return;
-        localStorage.removeItem(STORAGE_KEYS.content);
-        updateDashboardStats();
-        showToast('全コンテンツを削除しました', '');
-        // 全タブの textarea をデフォルトに戻すためリロード
-        location.reload();
+
+        try {
+            var res = await apiFetch('/api/content', { method: 'DELETE' });
+            if (res.ok) {
+                updateDashboardStats();
+                showToast('全コンテンツを削除しました', '');
+                location.reload();
+            } else {
+                showToast('削除に失敗しました', 'error');
+            }
+        } catch (e) {
+            showToast('サーバーとの通信に失敗しました', 'error');
+        }
     }
 
     // ============================================
@@ -222,6 +283,8 @@
     // ============================================
 
     async function changePassword() {
+        var currentPassEl = document.getElementById('current-password');
+        var currentPass = currentPassEl ? currentPassEl.value : '';
         var newPass = document.getElementById('new-password').value;
         var confirmPass = document.getElementById('new-password-confirm').value;
 
@@ -234,127 +297,83 @@
             return;
         }
 
-        var hash = await sha256(newPass);
-        localStorage.setItem(STORAGE_KEYS.hash, hash);
-        document.getElementById('new-password').value = '';
-        document.getElementById('new-password-confirm').value = '';
-        showToast('パスワードを変更しました', 'success');
-    }
-
-    // ============================================
-    // Firebase 設定
-    // ============================================
-
-    function loadFirebaseConfig() {
         try {
-            var raw = localStorage.getItem(STORAGE_KEYS.firebase);
-            return raw ? JSON.parse(raw) : {};
+            var res = await apiFetch('/api/auth/change-password', {
+                method: 'POST',
+                body: JSON.stringify({
+                    currentPassword: currentPass,
+                    newPassword: newPass
+                })
+            });
+
+            if (res.ok) {
+                if (currentPassEl) currentPassEl.value = '';
+                document.getElementById('new-password').value = '';
+                document.getElementById('new-password-confirm').value = '';
+                showToast('パスワードを変更しました', 'success');
+            } else {
+                var data = await res.json();
+                showToast(data.error || 'パスワード変更に失敗しました', 'error');
+            }
         } catch (e) {
-            return {};
+            showToast('サーバーとの通信に失敗しました', 'error');
         }
     }
 
-    function saveFirebaseConfig() {
-        var config = {
-            apiKey: document.getElementById('firebase-apiKey').value.trim(),
-            projectId: document.getElementById('firebase-projectId').value.trim(),
-            appId: document.getElementById('firebase-appId').value.trim()
-        };
-        localStorage.setItem(STORAGE_KEYS.firebase, JSON.stringify(config));
-        updateDashboardStats();
-        showToast('Firebase設定を保存しました', 'success');
-    }
-
-    function restoreFirebaseConfig() {
-        var config = loadFirebaseConfig();
-        if (config.apiKey) document.getElementById('firebase-apiKey').value = config.apiKey;
-        if (config.projectId) document.getElementById('firebase-projectId').value = config.projectId;
-        if (config.appId) document.getElementById('firebase-appId').value = config.appId;
-    }
-
     // ============================================
-    // ダッシュボード統計
+    // ダッシュボード統計 (バックエンドAPI)
     // ============================================
 
-    function updateDashboardStats() {
-        var data = loadAllContent();
-        var pageIds = ['index', 'workIntroduction', 'productionProcess', 'interview', 'artistIntroduction'];
-        var editedCount = 0;
-        pageIds.forEach(function (id) {
-            if (data[id]) editedCount++;
+    async function updateDashboardStats() {
+        try {
+            var res = await apiFetch('/api/analytics/stats?days=7');
+            if (!res.ok) return;
+            var stats = await res.json();
+
+            // コンテンツ統計
+            document.getElementById('edited-pages').textContent =
+                stats.contentStats.totalEntries + ' エントリ';
+
+            if (stats.contentStats.lastUpdated) {
+                document.getElementById('last-updated').textContent =
+                    formatDate(stats.contentStats.lastUpdated);
+            }
+
+            var modeEl = document.getElementById('storage-mode');
+            modeEl.textContent = 'PostgreSQL + Prisma';
+            modeEl.style.color = '#4caf50';
+
+            // 訪問者ログ
+            loadVisitorStats(stats);
+        } catch (e) {
+            // API不可の場合は既定値のまま
+        }
+    }
+
+    function loadVisitorStats(stats) {
+        var container = document.getElementById('visitor-stats');
+        if (!stats || !stats.byPage || stats.byPage.length === 0) return;
+
+        var html = '<table style="width:100%;border-collapse:collapse;">';
+        html += '<tr style="border-bottom:1px solid var(--border);">';
+        html += '<th style="text-align:left;padding:8px;font-size:13px;color:var(--text-muted);">ページ</th>';
+        html += '<th style="text-align:right;padding:8px;font-size:13px;color:var(--text-muted);">過去7日間PV</th>';
+        html += '</tr>';
+
+        stats.byPage.forEach(function (entry) {
+            html += '<tr style="border-bottom:1px solid rgba(42,63,85,0.5);">';
+            html += '<td style="padding:8px;font-size:14px;">' + escapeHtml(entry.page) + '</td>';
+            html += '<td style="text-align:right;padding:8px;font-size:14px;font-weight:700;">' + entry.count + '</td>';
+            html += '</tr>';
         });
 
-        document.getElementById('edited-pages').textContent = editedCount + ' / 5';
+        html += '<tr>';
+        html += '<td style="padding:8px;font-size:14px;font-weight:700;">合計</td>';
+        html += '<td style="text-align:right;padding:8px;font-size:14px;font-weight:700;">' + stats.totalVisits + '</td>';
+        html += '</tr>';
+        html += '</table>';
 
-        if (data._lastUpdated) {
-            document.getElementById('last-updated').textContent = formatDate(data._lastUpdated);
-        }
-
-        var fbConfig = loadFirebaseConfig();
-        var modeEl = document.getElementById('storage-mode');
-        if (fbConfig.apiKey && fbConfig.projectId) {
-            modeEl.textContent = 'Firebase';
-            modeEl.style.color = '#4caf50';
-        } else {
-            modeEl.textContent = 'ローカル + JSON';
-        }
-
-        // 訪問者ログ
-        loadVisitorStats();
-    }
-
-    function loadVisitorStats() {
-        var container = document.getElementById('visitor-stats');
-        try {
-            var raw = localStorage.getItem(STORAGE_KEYS.visitors);
-            if (!raw) return;
-            var logs = JSON.parse(raw);
-            if (!logs || !logs.length) return;
-
-            // 過去7日間のPV集計
-            var now = Date.now();
-            var sevenDays = 7 * 24 * 60 * 60 * 1000;
-            var recent = logs.filter(function (l) { return now - l.time < sevenDays; });
-
-            if (!recent.length) return;
-
-            // ページ別集計
-            var pageCounts = {};
-            recent.forEach(function (l) {
-                var page = l.page || 'unknown';
-                pageCounts[page] = (pageCounts[page] || 0) + 1;
-            });
-
-            var html = '<table style="width:100%;border-collapse:collapse;">';
-            html += '<tr style="border-bottom:1px solid var(--border);">';
-            html += '<th style="text-align:left;padding:8px;font-size:13px;color:var(--text-muted);">ページ</th>';
-            html += '<th style="text-align:right;padding:8px;font-size:13px;color:var(--text-muted);">過去7日間PV</th>';
-            html += '</tr>';
-
-            var sorted = Object.entries(pageCounts).sort(function (a, b) { return b[1] - a[1]; });
-            sorted.forEach(function (entry) {
-                html += '<tr style="border-bottom:1px solid rgba(42,63,85,0.5);">';
-                html += '<td style="padding:8px;font-size:14px;">' + escapeHtml(entry[0]) + '</td>';
-                html += '<td style="text-align:right;padding:8px;font-size:14px;font-weight:700;">' + entry[1] + '</td>';
-                html += '</tr>';
-            });
-
-            html += '<tr>';
-            html += '<td style="padding:8px;font-size:14px;font-weight:700;">合計</td>';
-            html += '<td style="text-align:right;padding:8px;font-size:14px;font-weight:700;">' + recent.length + '</td>';
-            html += '</tr>';
-            html += '</table>';
-
-            container.innerHTML = html;
-        } catch (e) {
-            // ignore
-        }
-    }
-
-    function escapeHtml(str) {
-        var div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
+        container.innerHTML = html;
     }
 
     // ============================================
@@ -384,10 +403,6 @@
 
         if (tabId === 'dashboard') {
             updateDashboardStats();
-        }
-
-        if (tabId === 'settings') {
-            restoreFirebaseConfig();
         }
 
         // モバイルでサイドバーを閉じる
@@ -445,7 +460,7 @@
         setInterval(function () {
             if (isAuthenticated()) {
                 // 引き続き有効
-            } else if (sessionStorage.getItem(STORAGE_KEYS.session) === 'true') {
+            } else if (authToken) {
                 // タイムアウト
                 logout();
                 showToast('セッションがタイムアウトしました', 'error');
@@ -519,9 +534,6 @@
         // パスワード変更
         document.getElementById('change-password-btn').addEventListener('click', changePassword);
 
-        // Firebase設定保存
-        document.getElementById('save-firebase-btn').addEventListener('click', saveFirebaseConfig);
-
         // アクティビティ追跡
         document.addEventListener('click', refreshActivity);
         document.addEventListener('keydown', refreshActivity);
@@ -531,16 +543,25 @@
     // 初期化
     // ============================================
 
-    function init() {
+    async function init() {
         bindEvents();
         setupChangeDetection();
         startInactivityCheck();
 
-        // 認証状態チェック
+        // 認証状態チェック（トークンの有効性をサーバーに確認）
         if (isAuthenticated()) {
-            document.getElementById('auth-overlay').hidden = true;
-            document.getElementById('admin-app').hidden = false;
-            updateDashboardStats();
+            try {
+                var res = await apiFetch('/api/auth/verify');
+                if (res.ok) {
+                    document.getElementById('auth-overlay').hidden = true;
+                    document.getElementById('admin-app').hidden = false;
+                    updateDashboardStats();
+                } else {
+                    logout();
+                }
+            } catch (e) {
+                logout();
+            }
         }
 
         // 全テキストエリアの初期値を保存
