@@ -1,0 +1,83 @@
+@use "_variable" as *;
+@use "_mixin.scss" as *;
+@import url('https://fonts.googleapis.com/css2?family=New+Tegomin&family=Noto+Sans+JP&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500&display=swap');
+
+.caption {
+    margin-top: 20px;
+    margin-bottom: 80px;
+}
+
+
+
+
+
+.accordion_div {
+    display: flex;
+    justify-content: center;
+}
+
+.qa-006 {
+    font-family: $zenOld;
+}
+
+.qa-006 summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 1em 2em 1em 3em;
+    color: #333333;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.qa-006 summary::before,
+.qa-006 p::before {
+    position: absolute;
+    left: 1em;
+    font-weight: 600;
+    font-size: 1.3em;
+}
+
+.qa-006 summary::before {
+    color: #75bbff;
+    content: "Q";
+}
+
+.qa-006 summary::after {
+    transform: translateY(-25%) rotate(45deg);
+    width: 7px;
+    height: 7px;
+    margin-left: 10px;
+    border-bottom: 3px solid #333333b3;
+    border-right: 3px solid #333333b3;
+    content: '';
+    transition: transform .5s;
+}
+
+.qa-006[open] summary::after {
+    transform: rotate(225deg);
+}
+
+.qa-006 p {
+    position: relative;
+    transform: translateY(-10px);
+    opacity: 0;
+    margin: 0;
+    padding: .3em 3em 1.5em;
+    color: #333;
+    transition: transform .5s, opacity .5s;
+}
+
+.qa-006[open] p {
+    transform: none;
+    opacity: 1;
+}
+
+.qa-006 p::before {
+    color: #ff8d8d;
+    line-height: 1.2;
+    content: "A";
+}

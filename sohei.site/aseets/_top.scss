@@ -1,0 +1,274 @@
+@use "_variable" as *;
+@use "_mixin.scss" as *;
+@import url('https://fonts.googleapis.com/css2?family=New+Tegomin&family=Noto+Sans+JP&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500&display=swap');
+
+// .top{
+//     background: $abc;
+//     &_dl{
+//         background-color: #000;
+//         &_dt{
+//     color: rgb(207, 232, 232);
+//         }
+//     }
+// 
+li {
+  list-style-type: none;
+}
+
+.signature {
+  width: 115px;
+}
+
+.extenal-link {
+  /* ボタン幅 */
+  border: 2px solid #9E4020;
+  /* 線幅・種類・色 */
+  // border-radius: 0;
+  color: #9E4020;
+  /* 文字色 */
+  background: #fff;
+  /* 背景色 */
+  -webkit-box-shadow: 4px 4px 0 #9E4020;
+  /* 影の距離・色 */
+  box-shadow: 4px 4px 0 #9E4020;
+  /* 影の距離・色 */
+  // padding: 1em 2em;
+  font-weight: bold;
+  /*文字の太さ*/
+  text-decoration: none;
+  // text-align: center;
+  transition: 0.3s;
+}
+
+.extenal-link {
+  position: relative;
+  /* 以下はボタンのデザインです。適宜変更してください。 */
+  display: block;
+  width: 280px;
+  padding: 20px 30px 20px 20px;
+  text-align: center;
+  border-radius: 5px;
+  margin: 0 auto 20px;
+}
+
+/* マウスオーバーした際のデザイン */
+.extenal-link:hover {
+  -webkit-box-shadow: -4px -4px 0 #9E4020;
+  /* 影の距離・色 */
+  box-shadow: -4px -4px 0 #9E4020;
+  /* 影の距離・色 */
+}
+
+.external_h3 {
+  text-align: center;
+}
+
+.external-li {
+  margin-bottom: 30px;
+}
+
+.extenal-link {
+  font-size: 18px;
+}
+
+.top_storesAndEvents {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.top_storesAndEvents li {
+  line-height: 50px;
+}
+
+
+
+
+.extenal-link:after {
+  content: '';
+  display: inline-block;
+  border-style: solid;
+  border-width: 6px 0 6px 6px;
+  border-color: transparent transparent transparent $accent;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  margin-top: -6px;
+}
+
+
+
+
+// .extenal-link {
+//   color: rgb(52, 52, 255);
+// }
+
+// .extenal-link:visited {
+//   color: #ff4081;
+// }
+
+// .extenal-link {
+//   text-decoration: none;
+// }
+
+// a {
+//   transition: color 0.3s;
+// }
+
+// a {
+//   padding: 0 10px;
+//   background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 50%, #9E4020 50%);
+//   background-position: 0 0;
+//   background-size: 200% auto;
+//   transition: .3s;
+// }
+
+// a:hover {
+//   background-position: -100% 0;
+//   color: #fff;
+// }
+
+
+
+
+
+a:active {
+  color: #26a69a;
+}
+
+.top {
+  &_main {
+    &_div {
+      &_omoi {
+
+        &_h2 {
+          margin-top: 60px;
+        }
+
+        &_name {
+          margin-top: 20px;
+          text-align: center;
+          margin-bottom: 20px;
+          font-family: $shippori;
+          font-size: 20px;
+        }
+
+        &_text {
+          margin-bottom: 120px;
+        }
+      }
+
+      &_pageIntroduction {
+
+        h2 {
+          margin-top: 24px;
+          margin-bottom: 10px;
+        }
+      }
+
+      &_salesStore {
+        &_div {
+          text-align: center;
+
+          &_div {
+            text-align: left;
+
+            h3 {
+              font-family: $zenOld;
+            }
+
+            ul {
+              li {
+                font-family: $zenOld;
+
+                a {
+                  font-family: $zenOld;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+//外部リンクアイコン
+
+
+// .extenal-link:hover::after {
+//   content: url('../img/icon_white.png');
+// }
+
+// 外部リンクアイコン
+
+//ボタン
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+.btn,
+a.btn,
+button.btn {
+  position: relative;
+  display: inline-block;
+  // padding: 10px 100px;
+  width: 333px;
+  padding: 20px 0px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+  letter-spacing: 0.1em;
+}
+
+.btn--orange,
+a.btn--orange {
+  color: #fff;
+  background-color: $accent;
+}
+
+.btn--orange:hover,
+a.btn--orange:hover {
+  color: #fff;
+  background: $main;
+}
+
+.btnDiv {
+  margin-top: 35px;
+  margin-bottom: 90px;
+
+  a {
+    font-family: $zenOld;
+    font-weight: bold;
+    font-size: 18px;
+  }
+}
+
+.btnDiv2 {
+  margin-top: 35px;
+  margin-bottom: 120px;
+
+  a {
+    font-family: $zenOld;
+    font-weight: bold;
+    font-size: 18px;
+  }
+}
+
+//ボタン
