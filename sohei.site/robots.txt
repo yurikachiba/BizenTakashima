@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Disallow: /sohei-kiln-room-m7x9.html
+Disallow: /aseets/admin/
+Disallow: /content.json
