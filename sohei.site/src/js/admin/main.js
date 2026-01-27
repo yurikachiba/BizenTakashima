@@ -91,7 +91,10 @@ async function authenticate(password) {
         return { success: true };
     } catch (e) {
         console.error('Auth error:', e);
-        return { success: false, error: 'サーバーに接続できません。APIサーバーが起動しているか確認してください。' };
+        if (e instanceof TypeError && e.message === 'Failed to fetch') {
+            return { success: false, error: 'サーバーに接続できません。APIサーバー（ポート3001）が起動しているか確認してください。\nCORSエラーの可能性もあります。ブラウザのコンソールを確認してください。' };
+        }
+        return { success: false, error: 'サーバーとの通信中にエラーが発生しました: ' + e.message };
     }
 }
 

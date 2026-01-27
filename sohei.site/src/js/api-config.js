@@ -1,4 +1,6 @@
-const BASE_URL = window.location.hostname === 'localhost'
+const hostname = window.location.hostname;
+const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+const BASE_URL = isLocal
   ? 'http://localhost:3001'
   : 'https://bizen-takashima-api.onrender.com';
 
