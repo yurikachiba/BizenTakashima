@@ -38,14 +38,25 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-// サーバー起動時にデフォルト管理者を自動作成
+// サーバー起動時にデフォルト管理者を自動作成・パスワード同期
 async function seedAdmin() {
   try {
+    const adminPassword = process.env.ADMIN_PASSWORD || DEFAULT_ADMIN_PASSWORD;
     const existing = await prisma.admin.findFirst();
     if (!existing) {
-      const passwordHash = await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, 12);
+      const passwordHash = await bcrypt.hash(adminPassword, 12);
       await prisma.admin.create({ data: { passwordHash } });
       console.log('Default admin created');
+    } else {
+      const match = await bcrypt.compare(adminPassword, existing.passwordHash);
+      if (!match) {
+        const passwordHash = await bcrypt.hash(adminPassword, 12);
+        await prisma.admin.update({
+          where: { id: existing.id },
+          data: { passwordHash }
+        });
+        console.log('Admin password synced to configured default');
+      }
     }
   } catch (err) {
     console.error('Admin seed error:', err);
