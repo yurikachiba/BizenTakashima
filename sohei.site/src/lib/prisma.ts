@@ -32,10 +32,7 @@ function isConnectionError(err: unknown): boolean {
 // Check if database is in cold-start state (Render.com free tier specific)
 function isDatabaseColdStart(err: unknown): boolean {
   const error = err as { code?: string; message?: string };
-  return (
-    error.code === 'P1001' ||
-    error.message?.includes("Can't reach database server") === true
-  );
+  return error.code === 'P1001' || error.message?.includes("Can't reach database server") === true;
 }
 
 // Helper function to ensure database connection with retry
