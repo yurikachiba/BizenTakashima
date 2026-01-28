@@ -97,7 +97,21 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json({ message: `${page}のコンテンツを保存しました` });
   } catch (err) {
     console.error('Update content error:', err);
-    const detail = err instanceof Error ? err.message : undefined;
-    return NextResponse.json({ error: 'コンテンツの保存中にエラーが発生しました', detail }, { status: 500 });
+    // Extract detailed error information for debugging
+    let detail: string | undefined;
+    let code: string | undefined;
+    if (err instanceof Error) {
+      detail = err.message;
+      // Extract Prisma error code if available
+      const prismaError = err as { code?: string };
+      code = prismaError.code;
+    } else if (typeof err === 'string') {
+      detail = err;
+    } else if (err && typeof err === 'object') {
+      const errObj = err as { message?: string; code?: string };
+      detail = errObj.message;
+      code = errObj.code;
+    }
+    return NextResponse.json({ error: 'コンテンツの保存中にエラーが発生しました', detail, code }, { status: 500 });
   }
 }
