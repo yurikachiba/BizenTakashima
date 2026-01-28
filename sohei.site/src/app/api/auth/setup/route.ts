@@ -20,6 +20,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: '管理者を作成しました' });
   } catch (err) {
     console.error('Setup error:', err);
-    return NextResponse.json({ error: 'サーバーエラー' }, { status: 500 });
+    const message =
+      err instanceof Error && err.message.includes('connect')
+        ? 'データベースに接続できません'
+        : 'サーバーエラー';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
