@@ -30,7 +30,8 @@ function isConnectionError(err: unknown): boolean {
 
 // Helper function to ensure database connection with retry
 // Uses a simple query to verify the connection is actually working (more reliable in serverless)
-export async function ensureConnection(retries = 3): Promise<void> {
+// Render.com free tier databases sleep after 15 minutes and can take up to 30 seconds to wake up
+export async function ensureConnection(retries = 5): Promise<void> {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       // Use a simple query to verify connection instead of just $connect
@@ -40,8 +41,18 @@ export async function ensureConnection(retries = 3): Promise<void> {
     } catch (err) {
       console.warn(`Database connection attempt ${attempt}/${retries} failed:`, err);
       if (attempt === retries) throw err;
-      // Exponential backoff with longer delays for serverless cold starts
-      await new Promise((resolve) => setTimeout(resolve, 200 * Math.pow(2, attempt - 1)));
+
+      // Try to disconnect stale connections before retry
+      try {
+        await prisma.$disconnect();
+      } catch {
+        // Ignore disconnect errors
+      }
+
+      // Exponential backoff with longer delays for database wake-up
+      // Delays: 2s, 4s, 8s, 16s, 32s = total ~62 seconds max wait
+      // This accommodates Render free tier database spin-up time (~30s)
+      await new Promise((resolve) => setTimeout(resolve, 2000 * Math.pow(2, attempt - 1)));
     }
   }
 }
@@ -61,7 +72,8 @@ export async function withRetry<T>(operation: () => Promise<T>, retries = 3): Pr
         throw err;
       }
       console.warn(`Database operation attempt ${attempt}/${retries} failed, retrying:`, err);
-      await new Promise((resolve) => setTimeout(resolve, 100 * Math.pow(2, attempt - 1)));
+      // Longer delays to handle database wake-up: 1s, 2s, 4s
+      await new Promise((resolve) => setTimeout(resolve, 1000 * Math.pow(2, attempt - 1)));
     }
   }
   throw lastError;
