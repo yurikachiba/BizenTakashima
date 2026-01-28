@@ -41,6 +41,24 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ message: '保存するコンテンツがありません' });
     }
 
+    // Helper function to save a single entry with retry
+    const saveEntry = async (key: string, value: unknown, retries = 3): Promise<void> => {
+      for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+          await prisma.content.upsert({
+            where: { page_key: { page, key } },
+            update: { value: String(value) },
+            create: { page, key, value: String(value) },
+          });
+          return;
+        } catch (err) {
+          if (attempt === retries) throw err;
+          // Exponential backoff: 100ms, 200ms, 400ms...
+          await new Promise((resolve) => setTimeout(resolve, 100 * Math.pow(2, attempt - 1)));
+        }
+      }
+    };
+
     // Try interactive transaction first, fall back to individual upserts on connection error
     try {
       await prisma.$transaction(
@@ -60,19 +78,15 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       console.warn('Transaction save failed, retrying with individual upserts:', txErr);
     }
 
-    // Fallback: reconnect and save entries individually
+    // Fallback: ensure connection and save entries individually with retry
     try {
-      await prisma.$disconnect();
+      await prisma.$connect();
     } catch {
-      /* ignore disconnect error */
+      /* connection may already be established */
     }
 
     for (const [key, value] of entries) {
-      await prisma.content.upsert({
-        where: { page_key: { page, key } },
-        update: { value: String(value) },
-        create: { page, key, value: String(value) },
-      });
+      await saveEntry(key, value);
     }
 
     return NextResponse.json({ message: `${page}のコンテンツを保存しました` });
