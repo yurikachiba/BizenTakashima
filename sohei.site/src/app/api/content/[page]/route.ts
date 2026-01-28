@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 import { prisma, ensureConnection } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
+import { sanitizeContent, hasDangerousContent } from '@/lib/sanitize';
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ page: string }> }) {
   try {
@@ -43,14 +44,23 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ message: '保存するコンテンツがありません' });
     }
 
+    // Sanitize entries to prevent XSS
+    const sanitizedEntries: [string, string][] = entries.map(([key, value]) => {
+      const stringValue = String(value);
+      if (hasDangerousContent(stringValue)) {
+        console.warn(`Dangerous content detected in page "${page}", key "${key}". Content has been sanitized.`);
+      }
+      return [key, sanitizeContent(stringValue)];
+    });
+
     // Helper function to save a single entry with retry
-    const saveEntry = async (key: string, value: unknown, retries = 3): Promise<void> => {
+    const saveEntry = async (key: string, value: string, retries = 3): Promise<void> => {
       for (let attempt = 1; attempt <= retries; attempt++) {
         try {
           await prisma.content.upsert({
             where: { page_key: { page, key } },
-            update: { value: String(value) },
-            create: { page, key, value: String(value) },
+            update: { value },
+            create: { page, key, value },
           });
           return;
         } catch (err) {
@@ -64,11 +74,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     try {
       await prisma.$transaction(
         async (tx: Prisma.TransactionClient) => {
-          for (const [key, value] of entries) {
+          for (const [key, value] of sanitizedEntries) {
             await tx.content.upsert({
               where: { page_key: { page, key } },
-              update: { value: String(value) },
-              create: { page, key, value: String(value) },
+              update: { value },
+              create: { page, key, value },
             });
           }
         },
@@ -80,7 +90,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Fallback: save entries individually with retry
-    for (const [key, value] of entries) {
+    for (const [key, value] of sanitizedEntries) {
       await saveEntry(key, value);
     }
 
