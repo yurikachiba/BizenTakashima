@@ -22,7 +22,9 @@ export async function POST(request: NextRequest) {
       for (const [key, value] of Object.entries(entries)) {
         const stringValue = String(value);
         if (hasDangerousContent(stringValue)) {
-          console.warn(`Dangerous content detected in import - page "${page}", key "${key}". Content has been sanitized.`);
+          console.warn(
+            `Dangerous content detected in import - page "${page}", key "${key}". Content has been sanitized.`,
+          );
         }
         allEntries.push({ page, key, value: sanitizeContent(stringValue) });
       }
