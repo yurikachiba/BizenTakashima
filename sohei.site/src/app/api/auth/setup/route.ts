@@ -21,9 +21,7 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     console.error('Setup error:', err);
     const message =
-      err instanceof Error && err.message.includes('connect')
-        ? 'データベースに接続できません'
-        : 'サーバーエラー';
+      err instanceof Error && err.message.includes('connect') ? 'データベースに接続できません' : 'サーバーエラー';
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
