@@ -21,6 +21,7 @@ jobs:
           cache: npm
           cache-dependency-path: sohei.site/package-lock.json
       - run: npm ci --ignore-scripts
+      - run: npx prisma generate
       - run: npx next lint
 
   typecheck:
@@ -37,6 +38,7 @@ jobs:
           cache: npm
           cache-dependency-path: sohei.site/package-lock.json
       - run: npm ci --ignore-scripts
+      - run: npx prisma generate
       - run: npx tsc --noEmit
 
   build:
