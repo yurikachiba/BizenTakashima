@@ -69,7 +69,20 @@ export async function POST(request: NextRequest) {
     });
   } catch (err) {
     console.error('Import content error:', err);
+    const errObj = err as { code?: string; message?: string };
     const detail = err instanceof Error ? err.message : undefined;
+
+    if (errObj.code === 'DATABASE_COLD_START') {
+      return NextResponse.json(
+        {
+          error: 'データベースが起動中です',
+          detail: 'データベースがスリープ状態から復帰中です。10〜30秒後に再度インポートをお試しください。',
+          retryable: true,
+        },
+        { status: 503 },
+      );
+    }
+
     return NextResponse.json({ error: 'インポート中にエラーが発生しました', detail }, { status: 500 });
   }
 }

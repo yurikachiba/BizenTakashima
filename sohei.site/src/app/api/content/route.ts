@@ -20,6 +20,17 @@ export async function GET() {
     return NextResponse.json(grouped);
   } catch (err) {
     console.error('Get content error:', err);
+    const errObj = err as { code?: string };
+    if (errObj.code === 'DATABASE_COLD_START') {
+      return NextResponse.json(
+        {
+          error: 'データベースが起動中です',
+          detail: 'データベースがスリープ状態から復帰中です。数秒後に再度お試しください。',
+          retryable: true,
+        },
+        { status: 503 },
+      );
+    }
     return NextResponse.json({ error: 'サーバーエラー' }, { status: 500 });
   }
 }
@@ -34,6 +45,17 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ message: '全コンテンツを削除しました', count: deleteResult.count });
   } catch (err) {
     console.error('Delete content error:', err);
+    const errObj = err as { code?: string };
+    if (errObj.code === 'DATABASE_COLD_START') {
+      return NextResponse.json(
+        {
+          error: 'データベースが起動中です',
+          detail: 'データベースがスリープ状態から復帰中です。数秒後に再度お試しください。',
+          retryable: true,
+        },
+        { status: 503 },
+      );
+    }
     return NextResponse.json({ error: 'サーバーエラー' }, { status: 500 });
   }
 }

@@ -20,6 +20,17 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     return NextResponse.json(result);
   } catch (err) {
     console.error('Get page content error:', err);
+    const errObj = err as { code?: string };
+    if (errObj.code === 'DATABASE_COLD_START') {
+      return NextResponse.json(
+        {
+          error: 'データベースが起動中です',
+          detail: 'データベースがスリープ状態から復帰中です。数秒後に再度お試しください。',
+          retryable: true,
+        },
+        { status: 503 },
+      );
+    }
     return NextResponse.json({ error: 'サーバーエラー' }, { status: 500 });
   }
 }
@@ -121,6 +132,20 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       detail = errObj.message;
       code = errObj.code;
     }
+
+    // Provide user-friendly message for database cold start
+    if (code === 'DATABASE_COLD_START') {
+      return NextResponse.json(
+        {
+          error: 'データベースが起動中です',
+          detail: 'データベースがスリープ状態から復帰中です。10〜30秒後に再度保存をお試しください。',
+          code,
+          retryable: true,
+        },
+        { status: 503 },
+      );
+    }
+
     return NextResponse.json({ error: 'コンテンツの保存中にエラーが発生しました', detail, code }, { status: 500 });
   }
 }
