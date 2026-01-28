@@ -811,6 +811,7 @@ function getTrendPercent(current: number, prev: number): { value: number; direct
 
 export default function AdminPageClient() {
   const [authenticated, setAuthenticated] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [activeTab, setActiveTab] = useState<PageTab>('dashboard');
   const [content, setContent] = useState<Record<string, Record<string, string>>>({});
   const [editedContent, setEditedContent] = useState<Record<string, Record<string, string>>>({});
@@ -945,6 +946,8 @@ export default function AdminPageClient() {
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isLoggingIn) return;
+    setIsLoggingIn(true);
     const form = e.currentTarget;
     const password = (form.elements.namedItem('password') as HTMLInputElement).value;
     try {
@@ -954,9 +957,13 @@ export default function AdminPageClient() {
         body: JSON.stringify({ password }),
       });
       const data = await res.json();
-      if (res.ok) {
+      if (res.ok && data.token) {
         tokenRef.current = data.token;
-        sessionStorage.setItem('admin_token', data.token);
+        try {
+          sessionStorage.setItem('admin_token', data.token);
+        } catch {
+          // sessionStorage may be unavailable in some browsers
+        }
         setAuthenticated(true);
         loadContent();
         loadImages();
@@ -965,6 +972,8 @@ export default function AdminPageClient() {
       }
     } catch {
       showToast('サーバーに接続できません', 'error');
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
@@ -1129,10 +1138,17 @@ export default function AdminPageClient() {
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                 <path d="M7 11V7a5 5 0 0110 0v4" />
               </svg>
-              <input type="password" name="password" className="auth-input" placeholder="パスワードを入力" required />
+              <input
+                type="password"
+                name="password"
+                className="auth-input"
+                placeholder="パスワードを入力"
+                required
+                disabled={isLoggingIn}
+              />
             </div>
-            <button type="submit" className="auth-btn">
-              ログイン
+            <button type="submit" className="auth-btn" disabled={isLoggingIn}>
+              {isLoggingIn ? 'ログイン中...' : 'ログイン'}
             </button>
           </form>
         </div>
