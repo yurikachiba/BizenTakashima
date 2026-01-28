@@ -11,8 +11,18 @@ export async function GET(request: NextRequest) {
     const since = new Date();
     since.setDate(since.getDate() - days);
 
+    // Previous period for trend comparison
+    const prevSince = new Date();
+    prevSince.setDate(prevSince.getDate() - days * 2);
+    const prevUntil = new Date();
+    prevUntil.setDate(prevUntil.getDate() - days);
+
     const totalVisits = await prisma.visitorLog.count({
       where: { createdAt: { gte: since } },
+    });
+
+    const prevTotalVisits = await prisma.visitorLog.count({
+      where: { createdAt: { gte: prevSince, lt: prevUntil } },
     });
 
     const uniqueIPs = await prisma.visitorLog.findMany({
@@ -22,10 +32,23 @@ export async function GET(request: NextRequest) {
     });
     const uniqueVisitors = uniqueIPs.length;
 
+    const prevUniqueIPs = await prisma.visitorLog.findMany({
+      where: { createdAt: { gte: prevSince, lt: prevUntil }, ipAddress: { not: null } },
+      distinct: ['ipAddress'],
+      select: { ipAddress: true },
+    });
+    const prevUniqueVisitors = prevUniqueIPs.length;
+
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
     const todayVisits = await prisma.visitorLog.count({
       where: { createdAt: { gte: todayStart } },
+    });
+
+    const yesterdayStart = new Date(todayStart);
+    yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+    const yesterdayVisits = await prisma.visitorLog.count({
+      where: { createdAt: { gte: yesterdayStart, lt: todayStart } },
     });
 
     const byPage = await prisma.visitorLog.groupBy({
@@ -47,6 +70,12 @@ export async function GET(request: NextRequest) {
       if (!daily[dateKey][log.page]) daily[dateKey][log.page] = 0;
       daily[dateKey][log.page]++;
       daily[dateKey].total++;
+    }
+
+    // Hourly distribution
+    const hourly: number[] = Array(24).fill(0);
+    for (const log of logs) {
+      hourly[log.createdAt.getHours()]++;
     }
 
     const referrerLogs = await prisma.visitorLog.findMany({
@@ -113,22 +142,47 @@ export async function GET(request: NextRequest) {
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
 
+    // Language stats
+    const languageLogs = await prisma.visitorLog.findMany({
+      where: { createdAt: { gte: since }, language: { not: null } },
+      select: { language: true },
+    });
+    const languageCounts: Record<string, number> = {};
+    for (const log of languageLogs) {
+      const lang = log.language || 'Unknown';
+      if (!languageCounts[lang]) languageCounts[lang] = 0;
+      languageCounts[lang]++;
+    }
+    const languages = Object.entries(languageCounts)
+      .map(([language, count]) => ({ language, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
     const contentCount = await prisma.content.count();
     const lastUpdated = await prisma.content.findFirst({
       orderBy: { updatedAt: 'desc' },
       select: { updatedAt: true },
     });
 
+    // Average visits per day
+    const avgVisitsPerDay = days > 0 ? Math.round(totalVisits / days) : 0;
+
     return NextResponse.json({
       totalVisits,
+      prevTotalVisits,
       uniqueVisitors,
+      prevUniqueVisitors,
       todayVisits,
+      yesterdayVisits,
+      avgVisitsPerDay,
       byPage: byPage.map((p: { page: string; _count: { id: number } }) => ({ page: p.page, count: p._count.id })),
       daily,
+      hourly,
       referrers,
       devices: deviceCounts,
       browsers,
       screens,
+      languages,
       contentStats: {
         totalEntries: contentCount,
         lastUpdated: lastUpdated?.updatedAt || null,
