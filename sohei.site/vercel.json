@@ -1,5 +1,6 @@
 {
   "framework": "nextjs",
+  "outputDirectory": ".next",
   "headers": [
     {
       "source": "/sohei-kiln-room-m7x9",
