@@ -58,19 +58,35 @@ router.put('/:page', authenticateToken, async (req, res) => {
       return res.json({ message: '保存するコンテンツがありません' });
     }
 
-    // Use interactive transaction with extended timeout for many upserts
-    await prisma.$transaction(
-      async (tx) => {
-        for (const [key, value] of entries) {
-          await tx.content.upsert({
-            where: { page_key: { page, key } },
-            update: { value: String(value) },
-            create: { page, key, value: String(value) }
-          });
-        }
-      },
-      { timeout: 30000, maxWait: 10000 }
-    );
+    // Try interactive transaction first, fall back to individual upserts on connection error
+    try {
+      await prisma.$transaction(
+        async (tx) => {
+          for (const [key, value] of entries) {
+            await tx.content.upsert({
+              where: { page_key: { page, key } },
+              update: { value: String(value) },
+              create: { page, key, value: String(value) }
+            });
+          }
+        },
+        { timeout: 30000, maxWait: 10000 }
+      );
+      return res.json({ message: `${page}のコンテンツを保存しました` });
+    } catch (txErr) {
+      console.warn('Transaction save failed, retrying with individual upserts:', txErr);
+    }
+
+    // Fallback: reconnect and save entries individually
+    try { await prisma.$disconnect(); } catch { /* ignore */ }
+
+    for (const [key, value] of entries) {
+      await prisma.content.upsert({
+        where: { page_key: { page, key } },
+        update: { value: String(value) },
+        create: { page, key, value: String(value) }
+      });
+    }
 
     res.json({ message: `${page}のコンテンツを保存しました` });
   } catch (err) {
@@ -92,19 +108,35 @@ router.post('/import', authenticateToken, async (req, res) => {
       }
     }
 
-    // Use interactive transaction with extended timeout for bulk import
-    await prisma.$transaction(
-      async (tx) => {
-        for (const { page, key, value } of allEntries) {
-          await tx.content.upsert({
-            where: { page_key: { page, key } },
-            update: { value },
-            create: { page, key, value }
-          });
-        }
-      },
-      { timeout: 60000, maxWait: 10000 }
-    );
+    // Try interactive transaction first, fall back to individual upserts on connection error
+    try {
+      await prisma.$transaction(
+        async (tx) => {
+          for (const { page, key, value } of allEntries) {
+            await tx.content.upsert({
+              where: { page_key: { page, key } },
+              update: { value },
+              create: { page, key, value }
+            });
+          }
+        },
+        { timeout: 60000, maxWait: 10000 }
+      );
+      return res.json({ message: 'コンテンツをインポートしました', count: allEntries.length });
+    } catch (txErr) {
+      console.warn('Transaction import failed, retrying with individual upserts:', txErr);
+    }
+
+    // Fallback: reconnect and save entries individually
+    try { await prisma.$disconnect(); } catch { /* ignore */ }
+
+    for (const { page, key, value } of allEntries) {
+      await prisma.content.upsert({
+        where: { page_key: { page, key } },
+        update: { value },
+        create: { page, key, value }
+      });
+    }
 
     res.json({ message: 'コンテンツをインポートしました', count: allEntries.length });
   } catch (err) {
