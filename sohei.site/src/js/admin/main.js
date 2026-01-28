@@ -165,51 +165,53 @@ function logout() {
 // 画像管理
 // ============================================
 
+var SITE_IMG_BASE = 'https://www.sohei-portfolio.com/img/';
+
 var PAGE_IMAGES = {
     index: [
-        { key: 'index.philosophy_image', label: 'ものづくりへの想い 画像' },
-        { key: 'index.work_image', label: '作品紹介 画像' },
-        { key: 'index.production_image', label: '制作の様子 画像' },
-        { key: 'index.interview_image', label: 'インタビュー 画像' },
-        { key: 'index.artist_image', label: '作家紹介 画像' }
+        { key: 'index.philosophy_image', label: 'ものづくりへの想い 画像', defaultSrc: SITE_IMG_BASE + 'omoi.png' },
+        { key: 'index.work_image', label: '作品紹介 画像', defaultSrc: SITE_IMG_BASE + 'WorkIntroduction.png' },
+        { key: 'index.production_image', label: '制作の様子 画像', defaultSrc: SITE_IMG_BASE + 'kneadTheClay.png' },
+        { key: 'index.interview_image', label: 'インタビュー 画像', defaultSrc: SITE_IMG_BASE + 'interview.png' },
+        { key: 'index.artist_image', label: '作家紹介 画像', defaultSrc: SITE_IMG_BASE + 'separate.png' }
     ],
     workIntroduction: [
-        { key: 'work.top_image', label: 'ページトップ画像' },
-        { key: 'work.image_0', label: '備前 酒器 三点' },
-        { key: 'work.image_1', label: '灰釉 茶盌' },
-        { key: 'work.image_2', label: '備前 茶注' },
-        { key: 'work.image_3', label: '備前 鉢' },
-        { key: 'work.image_4', label: '備前 壺' },
-        { key: 'work.image_5', label: '備前 火襷 徳利' },
-        { key: 'work.image_6', label: '灰釉 茶盌 2' },
-        { key: 'work.image_7', label: '備前 古色 瓢徳利' },
-        { key: 'work.image_8', label: '備前 ピッチャー' }
+        { key: 'work.top_image', label: 'ページトップ画像', defaultSrc: SITE_IMG_BASE + 'WorkIntroduction.png' },
+        { key: 'work.image_0', label: '備前 酒器 三点', defaultSrc: SITE_IMG_BASE + 'bizen_sakeVessels_threeItems.png' },
+        { key: 'work.image_1', label: '灰釉 茶盌', defaultSrc: SITE_IMG_BASE + 'bizen_oldColor_teaBowl.png' },
+        { key: 'work.image_2', label: '備前 茶注', defaultSrc: SITE_IMG_BASE + 'bizen_chachugi.png' },
+        { key: 'work.image_3', label: '備前 鉢', defaultSrc: SITE_IMG_BASE + 'bizen_pot.png' },
+        { key: 'work.image_4', label: '備前 壺', defaultSrc: SITE_IMG_BASE + 'bizen_jar.png' },
+        { key: 'work.image_5', label: '備前 火襷 徳利', defaultSrc: SITE_IMG_BASE + 'bizen_hidasuki_tokkuri.png' },
+        { key: 'work.image_6', label: '灰釉 茶盌 2', defaultSrc: SITE_IMG_BASE + 'ashGlaze_teaBowl.png' },
+        { key: 'work.image_7', label: '備前 古色 瓢徳利', defaultSrc: SITE_IMG_BASE + 'bizen_oldColor_hyotokkuri.png' },
+        { key: 'work.image_8', label: '備前 ピッチャー', defaultSrc: SITE_IMG_BASE + 'bizen_pitcher.png' }
     ],
     productionProcess: [
-        { key: 'production.image_0', label: '完成品の写真' },
-        { key: 'production.image_1', label: '原土の写真' },
-        { key: 'production.image_2', label: '粘土精製の写真' },
-        { key: 'production.image_3', label: '素焼き鉢の写真' },
-        { key: 'production.image_4', label: '粘土の写真' },
-        { key: 'production.image_5', label: '菊練りの写真' },
-        { key: 'production.image_6', label: 'ろくろ成形の写真' },
-        { key: 'production.image_7', label: '乾燥の写真' },
-        { key: 'production.image_8', label: '窯詰めの写真' },
-        { key: 'production.image_9', label: '藁の写真' },
-        { key: 'production.image_10', label: '割木の写真' },
-        { key: 'production.image_11', label: '薪乾燥の写真' },
-        { key: 'production.image_12', label: '窯焚きの写真' },
-        { key: 'production.image_13', label: '上口の写真' },
-        { key: 'production.image_14', label: '焚き口の写真' },
-        { key: 'production.image_15', label: '火を吹く焚き口の写真' },
-        { key: 'production.image_16', label: '窯出しの写真' },
-        { key: 'production.image_17', label: '水漏れチェックの写真' }
+        { key: 'production.image_0', label: '完成品の写真', defaultSrc: SITE_IMG_BASE + 'complete.png' },
+        { key: 'production.image_1', label: '原土の写真', defaultSrc: SITE_IMG_BASE + 'originalSoil.png' },
+        { key: 'production.image_2', label: '粘土精製の写真', defaultSrc: SITE_IMG_BASE + 'clayProduction.png' },
+        { key: 'production.image_3', label: '素焼き鉢の写真', defaultSrc: SITE_IMG_BASE + 'clayPot.png' },
+        { key: 'production.image_4', label: '粘土の写真', defaultSrc: SITE_IMG_BASE + 'clay.png' },
+        { key: 'production.image_5', label: '菊練りの写真', defaultSrc: SITE_IMG_BASE + 'spiralWedging.png' },
+        { key: 'production.image_6', label: 'ろくろ成形の写真', defaultSrc: SITE_IMG_BASE + 'molding.png' },
+        { key: 'production.image_7', label: '乾燥の写真', defaultSrc: SITE_IMG_BASE + 'teapotBox.png' },
+        { key: 'production.image_8', label: '窯詰めの写真', defaultSrc: SITE_IMG_BASE + 'kilnFilling.png' },
+        { key: 'production.image_9', label: '藁の写真', defaultSrc: SITE_IMG_BASE + 'straw.png' },
+        { key: 'production.image_10', label: '割木の写真', defaultSrc: SITE_IMG_BASE + 'splitWood.png' },
+        { key: 'production.image_11', label: '薪乾燥の写真', defaultSrc: SITE_IMG_BASE + 'splitWoodOutside.png' },
+        { key: 'production.image_12', label: '窯焚きの写真', defaultSrc: SITE_IMG_BASE + 'kilnFiring.png' },
+        { key: 'production.image_13', label: '上口の写真', defaultSrc: SITE_IMG_BASE + 'UpperMouth.png' },
+        { key: 'production.image_14', label: '焚き口の写真', defaultSrc: SITE_IMG_BASE + 'firePit.png' },
+        { key: 'production.image_15', label: '火を吹く焚き口の写真', defaultSrc: SITE_IMG_BASE + 'fire-breathingFirePit.png' },
+        { key: 'production.image_16', label: '窯出しの写真', defaultSrc: SITE_IMG_BASE + 'OutOfTheKiln.png' },
+        { key: 'production.image_17', label: '水漏れチェックの写真', defaultSrc: SITE_IMG_BASE + 'WaterLeakCheck.png' }
     ],
     interview: [
-        { key: 'interview.top_image', label: 'ページトップ画像' }
+        { key: 'interview.top_image', label: 'ページトップ画像', defaultSrc: SITE_IMG_BASE + 'interview_top.png' }
     ],
     artistIntroduction: [
-        { key: 'artist.top_image', label: 'ページトップ画像' }
+        { key: 'artist.top_image', label: 'ページトップ画像', defaultSrc: SITE_IMG_BASE + 'artistIntroduction_top.png' }
     ]
 };
 
@@ -227,8 +229,13 @@ function createImageEditors(pageId) {
         html += '<div class="image-editor-item" data-image-key="' + img.key + '" data-page="' + pageId + '">';
         html += '<p class="image-editor-label">' + escapeHtml(img.label) + '</p>';
         html += '<div class="image-preview-wrapper">';
-        html += '<img class="image-preview" src="" alt="' + escapeHtml(img.label) + '" hidden>';
-        html += '<div class="image-placeholder">未設定</div>';
+        if (img.defaultSrc) {
+            html += '<img class="image-preview" src="' + escapeHtml(img.defaultSrc) + '" alt="' + escapeHtml(img.label) + '">';
+            html += '<div class="image-placeholder" hidden>初期画像</div>';
+        } else {
+            html += '<img class="image-preview" src="" alt="' + escapeHtml(img.label) + '" hidden>';
+            html += '<div class="image-placeholder">未設定</div>';
+        }
         html += '</div>';
         html += '<div class="image-editor-actions">';
         html += '<label class="btn btn-secondary image-upload-label">';
@@ -306,9 +313,16 @@ async function loadPageImages(pageId) {
                 preview.hidden = false;
                 placeholder.hidden = true;
                 deleteBtn.hidden = false;
+            } else if (img.defaultSrc) {
+                preview.src = img.defaultSrc;
+                preview.hidden = false;
+                placeholder.textContent = '初期画像';
+                placeholder.hidden = true;
+                deleteBtn.hidden = true;
             } else {
                 preview.src = '';
                 preview.hidden = true;
+                placeholder.textContent = '未設定';
                 placeholder.hidden = false;
                 deleteBtn.hidden = true;
             }
