@@ -816,6 +816,8 @@ export default function AdminPageClient() {
   const [content, setContent] = useState<Record<string, Record<string, string>>>({});
   const [editedContent, setEditedContent] = useState<Record<string, Record<string, string>>>({});
   const [analyticsStats, setAnalyticsStats] = useState<AnalyticsStats | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsError, setAnalyticsError] = useState(false);
   const [analyticsPeriod, setAnalyticsPeriod] = useState(7);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<Record<string, string>>({});
@@ -878,14 +880,20 @@ export default function AdminPageClient() {
 
   const loadAnalytics = useCallback(
     async (days: number) => {
+      setAnalyticsLoading(true);
+      setAnalyticsError(false);
       try {
         const res = await fetchWithAuth(`/api/analytics/stats?days=${days}`);
         if (res.ok) {
           const data = await res.json();
           setAnalyticsStats(data);
+        } else {
+          setAnalyticsError(true);
         }
       } catch {
-        /* silent */
+        setAnalyticsError(true);
+      } finally {
+        setAnalyticsLoading(false);
       }
     },
     [fetchWithAuth],
@@ -1521,7 +1529,15 @@ export default function AdminPageClient() {
           </>
         )}
 
-        {!stats && <div className="loading-state">読み込み中...</div>}
+        {!stats && analyticsLoading && <div className="loading-state">読み込み中...</div>}
+        {!stats && analyticsError && !analyticsLoading && (
+          <div className="loading-state">
+            <p>データの読み込みに失敗しました</p>
+            <button onClick={() => loadAnalytics(analyticsPeriod)} className="retry-button">
+              再試行
+            </button>
+          </div>
+        )}
       </div>
     );
   };
