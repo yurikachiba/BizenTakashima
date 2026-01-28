@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+import { prisma, ensureConnection } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
@@ -21,6 +21,8 @@ export async function POST(request: NextRequest) {
         allEntries.push({ page, key, value: String(value) });
       }
     }
+
+    await ensureConnection();
 
     // Try interactive transaction first, fall back to individual upserts on connection error
     try {
@@ -44,13 +46,7 @@ export async function POST(request: NextRequest) {
       console.warn('Transaction import failed, retrying with individual upserts:', txErr);
     }
 
-    // Fallback: reconnect and save entries individually
-    try {
-      await prisma.$disconnect();
-    } catch {
-      /* ignore disconnect error */
-    }
-
+    // Fallback: save entries individually
     for (const { page, key, value } of allEntries) {
       await prisma.content.upsert({
         where: { page_key: { page, key } },

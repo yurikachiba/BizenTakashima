@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { prisma } from '@/lib/prisma';
+import { prisma, ensureConnection } from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
   try {
+    await ensureConnection();
     const existingAdmin = await prisma.admin.findFirst();
     if (existingAdmin) {
       return NextResponse.json({ error: '管理者は既に設定されています' }, { status: 400 });

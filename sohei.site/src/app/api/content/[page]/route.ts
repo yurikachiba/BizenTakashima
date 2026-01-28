@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+import { prisma, ensureConnection } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ page: string }> }) {
   try {
+    await ensureConnection();
     const { page } = await params;
     const contents = await prisma.content.findMany({
       where: { page },
@@ -27,6 +28,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const authResult = requireAuth(request);
     if (authResult instanceof NextResponse) return authResult;
 
+    await ensureConnection();
     const { page } = await params;
 
     let data: Record<string, unknown>;
@@ -53,7 +55,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
           return;
         } catch (err) {
           if (attempt === retries) throw err;
-          // Exponential backoff: 100ms, 200ms, 400ms...
           await new Promise((resolve) => setTimeout(resolve, 100 * Math.pow(2, attempt - 1)));
         }
       }
@@ -78,13 +79,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       console.warn('Transaction save failed, retrying with individual upserts:', txErr);
     }
 
-    // Fallback: ensure connection and save entries individually with retry
-    try {
-      await prisma.$connect();
-    } catch {
-      /* connection may already be established */
-    }
-
+    // Fallback: save entries individually with retry
     for (const [key, value] of entries) {
       await saveEntry(key, value);
     }

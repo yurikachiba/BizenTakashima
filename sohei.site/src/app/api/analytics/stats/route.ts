@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, ensureConnection } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
     const result = requireAuth(request);
     if (result instanceof NextResponse) return result;
+
+    await ensureConnection();
 
     const days = parseInt(request.nextUrl.searchParams.get('days') || '7');
     const since = new Date();

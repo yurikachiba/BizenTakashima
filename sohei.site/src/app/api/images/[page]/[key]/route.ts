@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, ensureConnection } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
 
 type Params = { params: Promise<{ page: string; key: string }> };
 
 export async function GET(_request: NextRequest, { params }: Params) {
   try {
+    await ensureConnection();
     const { page, key } = await params;
     const image = await prisma.image.findUnique({
       where: { page_key: { page, key } },
@@ -41,6 +42,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     const authResult = requireAuth(request);
     if (authResult instanceof NextResponse) return authResult;
 
+    await ensureConnection();
     const { page, key } = await params;
 
     let formData: FormData;
@@ -87,6 +89,7 @@ export async function DELETE(request: NextRequest, { params }: Params) {
     const authResult = requireAuth(request);
     if (authResult instanceof NextResponse) return authResult;
 
+    await ensureConnection();
     const { page, key } = await params;
 
     await prisma.image.delete({

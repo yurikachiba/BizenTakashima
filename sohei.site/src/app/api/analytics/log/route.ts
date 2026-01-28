@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, ensureConnection } from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,6 +8,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'ページ名が必要です' }, { status: 400 });
     }
 
+    await ensureConnection();
     await prisma.visitorLog.create({
       data: {
         page,

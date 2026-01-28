@@ -12,8 +12,9 @@ type DbLoginResult =
 
 async function tryDatabaseLogin(password: string): Promise<DbLoginResult> {
   try {
-    const { prisma } = await import('@/lib/prisma');
+    const { prisma, ensureConnection } = await import('@/lib/prisma');
 
+    await ensureConnection();
     let admin = await prisma.admin.findFirst();
     if (!admin) {
       const passwordHash = await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, 12);
