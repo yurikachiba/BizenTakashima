@@ -9,6 +9,9 @@ out/
 build/
 dist/
 
+# typescript
+*.tsbuildinfo
+
 # misc
 .DS_Store
 *.pem
