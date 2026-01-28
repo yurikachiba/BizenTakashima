@@ -5,8 +5,10 @@ import Script from 'next/script';
 import { useEffect } from 'react';
 import { useContentLoader } from '@/lib/content-loader';
 
+const DEFAULT_INSTAGRAM_URL = 'https://www.instagram.com/p/CzjLvCaPF2S/';
+
 export default function Footer() {
-  const { getContent } = useContentLoader();
+  const { getContent } = useContentLoader('index');
 
   useEffect(() => {
     const backToTop = document.getElementById('back-to-top');
@@ -31,7 +33,7 @@ export default function Footer() {
           {getContent('index.contact_text', 'InstagramのDMまでお願いいたします。')}
         </p>
         <div className="footer__instagram">
-          <InstagramEmbed />
+          <InstagramEmbed url={getContent('index.instagram_url', DEFAULT_INSTAGRAM_URL)} />
         </div>
       </div>
 
@@ -63,13 +65,17 @@ export default function Footer() {
   );
 }
 
-function InstagramEmbed() {
+function InstagramEmbed({ url }: { url: string }) {
+  const permalink = url
+    ? `${url.replace(/\/$/, '')}/?utm_source=ig_embed&utm_campaign=loading`
+    : `${DEFAULT_INSTAGRAM_URL.replace(/\/$/, '')}/?utm_source=ig_embed&utm_campaign=loading`;
+
   return (
     <>
       <Script src="https://www.instagram.com/embed.js" strategy="lazyOnload" />
       <blockquote
         className="instagram-media"
-        data-instgrm-permalink="https://www.instagram.com/p/CzjLvCaPF2S/?utm_source=ig_embed&amp;utm_campaign=loading"
+        data-instgrm-permalink={permalink}
         data-instgrm-version="14"
         style={{
           background: '#FFF',
@@ -85,7 +91,7 @@ function InstagramEmbed() {
       >
         <div style={{ padding: '16px' }}>
           <a
-            href="https://www.instagram.com/p/CzjLvCaPF2S/?utm_source=ig_embed&amp;utm_campaign=loading"
+            href={permalink}
             style={{
               background: '#FFFFFF',
               lineHeight: 0,
@@ -172,7 +178,7 @@ function InstagramEmbed() {
             }}
           >
             <a
-              href="https://www.instagram.com/p/CzjLvCaPF2S/?utm_source=ig_embed&amp;utm_campaign=loading"
+              href={permalink}
               style={{
                 color: '#c9c8cd',
                 fontFamily: 'Arial,sans-serif',

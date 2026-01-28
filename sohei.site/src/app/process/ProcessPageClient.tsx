@@ -6,6 +6,9 @@ import Footer from '@/components/Footer';
 import ScrollAnimations from '@/components/ScrollAnimations';
 import { useContentLoader, useAnalyticsLog } from '@/lib/content-loader';
 
+const DEFAULT_YOUTUBE_0 = 'https://www.youtube.com/embed/UINddZBlXKA?si=ONc5cd0J6_H_zpGw';
+const DEFAULT_YOUTUBE_1 = 'https://www.youtube.com/embed/i8zNkNUtsZI?si=Fkihce3k8HsTUReE';
+
 const STEPS = [
   { img: '/img/complete.png', alt: '焼き物の完成した写真', key: 'production.image_0' },
   { img: '/img/originalSoil.png', alt: '原土の写真', key: 'production.image_1' },
@@ -16,13 +19,15 @@ const STEPS = [
     img: '/img/spiralWedging.png',
     alt: '菊練りの写真',
     key: 'production.image_5',
-    youtube: 'https://www.youtube.com/embed/UINddZBlXKA?si=ONc5cd0J6_H_zpGw',
+    youtubeKey: 'production.youtube_0',
+    youtubeDefault: DEFAULT_YOUTUBE_0,
   },
   {
     img: '/img/molding.png',
     alt: 'ろくろで成形した作品',
     key: 'production.image_6',
-    youtube: 'https://www.youtube.com/embed/i8zNkNUtsZI?si=Fkihce3k8HsTUReE',
+    youtubeKey: 'production.youtube_1',
+    youtubeDefault: DEFAULT_YOUTUBE_1,
   },
   { img: '/img/teapotBox.png', alt: '乾燥させた急須の入った箱の写真', key: 'production.image_7' },
   { img: '/img/kilnFilling.png', alt: '窯詰めの写真', key: 'production.image_8' },
@@ -136,10 +141,13 @@ export default function ProcessPageClient() {
                         unoptimized
                       />
                     </div>
-                    {(step as { youtube?: string }).youtube && (
+                    {(step as { youtubeKey?: string }).youtubeKey && (
                       <iframe
                         className="process-step__video"
-                        src={(step as { youtube: string }).youtube}
+                        src={getContent(
+                          (step as { youtubeKey: string }).youtubeKey,
+                          (step as { youtubeDefault: string }).youtubeDefault,
+                        )}
                         title="YouTube video player"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowFullScreen
