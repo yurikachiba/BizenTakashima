@@ -410,8 +410,7 @@ export default function AdminPageClient() {
                       <input type="file" accept="image/*" hidden onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          const [p, k] = key.split('.');
-                          handleImageUpload(p, key, file);
+                          handleImageUpload(key.split('.')[0], key, file);
                         }
                       }} />
                     </label>
