@@ -40,11 +40,14 @@ model Image {
 }
 
 model VisitorLog {
-  id        String   @id @default(cuid())
-  page      String
-  userAgent String?
-  ipAddress String?
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  page       String
+  userAgent  String?
+  ipAddress  String?
+  referrer   String?
+  screenSize String?
+  language   String?
+  createdAt  DateTime @default(now())
 
   @@index([page])
   @@index([createdAt])

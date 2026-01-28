@@ -615,12 +615,14 @@ async function changePassword() {
 }
 
 // ============================================
-// ダッシュボード統計 (バックエンドAPI)
+// ダッシュボード統計 (自前アナリティクス)
 // ============================================
+
+var currentAnalyticsDays = 7;
 
 async function updateDashboardStats() {
     try {
-        const res = await apiFetch('/api/analytics/stats?days=7');
+        const res = await apiFetch('/api/analytics/stats?days=' + currentAnalyticsDays);
         if (!res.ok) return;
         const stats = await res.json();
 
@@ -633,39 +635,200 @@ async function updateDashboardStats() {
                 formatDate(stats.contentStats.lastUpdated);
         }
 
-        const modeEl = document.getElementById('storage-mode');
+        var modeEl = document.getElementById('storage-mode');
         modeEl.textContent = 'PostgreSQL + Prisma';
         modeEl.style.color = '#4caf50';
 
-        // 訪問者ログ
-        loadVisitorStats(stats);
+        // アナリティクス サマリー
+        var totalPvEl = document.getElementById('analytics-total-pv');
+        var uniqueEl = document.getElementById('analytics-unique-visitors');
+        var todayEl = document.getElementById('analytics-today-pv');
+        if (totalPvEl) totalPvEl.textContent = stats.totalVisits;
+        if (uniqueEl) uniqueEl.textContent = stats.uniqueVisitors !== undefined ? stats.uniqueVisitors : '--';
+        if (todayEl) todayEl.textContent = stats.todayVisits !== undefined ? stats.todayVisits : '--';
+
+        // 各セクション描画
+        renderDailyChart(stats.daily);
+        renderPageStats(stats.byPage, stats.totalVisits);
+        renderReferrerStats(stats.referrers);
+        renderDeviceStats(stats.devices, stats.browsers, stats.screens);
     } catch {
         // API不可の場合は既定値のまま
     }
 }
 
-function loadVisitorStats(stats) {
-    const container = document.getElementById('visitor-stats');
-    if (!stats || !stats.byPage || stats.byPage.length === 0) return;
+function renderDailyChart(daily) {
+    var container = document.getElementById('analytics-daily-chart');
+    if (!container) return;
+    if (!daily || Object.keys(daily).length === 0) {
+        container.innerHTML = '<p class="no-data">データがまだありません。</p>';
+        return;
+    }
 
-    let html = '<table style="width:100%;border-collapse:collapse;">';
-    html += '<tr style="border-bottom:1px solid var(--border);">';
-    html += '<th style="text-align:left;padding:8px;font-size:13px;color:var(--text-muted);">ページ</th>';
-    html += '<th style="text-align:right;padding:8px;font-size:13px;color:var(--text-muted);">過去7日間PV</th>';
+    // 日付でソートして全日を埋める
+    var dates = [];
+    var now = new Date();
+    for (var i = currentAnalyticsDays - 1; i >= 0; i--) {
+        var d = new Date(now);
+        d.setDate(d.getDate() - i);
+        dates.push(d.toISOString().split('T')[0]);
+    }
+
+    var maxTotal = 0;
+    dates.forEach(function (date) {
+        var total = daily[date] ? (daily[date].total || 0) : 0;
+        if (total > maxTotal) maxTotal = total;
+    });
+    if (maxTotal === 0) maxTotal = 1;
+
+    var html = '<div class="daily-chart">';
+    dates.forEach(function (date) {
+        var total = daily[date] ? (daily[date].total || 0) : 0;
+        var pct = Math.round((total / maxTotal) * 100);
+        var label = date.slice(5); // MM-DD
+        html += '<div class="chart-bar-row">';
+        html += '<span class="chart-date">' + escapeHtml(label) + '</span>';
+        html += '<div class="chart-bar-track">';
+        html += '<div class="chart-bar-fill" style="width:' + pct + '%;"></div>';
+        html += '</div>';
+        html += '<span class="chart-count">' + total + '</span>';
+        html += '</div>';
+    });
+    html += '</div>';
+
+    container.innerHTML = html;
+}
+
+function renderPageStats(byPage, totalVisits) {
+    var container = document.getElementById('analytics-page-stats');
+    if (!container) return;
+    if (!byPage || byPage.length === 0) {
+        container.innerHTML = '<p class="no-data">データがまだありません。</p>';
+        return;
+    }
+
+    var pageLabels = {
+        index: 'トップページ',
+        workIntroduction: '作品紹介',
+        productionProcess: '制作の様子',
+        interview: 'インタビュー',
+        artistIntroduction: '作家紹介'
+    };
+
+    var html = '<table class="analytics-table">';
+    html += '<tr>';
+    html += '<th>ページ</th>';
+    html += '<th>PV</th>';
+    html += '<th>割合</th>';
     html += '</tr>';
 
-    stats.byPage.forEach(function (entry) {
-        html += '<tr style="border-bottom:1px solid rgba(42,63,85,0.5);">';
-        html += '<td style="padding:8px;font-size:14px;">' + escapeHtml(entry.page) + '</td>';
-        html += '<td style="text-align:right;padding:8px;font-size:14px;font-weight:700;">' + entry.count + '</td>';
+    byPage.forEach(function (entry) {
+        var pct = totalVisits > 0 ? Math.round((entry.count / totalVisits) * 100) : 0;
+        var label = pageLabels[entry.page] || entry.page;
+        html += '<tr>';
+        html += '<td>' + escapeHtml(label) + '</td>';
+        html += '<td class="num">' + entry.count + '</td>';
+        html += '<td class="num">' + pct + '%</td>';
         html += '</tr>';
     });
 
-    html += '<tr>';
-    html += '<td style="padding:8px;font-size:14px;font-weight:700;">合計</td>';
-    html += '<td style="text-align:right;padding:8px;font-size:14px;font-weight:700;">' + stats.totalVisits + '</td>';
+    html += '<tr class="total-row">';
+    html += '<td>合計</td>';
+    html += '<td class="num">' + totalVisits + '</td>';
+    html += '<td class="num">100%</td>';
     html += '</tr>';
     html += '</table>';
+
+    container.innerHTML = html;
+}
+
+function renderReferrerStats(referrers) {
+    var container = document.getElementById('analytics-referrer-stats');
+    if (!container) return;
+    if (!referrers || referrers.length === 0) {
+        container.innerHTML = '<p class="no-data">データがまだありません。</p>';
+        return;
+    }
+
+    var html = '<table class="analytics-table">';
+    html += '<tr>';
+    html += '<th>リファラー</th>';
+    html += '<th>アクセス数</th>';
+    html += '</tr>';
+
+    referrers.forEach(function (entry) {
+        var label = entry.referrer === '(direct)' ? '(直接アクセス)' : entry.referrer;
+        html += '<tr>';
+        html += '<td>' + escapeHtml(label) + '</td>';
+        html += '<td class="num">' + entry.count + '</td>';
+        html += '</tr>';
+    });
+
+    html += '</table>';
+    container.innerHTML = html;
+}
+
+function renderDeviceStats(devices, browsers, screens) {
+    var container = document.getElementById('analytics-device-stats');
+    if (!container) return;
+    if (!devices && !browsers) {
+        container.innerHTML = '<p class="no-data">データがまだありません。</p>';
+        return;
+    }
+
+    var html = '';
+
+    // デバイスタイプ
+    if (devices) {
+        var deviceTotal = (devices.desktop || 0) + (devices.mobile || 0) + (devices.tablet || 0);
+        html += '<h4 class="analytics-sub-title">デバイスタイプ</h4>';
+        html += '<div class="device-bars">';
+
+        var deviceList = [
+            { label: 'デスクトップ', count: devices.desktop || 0 },
+            { label: 'モバイル', count: devices.mobile || 0 },
+            { label: 'タブレット', count: devices.tablet || 0 }
+        ];
+        deviceList.forEach(function (item) {
+            var pct = deviceTotal > 0 ? Math.round((item.count / deviceTotal) * 100) : 0;
+            html += '<div class="device-bar-row">';
+            html += '<span class="device-label">' + item.label + '</span>';
+            html += '<div class="device-bar-track">';
+            html += '<div class="device-bar-fill" style="width:' + pct + '%;"></div>';
+            html += '</div>';
+            html += '<span class="device-count">' + item.count + ' (' + pct + '%)</span>';
+            html += '</div>';
+        });
+        html += '</div>';
+    }
+
+    // ブラウザ
+    if (browsers && browsers.length > 0) {
+        html += '<h4 class="analytics-sub-title">ブラウザ</h4>';
+        html += '<table class="analytics-table">';
+        html += '<tr><th>ブラウザ</th><th>アクセス数</th></tr>';
+        browsers.forEach(function (entry) {
+            html += '<tr>';
+            html += '<td>' + escapeHtml(entry.browser) + '</td>';
+            html += '<td class="num">' + entry.count + '</td>';
+            html += '</tr>';
+        });
+        html += '</table>';
+    }
+
+    // 画面サイズ
+    if (screens && screens.length > 0) {
+        html += '<h4 class="analytics-sub-title">画面サイズ (上位)</h4>';
+        html += '<table class="analytics-table">';
+        html += '<tr><th>サイズ</th><th>アクセス数</th></tr>';
+        screens.forEach(function (entry) {
+            html += '<tr>';
+            html += '<td>' + escapeHtml(entry.size) + '</td>';
+            html += '<td class="num">' + entry.count + '</td>';
+            html += '</tr>';
+        });
+        html += '</table>';
+    }
 
     container.innerHTML = html;
 }
@@ -858,6 +1021,18 @@ function bindEvents() {
 
     // パスワード変更
     document.getElementById('change-password-btn').addEventListener('click', changePassword);
+
+    // アナリティクス期間切替
+    document.querySelectorAll('.analytics-period-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.analytics-period-btn').forEach(function (b) {
+                b.classList.remove('active');
+            });
+            this.classList.add('active');
+            currentAnalyticsDays = parseInt(this.getAttribute('data-days')) || 7;
+            updateDashboardStats();
+        });
+    });
 
     // アクティビティ追跡
     document.addEventListener('click', refreshActivity);
