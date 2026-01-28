@@ -52,7 +52,27 @@ async function logVisit() {
   }
 }
 
+async function loadImages() {
+  const page = getPageName();
+  try {
+    const res = await fetch(SOHEI_API.getUrl(`/api/images/${page}`));
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data.keys || data.keys.length === 0) return;
+
+    document.querySelectorAll('[data-image-key]').forEach((el) => {
+      const key = el.getAttribute('data-image-key');
+      if (data.keys.includes(key)) {
+        el.src = SOHEI_API.getUrl(`/api/images/${page}/${key}`);
+      }
+    });
+  } catch {
+    // API not available - use fallback static images
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadContent();
+  loadImages();
   logVisit();
 });

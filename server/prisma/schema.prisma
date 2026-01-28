@@ -26,6 +26,19 @@ model Content {
   @@index([page])
 }
 
+model Image {
+  id        String   @id @default(cuid())
+  page      String
+  key       String
+  data      String   @db.Text
+  mimeType  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([page, key])
+  @@index([page])
+}
+
 model VisitorLog {
   id        String   @id @default(cuid())
   page      String

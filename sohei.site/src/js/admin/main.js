@@ -162,6 +162,218 @@ function logout() {
 }
 
 // ============================================
+// 画像管理
+// ============================================
+
+var PAGE_IMAGES = {
+    index: [
+        { key: 'index.philosophy_image', label: 'ものづくりへの想い 画像' },
+        { key: 'index.work_image', label: '作品紹介 画像' },
+        { key: 'index.production_image', label: '制作の様子 画像' },
+        { key: 'index.interview_image', label: 'インタビュー 画像' },
+        { key: 'index.artist_image', label: '作家紹介 画像' }
+    ],
+    workIntroduction: [
+        { key: 'work.top_image', label: 'ページトップ画像' },
+        { key: 'work.image_0', label: '備前 酒器 三点' },
+        { key: 'work.image_1', label: '灰釉 茶盌' },
+        { key: 'work.image_2', label: '備前 茶注' },
+        { key: 'work.image_3', label: '備前 鉢' },
+        { key: 'work.image_4', label: '備前 壺' },
+        { key: 'work.image_5', label: '備前 火襷 徳利' },
+        { key: 'work.image_6', label: '灰釉 茶盌 2' },
+        { key: 'work.image_7', label: '備前 古色 瓢徳利' },
+        { key: 'work.image_8', label: '備前 ピッチャー' }
+    ],
+    productionProcess: [
+        { key: 'production.image_0', label: '完成品の写真' },
+        { key: 'production.image_1', label: '原土の写真' },
+        { key: 'production.image_2', label: '粘土精製の写真' },
+        { key: 'production.image_3', label: '素焼き鉢の写真' },
+        { key: 'production.image_4', label: '粘土の写真' },
+        { key: 'production.image_5', label: '菊練りの写真' },
+        { key: 'production.image_6', label: 'ろくろ成形の写真' },
+        { key: 'production.image_7', label: '乾燥の写真' },
+        { key: 'production.image_8', label: '窯詰めの写真' },
+        { key: 'production.image_9', label: '藁の写真' },
+        { key: 'production.image_10', label: '割木の写真' },
+        { key: 'production.image_11', label: '薪乾燥の写真' },
+        { key: 'production.image_12', label: '窯焚きの写真' },
+        { key: 'production.image_13', label: '上口の写真' },
+        { key: 'production.image_14', label: '焚き口の写真' },
+        { key: 'production.image_15', label: '火を吹く焚き口の写真' },
+        { key: 'production.image_16', label: '窯出しの写真' },
+        { key: 'production.image_17', label: '水漏れチェックの写真' }
+    ],
+    interview: [
+        { key: 'interview.top_image', label: 'ページトップ画像' }
+    ],
+    artistIntroduction: [
+        { key: 'artist.top_image', label: 'ページトップ画像' }
+    ]
+};
+
+function createImageEditors(pageId) {
+    var container = document.querySelector('#tab-' + pageId + ' .image-editors-container');
+    if (!container) return;
+    var images = PAGE_IMAGES[pageId];
+    if (!images || images.length === 0) return;
+
+    var html = '<div class="editor-section image-section">';
+    html += '<h3 class="editor-label">画像編集</h3>';
+    html += '<div class="image-editors-grid">';
+
+    images.forEach(function (img) {
+        html += '<div class="image-editor-item" data-image-key="' + img.key + '" data-page="' + pageId + '">';
+        html += '<p class="image-editor-label">' + escapeHtml(img.label) + '</p>';
+        html += '<div class="image-preview-wrapper">';
+        html += '<img class="image-preview" src="" alt="' + escapeHtml(img.label) + '" hidden>';
+        html += '<div class="image-placeholder">未設定</div>';
+        html += '</div>';
+        html += '<div class="image-editor-actions">';
+        html += '<label class="btn btn-secondary image-upload-label">';
+        html += '画像を変更';
+        html += '<input type="file" accept="image/*" class="image-upload-input" hidden>';
+        html += '</label>';
+        html += '<button class="btn btn-danger image-delete-btn" hidden>削除</button>';
+        html += '</div>';
+        html += '</div>';
+    });
+
+    html += '</div></div>';
+    container.innerHTML = html;
+
+    // Bind upload events
+    container.querySelectorAll('.image-upload-input').forEach(function (input) {
+        input.addEventListener('change', function (e) {
+            if (!e.target.files[0]) return;
+            var item = e.target.closest('.image-editor-item');
+            var key = item.getAttribute('data-image-key');
+            var page = item.getAttribute('data-page');
+            uploadImage(page, key, e.target.files[0]).then(function (ok) {
+                if (ok) loadPageImages(page);
+            });
+            e.target.value = '';
+        });
+    });
+
+    // Bind delete events
+    container.querySelectorAll('.image-delete-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var item = this.closest('.image-editor-item');
+            var key = item.getAttribute('data-image-key');
+            var page = item.getAttribute('data-page');
+            deleteImage(page, key).then(function (ok) {
+                if (ok) loadPageImages(page);
+            });
+        });
+    });
+}
+
+async function loadPageImages(pageId) {
+    var images = PAGE_IMAGES[pageId];
+    if (!images) return;
+
+    try {
+        var res = await apiFetch('/api/images/' + pageId);
+        if (!res.ok) return;
+        var data = await res.json();
+        var keys = data.keys || [];
+
+        images.forEach(function (img) {
+            var item = document.querySelector('.image-editor-item[data-image-key="' + img.key + '"]');
+            if (!item) return;
+
+            var preview = item.querySelector('.image-preview');
+            var placeholder = item.querySelector('.image-placeholder');
+            var deleteBtn = item.querySelector('.image-delete-btn');
+
+            if (keys.indexOf(img.key) !== -1) {
+                preview.src = apiUrl('/api/images/' + pageId + '/' + img.key) + '?t=' + Date.now();
+                preview.hidden = false;
+                placeholder.hidden = true;
+                deleteBtn.hidden = false;
+            } else {
+                preview.src = '';
+                preview.hidden = true;
+                placeholder.hidden = false;
+                deleteBtn.hidden = true;
+            }
+        });
+    } catch (e) {
+        // API not available
+    }
+}
+
+async function uploadImage(pageId, key, file) {
+    var formData = new FormData();
+    formData.append('image', file);
+
+    try {
+        var res = await fetch(apiUrl('/api/images/' + pageId + '/' + key), {
+            method: 'PUT',
+            headers: { 'Authorization': 'Bearer ' + authToken },
+            body: formData
+        });
+
+        if (res.status === 401 || res.status === 403) {
+            logout();
+            showToast('セッションが無効です。再ログインしてください', 'error');
+            return false;
+        }
+
+        if (res.ok) {
+            showToast('画像を保存しました', 'success');
+            refreshActivity();
+            return true;
+        } else {
+            showToast('画像の保存に失敗しました', 'error');
+            return false;
+        }
+    } catch (e) {
+        if (isNetworkError(e)) {
+            showToast('サーバーに接続できません', 'error');
+        } else {
+            showToast('サーバーとの通信に失敗しました', 'error');
+        }
+        return false;
+    }
+}
+
+async function deleteImage(pageId, key) {
+    if (!confirm('この画像を削除しますか？\n削除すると元の画像に戻ります。')) return false;
+
+    try {
+        var res = await fetch(apiUrl('/api/images/' + pageId + '/' + key), {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Bearer ' + authToken }
+        });
+
+        if (res.status === 401 || res.status === 403) {
+            logout();
+            showToast('セッションが無効です。再ログインしてください', 'error');
+            return false;
+        }
+
+        if (res.ok) {
+            showToast('画像を削除しました', 'success');
+            refreshActivity();
+            return true;
+        } else {
+            showToast('画像の削除に失敗しました', 'error');
+            return false;
+        }
+    } catch (e) {
+        if (isNetworkError(e)) {
+            showToast('サーバーに接続できません', 'error');
+        } else {
+            showToast('サーバーとの通信に失敗しました', 'error');
+        }
+        return false;
+    }
+}
+
+// ============================================
 // コンテンツ管理 (バックエンドAPI)
 // ============================================
 
@@ -454,6 +666,12 @@ function switchTab(tabId) {
     // コンテンツを読み込み
     if (tabId !== 'dashboard' && tabId !== 'settings') {
         loadPageContent(tabId);
+        // 画像エディタを初期化（未作成の場合のみ）
+        var imgContainer = document.querySelector('#tab-' + tabId + ' .image-editors-container');
+        if (imgContainer && !imgContainer.hasChildNodes()) {
+            createImageEditors(tabId);
+        }
+        loadPageImages(tabId);
     }
 
     if (tabId === 'dashboard') {
