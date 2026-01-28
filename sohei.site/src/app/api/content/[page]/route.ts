@@ -41,19 +41,39 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ message: '保存するコンテンツがありません' });
     }
 
-    // Use interactive transaction with extended timeout for many upserts
-    await prisma.$transaction(
-      async (tx: Prisma.TransactionClient) => {
-        for (const [key, value] of entries) {
-          await tx.content.upsert({
-            where: { page_key: { page, key } },
-            update: { value: String(value) },
-            create: { page, key, value: String(value) },
-          });
-        }
-      },
-      { timeout: 30000, maxWait: 10000 },
-    );
+    // Try interactive transaction first, fall back to individual upserts on connection error
+    try {
+      await prisma.$transaction(
+        async (tx: Prisma.TransactionClient) => {
+          for (const [key, value] of entries) {
+            await tx.content.upsert({
+              where: { page_key: { page, key } },
+              update: { value: String(value) },
+              create: { page, key, value: String(value) },
+            });
+          }
+        },
+        { timeout: 30000, maxWait: 10000 },
+      );
+      return NextResponse.json({ message: `${page}のコンテンツを保存しました` });
+    } catch (txErr) {
+      console.warn('Transaction save failed, retrying with individual upserts:', txErr);
+    }
+
+    // Fallback: reconnect and save entries individually
+    try {
+      await prisma.$disconnect();
+    } catch {
+      /* ignore disconnect error */
+    }
+
+    for (const [key, value] of entries) {
+      await prisma.content.upsert({
+        where: { page_key: { page, key } },
+        update: { value: String(value) },
+        create: { page, key, value: String(value) },
+      });
+    }
 
     return NextResponse.json({ message: `${page}のコンテンツを保存しました` });
   } catch (err) {

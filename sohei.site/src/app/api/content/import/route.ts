@@ -22,19 +22,42 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Use interactive transaction with extended timeout for bulk import
-    await prisma.$transaction(
-      async (tx: Prisma.TransactionClient) => {
-        for (const { page, key, value } of allEntries) {
-          await tx.content.upsert({
-            where: { page_key: { page, key } },
-            update: { value },
-            create: { page, key, value },
-          });
-        }
-      },
-      { timeout: 60000, maxWait: 10000 },
-    );
+    // Try interactive transaction first, fall back to individual upserts on connection error
+    try {
+      await prisma.$transaction(
+        async (tx: Prisma.TransactionClient) => {
+          for (const { page, key, value } of allEntries) {
+            await tx.content.upsert({
+              where: { page_key: { page, key } },
+              update: { value },
+              create: { page, key, value },
+            });
+          }
+        },
+        { timeout: 60000, maxWait: 10000 },
+      );
+      return NextResponse.json({
+        message: 'コンテンツをインポートしました',
+        count: allEntries.length,
+      });
+    } catch (txErr) {
+      console.warn('Transaction import failed, retrying with individual upserts:', txErr);
+    }
+
+    // Fallback: reconnect and save entries individually
+    try {
+      await prisma.$disconnect();
+    } catch {
+      /* ignore disconnect error */
+    }
+
+    for (const { page, key, value } of allEntries) {
+      await prisma.content.upsert({
+        where: { page_key: { page, key } },
+        update: { value },
+        create: { page, key, value },
+      });
+    }
 
     return NextResponse.json({
       message: 'コンテンツをインポートしました',

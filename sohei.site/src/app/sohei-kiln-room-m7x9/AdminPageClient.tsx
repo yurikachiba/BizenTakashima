@@ -982,13 +982,27 @@ export default function AdminPageClient() {
   };
 
   const handleSave = async (page: string) => {
+    // Only send changed keys to reduce DB operations
+    const original = content[page] || {};
+    const edited = editedContent[page] || {};
+    const changedContent: Record<string, string> = {};
+    for (const [key, value] of Object.entries(edited)) {
+      if (value !== original[key]) {
+        changedContent[key] = value;
+      }
+    }
+    if (Object.keys(changedContent).length === 0) {
+      showToast('変更がありません');
+      return;
+    }
+
     const maxRetries = 2;
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         const res = await fetchWithAuth(`/api/content/${page}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(editedContent[page] || {}),
+          body: JSON.stringify(changedContent),
         });
         if (res.ok) {
           showToast(`${PAGE_NAMES[page]}を保存しました`);
