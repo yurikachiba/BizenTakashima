@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, ensureConnection } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
 
 export async function GET() {
   try {
+    await ensureConnection();
     const contents = await prisma.content.findMany({
       orderBy: [{ page: 'asc' }, { key: 'asc' }],
     });
@@ -28,6 +29,7 @@ export async function DELETE(request: NextRequest) {
     const result = requireAuth(request);
     if (result instanceof NextResponse) return result;
 
+    await ensureConnection();
     const deleteResult = await prisma.content.deleteMany();
     return NextResponse.json({ message: '全コンテンツを削除しました', count: deleteResult.count });
   } catch (err) {

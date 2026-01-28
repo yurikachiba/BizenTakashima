@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { prisma } from '@/lib/prisma';
+import { prisma, ensureConnection } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '現在のパスワードと新しいパスワードが必要です' }, { status: 400 });
     }
 
+    await ensureConnection();
     const admin = await prisma.admin.findUnique({ where: { id: adminId } });
     if (!admin) {
       return NextResponse.json({ error: '管理者が見つかりません' }, { status: 404 });
