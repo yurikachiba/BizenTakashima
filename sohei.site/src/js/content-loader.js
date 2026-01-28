@@ -94,10 +94,24 @@ async function loadContent() {
 async function logVisit() {
   const page = getPageName();
   try {
+    var ref = document.referrer || '';
+    var referrer = '';
+    if (ref) {
+      try {
+        referrer = new URL(ref).hostname;
+      } catch {
+        referrer = ref;
+      }
+    }
     await fetch(SOHEI_API.getUrl('/api/analytics/log'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page }),
+      body: JSON.stringify({
+        page,
+        referrer: referrer,
+        screenSize: window.screen.width + 'x' + window.screen.height,
+        language: navigator.language || ''
+      }),
     });
   } catch {
     // Tracking not available
