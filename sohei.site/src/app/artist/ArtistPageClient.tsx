@@ -77,9 +77,7 @@ export default function ArtistPageClient() {
                 { key: 'artist.timeline_6', text: '2023年　柿傳ギャラリーにて個展' },
               ].map((item, i) => (
                 <div key={i} className="artist-timeline__item">
-                  <p data-content-key={item.key}>
-                    {getContent(item.key, item.text)}
-                  </p>
+                  <p data-content-key={item.key}>{getContent(item.key, item.text)}</p>
                 </div>
               ))}
             </div>

@@ -82,15 +82,11 @@ export default function InterviewPageClient() {
                 <div key={i} className="interview-qa__block reveal">
                   <div className="interview-qa__question">
                     <span className="interview-qa__label interview-qa__label--q">Q</span>
-                    <p data-content-key={item.qKey}>
-                      {getContent(item.qKey, item.q)}
-                    </p>
+                    <p data-content-key={item.qKey}>{getContent(item.qKey, item.q)}</p>
                   </div>
                   <div className="interview-qa__answer">
                     <span className="interview-qa__label interview-qa__label--a">A</span>
-                    <p data-content-key={item.aKey}>
-                      {getContent(item.aKey, item.a)}
-                    </p>
+                    <p data-content-key={item.aKey}>{getContent(item.aKey, item.a)}</p>
                   </div>
                 </div>
               ))}

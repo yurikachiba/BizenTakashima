@@ -39,7 +39,13 @@ export default function Footer() {
       <div className="footer__bottom">
         <button id="back-to-top" className="footer__back-to-top" aria-label="トップへ戻る">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path
+              d="M12 19V5M12 5L5 12M12 5L19 12"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
         <nav className="footer__nav">

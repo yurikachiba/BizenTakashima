@@ -105,14 +105,7 @@ export default function ProcessPageClient() {
       {/* Hero */}
       <div className="page-hero">
         <div className="page-hero__image">
-          <Image
-            src="/img/kilnFiring.png"
-            alt="窯焚きの写真"
-            width={1200}
-            height={600}
-            priority
-            unoptimized
-          />
+          <Image src="/img/kilnFiring.png" alt="窯焚きの写真" width={1200} height={600} priority unoptimized />
         </div>
         <div className="page-hero__overlay"></div>
         <h1 className="page-hero__title" data-content-key="production.heading_h1">
@@ -132,9 +125,7 @@ export default function ProcessPageClient() {
                 const textKey = stepTextKeys[i];
                 return (
                   <div key={i} className="process-step reveal">
-                    <span className="process-step__number">
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
+                    <span className="process-step__number">{String(i + 1).padStart(2, '0')}</span>
                     <div className="process-step__image">
                       <Image
                         src={step.img}

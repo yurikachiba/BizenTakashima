@@ -96,13 +96,7 @@ export default function HomePageClient() {
                 {getContent('index.heading_philosophy', 'ものづくりへの想い')}
               </h2>
               <div className="philosophy__signature">
-                <Image
-                  src="/img/signature.png"
-                  alt="高島聡平の署名"
-                  width={200}
-                  height={80}
-                  unoptimized
-                />
+                <Image src="/img/signature.png" alt="高島聡平の署名" width={200} height={80} unoptimized />
               </div>
               <p className="text-body" data-content-key="index.philosophy">
                 {getContent(
@@ -142,7 +136,13 @@ export default function HomePageClient() {
               <Link href="/work" className="section-card__link">
                 <span>詳細を見る</span>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path
+                    d="M5 12H19M19 12L12 5M19 12L12 19"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </Link>
             </div>
@@ -174,7 +174,13 @@ export default function HomePageClient() {
               <Link href="/process" className="section-card__link">
                 <span>詳細を見る</span>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path
+                    d="M5 12H19M19 12L12 5M19 12L12 19"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </Link>
             </div>
@@ -198,15 +204,18 @@ export default function HomePageClient() {
                 {getContent('index.heading_interview', 'インタビュー')}
               </h2>
               <p className="section-card__desc text-body" data-content-key="index.interview_intro">
-                {getContent(
-                  'index.interview_intro',
-                  '高島の作品や岡山に対する想いや、師匠との関係などを少しご紹介。',
-                )}
+                {getContent('index.interview_intro', '高島の作品や岡山に対する想いや、師匠との関係などを少しご紹介。')}
               </p>
               <Link href="/interview" className="section-card__link">
                 <span>詳細を見る</span>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path
+                    d="M5 12H19M19 12L12 5M19 12L12 19"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </Link>
             </div>
@@ -238,7 +247,13 @@ export default function HomePageClient() {
               <Link href="/artist" className="section-card__link">
                 <span>詳細を見る</span>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path
+                    d="M5 12H19M19 12L12 5M19 12L12 19"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </Link>
             </div>
@@ -254,10 +269,7 @@ export default function HomePageClient() {
               </h2>
               <ul className="info-block__list">
                 <li>
-                  <a
-                    target="_blank"
-                    href="https://rtrp.jp/spots/bfbacd09-9164-44f1-b30f-be4c8352fc1e/"
-                  >
+                  <a target="_blank" href="https://rtrp.jp/spots/bfbacd09-9164-44f1-b30f-be4c8352fc1e/">
                     {getContent('index.store_0_name', '器まえさか')}
                   </a>
                 </li>
@@ -267,9 +279,7 @@ export default function HomePageClient() {
                   </a>
                 </li>
                 <li>
-                  <a href="https://ryoisseki.com/">
-                    {getContent('index.store_2_name', 'うつわや涼一石')}
-                  </a>
+                  <a href="https://ryoisseki.com/">{getContent('index.store_2_name', 'うつわや涼一石')}</a>
                 </li>
               </ul>
             </div>
@@ -279,18 +289,12 @@ export default function HomePageClient() {
               </h2>
               <ul className="info-block__list">
                 <li>
-                  <a
-                    target="_blank"
-                    href="https://www.kakiden.com/gallery/archives/50770/"
-                  >
+                  <a target="_blank" href="https://www.kakiden.com/gallery/archives/50770/">
                     {getContent('index.exhibition_0_name', '柿傳ギャラリー\n(高島聡平 展)')}
                   </a>
                 </li>
                 <li>
-                  <a
-                    target="_blank"
-                    href="https://www.kakiden.com/gallery/archives/64427/"
-                  >
+                  <a target="_blank" href="https://www.kakiden.com/gallery/archives/64427/">
                     {getContent('index.exhibition_1_name', '柿傳ギャラリー\n(BIZENの八人展 Ⅱ)')}
                   </a>
                 </li>

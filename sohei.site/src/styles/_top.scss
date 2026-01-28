@@ -214,12 +214,7 @@
   &__overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba($bg-dark, 0.15) 0%,
-      rgba($bg-dark, 0.3) 50%,
-      rgba($bg-dark, 0.5) 100%
-    );
+    background: linear-gradient(to bottom, rgba($bg-dark, 0.15) 0%, rgba($bg-dark, 0.3) 50%, rgba($bg-dark, 0.5) 100%);
   }
 
   &__content {
@@ -740,11 +735,7 @@
   &__overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba($bg-dark, 0.1) 0%,
-      rgba($bg-dark, 0.4) 100%
-    );
+    background: linear-gradient(to bottom, rgba($bg-dark, 0.1) 0%, rgba($bg-dark, 0.4) 100%);
   }
 
   &__title {
