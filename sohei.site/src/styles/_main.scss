@@ -1,167 +1,91 @@
-@use "_variable" as *;
-@use "_mixin.scss" as *;
-
-.marginT30px {
-    margin-top: 30px;
-}
-
-
-
-.textL {
-    text-align: left;
-}
-
-.display-inline-block {
-    display: inline-block;
-}
-
-#back-to-top {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    display: none;
-
-    img {
-        width: 112px;
-    }
-}
-
+@use "variable" as *;
+@use "mixin" as *;
 
 .textA {
     text-align: center;
 }
 
-h2 {
-    text-align: center;
-    font-family: $shippori;
-    font-size: 26px;
-}
-
-.marginT50px {
-    margin-top: 50px;
-}
-
-.marginT120px {
-    margin-top: 120px;
-}
-
-.marginT30px {
-    margin-top: 30px;
+.marginT10px {
+    margin-top: 10px;
 }
 
 .marginT20px {
     margin-top: 20px;
 }
 
-.marginB60px {
-    margin-bottom: 60px;
-}
-
-.marginB10px {
-    margin-bottom: 10px;
-}
-
-.marginB30px {
-    margin-bottom: 30px;
-}
-
-.marginB120px {
-    margin-bottom: 120px;
-}
-
-.marginB20px {
-    margin-bottom: 20px;
-}
-
-.marginB50px {
-    margin-bottom: 50px;
-}
-
-.margin0auto {
-    margin: 0 auto;
-}
-
-
-.paddingB20px {
-    padding-bottom: 20px;
-}
-
-iframe.instagram-media {
-    margin-bottom: 0 !important;
-}
-
-.margin-display {
-    margin: auto;
-    display: block;
-}
-
-.otherPageTopImage {
-    width: 100%;
-    display: block;
-}
-
-.otherPage-h1 {
-    font-family: $shippori;
-    font-size: 30px;
-    text-align: center;
-    padding-top: 130px;
-    padding-bottom: 50px;
-}
-
-.otherPage-h2 {
-    margin-top: 50px;
-    margin-bottom: 30px;
-}
-
-.zenOld {
-    font-family: $zenOld;
-}
-
-.shippori {
-    font-family: $shippori;
-}
-
-.font18px {
-    font-size: 18px;
-}
-
-.font20px {
-    font-size: 20px;
-}
-
-.font30px {
-    font-size: 30px;
-}
-
-.positionR {
-    position: relative;
-}
-
-.fontBold {
-    font-weight: bold;
-}
-
-.accent {
-    color: $accent;
-}
-
-.width393px {
-    width: 393px;
-}
-
-.red {
-    color: red;
-}
-
-.blue {
-    color: blue;
+.marginT30px {
+    margin-top: 30px;
 }
 
 .marginT40px {
     margin-top: 40px;
 }
 
-.left-inline {
-    text-align: left;
-    display: inline-block;
+.marginT120px {
+    margin-top: 120px;
+}
+
+.marginB10px {
+    margin-bottom: 10px;
+}
+
+.marginB20px {
+    margin-bottom: 20px;
+}
+
+.marginB30px {
+    margin-bottom: 30px;
+}
+
+.marginB50px {
+    margin-bottom: 50px;
+}
+
+.marginB100px {
+    margin-bottom: 100px;
+}
+
+.marginB120px {
+    margin-bottom: 120px;
+}
+
+.fontBold {
+    font-weight: bold;
+}
+
+.font18px {
+    font-size: 18px;
+}
+
+.blue {
+    color: #0000FF;
+}
+
+.red {
+    color: #FF0000;
+}
+
+.pc_site_img {
+    @include pc {
+        text-align: center;
+    }
+}
+
+.sp_site_img {
+    @include sp {
+        text-align: center;
+    }
+}
+
+.margin-display {
+    display: block;
+    margin: 0 auto;
+}
+
+.positionR {
+    position: relative;
+}
+
+.zenOld {
+    font-family: "Zen Old Mincho", serif;
 }

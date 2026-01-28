@@ -1,274 +1,456 @@
-@use "_variable" as *;
-@use "_mixin.scss" as *;
-@import url('https://fonts.googleapis.com/css2?family=New+Tegomin&family=Noto+Sans+JP&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500&display=swap');
+@use "variable" as *;
+@use "mixin" as *;
 
-// .top{
-//     background: $abc;
-//     &_dl{
-//         background-color: #000;
-//         &_dt{
-//     color: rgb(207, 232, 232);
-//         }
-//     }
-// 
-li {
-  list-style-type: none;
+.background {
+    background: url("/img/background.png");
+    @include pc {
+        background: url("/img/pc_background.png");
+    }
+}
+
+.background2 {
+    background-color: #EAE5DF;
+}
+
+.top_header {
+    position: fixed;
+    z-index: 50;
+    width: 100%;
+
+    .top_header_h1 {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        z-index: 3;
+        padding: 10px;
+
+        .top_header_h1_img {
+            height: 25px;
+        }
+    }
+}
+
+.hamburger-menu {
+    z-index: 50;
+}
+
+#menu-btn-check {
+    display: none;
+}
+
+.menu-btn {
+    position: fixed;
+    display: flex;
+    height: 40px;
+    width: 40px;
+    justify-content: center;
+    align-items: center;
+    z-index: 90;
+    cursor: pointer;
+    right: 10px;
+    top: 10px;
+    background-color: rgba(234, 229, 223, 0.8);
+    border-radius: 50%;
+}
+
+.menu-btn span,
+.menu-btn span:before,
+.menu-btn span:after {
+    content: "";
+    display: block;
+    height: 2px;
+    width: 20px;
+    border-radius: 3px;
+    background-color: #333;
+    position: absolute;
+    transition: 0.5s;
+}
+
+.menu-btn span:before {
+    bottom: 6px;
+}
+
+.menu-btn span:after {
+    top: 6px;
+}
+
+#menu-btn-check:checked~.menu-btn span {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+#menu-btn-check:checked~.menu-btn span::before {
+    bottom: 0;
+    transform: rotate(45deg);
+}
+
+#menu-btn-check:checked~.menu-btn span::after {
+    top: 0;
+    transform: rotate(-45deg);
+}
+
+.menu-content {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 100%;
+    z-index: 80;
+    background-color: rgba(234, 229, 223, 0.8);
+    transition: all 0.5s;
+}
+
+.menu-content ul {
+    padding: 70px 10px 0;
+}
+
+.menu-content ul li {
+    border-bottom: solid 1px #333;
+    list-style: none;
+}
+
+.menu-content ul li a {
+    display: block;
+    width: 100%;
+    font-size: 15px;
+    box-sizing: border-box;
+    color: $font-color;
+    text-decoration: none;
+    padding: 9px 15px 10px 0;
+    position: relative;
+    font-family: "New Tegomin", serif;
+    letter-spacing: 0.1em;
+}
+
+.menu-content ul li a::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-top: solid 2px $font-color;
+    border-right: solid 2px $font-color;
+    transform: rotate(45deg);
+    position: absolute;
+    right: 12px;
+    top: 16px;
+}
+
+#menu-btn-check:checked~.menu-content {
+    left: 0;
+}
+
+.fv {
+    overflow: hidden;
+
+    .gsap {
+        position: absolute;
+        z-index: 3;
+        top: 40%;
+        left: 50%;
+        width: 100%;
+        transform: translate(-50%, -50%);
+    }
+
+    .title_sp {
+        width: 60%;
+        display: block;
+        margin: 0 auto;
+
+        @include pc {
+            display: none;
+        }
+
+        @include tab {
+            display: none;
+        }
+    }
+
+    .title_pc {
+        display: none;
+
+        @include pc {
+            display: block;
+            width: 40%;
+            margin: 0 auto;
+        }
+
+        @include tab {
+            display: block;
+            width: 50%;
+            margin: 0 auto;
+        }
+    }
+
+    .fv_sp {
+        width: 100%;
+
+        @include pc {
+            display: none;
+        }
+
+        @include tab {
+            display: none;
+        }
+    }
+
+    .fv_pc {
+        display: none;
+
+        @include pc {
+            display: block;
+            width: 100%;
+        }
+    }
+
+    .fv_tublet {
+        display: none;
+
+        @include tab {
+            display: block;
+            width: 100%;
+        }
+    }
+}
+
+.top_main_div {
+    font-family: "New Tegomin", serif;
+}
+
+.top_main_div_omoi {
+    padding: 60px 0;
+
+    @include pc {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    img {
+        width: 90%;
+    }
+
+    .top_main_div_omoi_h2 {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 20px;
+        color: $font-color;
+        letter-spacing: 0.2em;
+        font-family: "New Tegomin", serif;
+    }
+}
+
+.top_main_div_pageIntroduction {
+    @include pc {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    h2 {
+        font-size: 22px;
+        color: $font-color;
+        text-align: center;
+        font-family: "New Tegomin", serif;
+        letter-spacing: 0.2em;
+    }
+}
+
+.flex-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 80px;
+
+    .flex-item {
+        width: 90%;
+        text-align: center;
+    }
+
+    img {
+        width: 90%;
+    }
+}
+
+.top-page-guidance-div-2 {
+    margin: 0 auto;
+    width: 80%;
+}
+
+.text {
+    font-family: "Noto Sans JP", sans-serif;
+    line-height: 2;
+    color: $font-color-2;
+    font-size: 14px;
+}
+
+.text-2 {
+    @include pc {
+        text-align: left;
+    }
+    text-align: left;
+}
+
+.text-flex {
+    font-family: "Noto Sans JP", sans-serif;
+    line-height: 2;
+    color: $font-color-2;
+    font-size: 14px;
+    text-align: left;
+}
+
+.text-5 {
+    font-family: "Noto Sans JP", sans-serif;
+    line-height: 2;
+    color: $font-color-2;
+    font-size: 14px;
+    text-align: center;
 }
 
 .signature {
-  width: 115px;
+    width: 200px;
 }
 
-.extenal-link {
-  /* ボタン幅 */
-  border: 2px solid #9E4020;
-  /* 線幅・種類・色 */
-  // border-radius: 0;
-  color: #9E4020;
-  /* 文字色 */
-  background: #fff;
-  /* 背景色 */
-  -webkit-box-shadow: 4px 4px 0 #9E4020;
-  /* 影の距離・色 */
-  box-shadow: 4px 4px 0 #9E4020;
-  /* 影の距離・色 */
-  // padding: 1em 2em;
-  font-weight: bold;
-  /*文字の太さ*/
-  text-decoration: none;
-  // text-align: center;
-  transition: 0.3s;
+.btn {
+    display: inline-block;
+    text-decoration: none;
+    outline: none;
+    font-family: "Noto Sans JP", sans-serif;
 }
 
-.extenal-link {
-  position: relative;
-  /* 以下はボタンのデザインです。適宜変更してください。 */
-  display: block;
-  width: 280px;
-  padding: 20px 30px 20px 20px;
-  text-align: center;
-  border-radius: 5px;
-  margin: 0 auto 20px;
-}
-
-/* マウスオーバーした際のデザイン */
-.extenal-link:hover {
-  -webkit-box-shadow: -4px -4px 0 #9E4020;
-  /* 影の距離・色 */
-  box-shadow: -4px -4px 0 #9E4020;
-  /* 影の距離・色 */
-}
-
-.external_h3 {
-  text-align: center;
-}
-
-.external-li {
-  margin-bottom: 30px;
-}
-
-.extenal-link {
-  font-size: 18px;
-}
-
-.top_storesAndEvents {
-  padding-left: 10px;
-  padding-right: 10px;
-}
-
-.top_storesAndEvents li {
-  line-height: 50px;
-}
-
-
-
-
-.extenal-link:after {
-  content: '';
-  display: inline-block;
-  border-style: solid;
-  border-width: 6px 0 6px 6px;
-  border-color: transparent transparent transparent $accent;
-  display: inline-block;
-  width: 0;
-  height: 0;
-  position: absolute;
-  top: 50%;
-  right: 20px;
-  margin-top: -6px;
-}
-
-
-
-
-// .extenal-link {
-//   color: rgb(52, 52, 255);
-// }
-
-// .extenal-link:visited {
-//   color: #ff4081;
-// }
-
-// .extenal-link {
-//   text-decoration: none;
-// }
-
-// a {
-//   transition: color 0.3s;
-// }
-
-// a {
-//   padding: 0 10px;
-//   background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 50%, #9E4020 50%);
-//   background-position: 0 0;
-//   background-size: 200% auto;
-//   transition: .3s;
-// }
-
-// a:hover {
-//   background-position: -100% 0;
-//   color: #fff;
-// }
-
-
-
-
-
-a:active {
-  color: #26a69a;
-}
-
-.top {
-  &_main {
-    &_div {
-      &_omoi {
-
-        &_h2 {
-          margin-top: 60px;
-        }
-
-        &_name {
-          margin-top: 20px;
-          text-align: center;
-          margin-bottom: 20px;
-          font-family: $shippori;
-          font-size: 20px;
-        }
-
-        &_text {
-          margin-bottom: 120px;
-        }
-      }
-
-      &_pageIntroduction {
-
-        h2 {
-          margin-top: 24px;
-          margin-bottom: 10px;
-        }
-      }
-
-      &_salesStore {
-        &_div {
-          text-align: center;
-
-          &_div {
-            text-align: left;
-
-            h3 {
-              font-family: $zenOld;
-            }
-
-            ul {
-              li {
-                font-family: $zenOld;
-
-                a {
-                  font-family: $zenOld;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-
-
-//外部リンクアイコン
-
-
-// .extenal-link:hover::after {
-//   content: url('../img/icon_white.png');
-// }
-
-// 外部リンクアイコン
-
-//ボタン
-*,
-*:before,
-*:after {
-  -webkit-box-sizing: inherit;
-  box-sizing: inherit;
-}
-
-.btn,
-a.btn,
-button.btn {
-  position: relative;
-  display: inline-block;
-  // padding: 10px 100px;
-  width: 333px;
-  padding: 20px 0px;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  -webkit-transition: all 0.3s;
-  transition: all 0.3s;
-  text-align: center;
-  vertical-align: middle;
-  text-decoration: none;
-  letter-spacing: 0.1em;
-}
-
-.btn--orange,
-a.btn--orange {
-  color: #fff;
-  background-color: $accent;
-}
-
-.btn--orange:hover,
-a.btn--orange:hover {
-  color: #fff;
-  background: $main;
+.btn--orange {
+    color: $font-color;
+    border-bottom: 1px solid;
+    font-size: 14px;
+    letter-spacing: 0.2em;
 }
 
 .btnDiv {
-  margin-top: 35px;
-  margin-bottom: 90px;
-
-  a {
-    font-family: $zenOld;
-    font-weight: bold;
-    font-size: 18px;
-  }
+    margin-bottom: 30px;
+    margin-top: 20px;
 }
 
 .btnDiv2 {
-  margin-top: 35px;
-  margin-bottom: 120px;
-
-  a {
-    font-family: $zenOld;
-    font-weight: bold;
-    font-size: 18px;
-  }
+    margin-top: 20px;
 }
 
-//ボタン
+.top_main_div_salesStore {
+    width: 100%;
+
+    .top_main_div_salesStore_div {
+        margin: 0 auto;
+        padding: 50px 0;
+    }
+
+    .top_main_div_salesStore_div_div {
+        width: 80%;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+
+        @include pc {
+            flex-direction: row;
+            justify-content: center;
+            gap: 80px;
+            max-width: 900px;
+        }
+    }
+}
+
+.external_h3 {
+    font-size: 22px;
+    color: $font-color;
+    font-family: "New Tegomin", serif;
+    letter-spacing: 0.2em;
+    text-align: center;
+}
+
+.top_storesAndEvents {
+    margin-bottom: 40px;
+}
+
+.external-li {
+    margin-top: 20px;
+    text-align: center;
+
+    .extenal-link {
+        font-family: "Noto Sans JP", sans-serif;
+        line-height: 2;
+        color: $font-color-2;
+        font-size: 14px;
+        display: inline-block;
+        position: relative;
+        transition: .3s;
+    }
+
+    .extenal-link::after {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        content: '';
+        width: 0;
+        height: 1px;
+        background-color: $font-color;
+        transition: .3s;
+        transform: translateX(-50%);
+    }
+
+    .extenal-link:hover::after {
+        width: 100%;
+    }
+}
+
+.flex-box-2 {
+    display: flex;
+    flex-direction: column;
+}
+
+.instagram-center {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.footer {
+    padding: 80px 0 30px;
+    text-align: center;
+
+    div {
+        margin-bottom: 5px;
+    }
+
+    a {
+        font-family: "Noto Sans JP", sans-serif;
+        color: $font-color-2;
+        font-size: 12px;
+    }
+
+    p {
+        font-family: "Noto Sans JP", sans-serif;
+        color: $font-color-2;
+        font-size: 12px;
+        margin-top: 10px;
+    }
+}
+
+#back-to-top {
+    display: inline-block;
+    margin-bottom: 20px;
+
+    img {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+.scroll,
+.scroll2,
+.scroll3,
+.scroll4,
+.scroll5 {
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.scroll.active,
+.scroll2.active,
+.scroll3.active,
+.scroll4.active,
+.scroll5.active {
+    opacity: 1;
+}

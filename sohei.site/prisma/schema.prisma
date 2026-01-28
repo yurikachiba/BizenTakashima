@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Content {
+  id        String   @id @default(cuid())
+  page      String
+  key       String
+  value     String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([page, key])
+  @@index([page])
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  page      String
+  key       String
+  data      String   @db.Text
+  mimeType  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([page, key])
+  @@index([page])
+}
+
+model VisitorLog {
+  id         String   @id @default(cuid())
+  page       String
+  userAgent  String?
+  ipAddress  String?
+  referrer   String?
+  screenSize String?
+  language   String?
+  createdAt  DateTime @default(now())
+
+  @@index([page])
+  @@index([createdAt])
+}
