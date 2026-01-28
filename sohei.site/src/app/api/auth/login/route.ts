@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { signToken } from '@/lib/auth';
 
-const DEFAULT_ADMIN_PASSWORD = process.env.DEFAULT_ADMIN_PASSWORD || 'Qh7A.(LDu%P-';
+const DEFAULT_ADMIN_PASSWORD = process.env.DEFAULT_ADMIN_PASSWORD;
 const FALLBACK_ADMIN_ID = 'env-admin';
+
+if (!DEFAULT_ADMIN_PASSWORD) {
+  console.warn('DEFAULT_ADMIN_PASSWORD environment variable is not set. Initial admin setup will fail until set.');
+}
 
 type DbLoginResult =
   | { ok: true; token: string }
@@ -17,6 +21,9 @@ async function tryDatabaseLogin(password: string): Promise<DbLoginResult> {
     await ensureConnection();
     let admin = await prisma.admin.findFirst();
     if (!admin) {
+      if (!DEFAULT_ADMIN_PASSWORD) {
+        throw new Error('DEFAULT_ADMIN_PASSWORD environment variable is required for initial admin setup');
+      }
       const passwordHash = await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, 12);
       admin = await prisma.admin.create({ data: { passwordHash } });
     }
@@ -50,8 +57,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'パスワードが正しくありません' }, { status: 401 });
     }
 
-    // DB error — fallback to env-based auth
-    if (password === DEFAULT_ADMIN_PASSWORD) {
+    // DB error — fallback to env-based auth (only if DEFAULT_ADMIN_PASSWORD is set)
+    if (DEFAULT_ADMIN_PASSWORD && password === DEFAULT_ADMIN_PASSWORD) {
       const token = signToken(FALLBACK_ADMIN_ID);
       return NextResponse.json({ token });
     }

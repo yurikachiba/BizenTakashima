@@ -1,18 +1,24 @@
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'change-this-secret';
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is required');
+  }
+  return secret;
+}
 
 interface TokenPayload {
   adminId: string;
 }
 
 export function signToken(adminId: string): string {
-  return jwt.sign({ adminId }, JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign({ adminId }, getJwtSecret(), { expiresIn: '7d' });
 }
 
 export function verifyToken(token: string): TokenPayload {
-  return jwt.verify(token, JWT_SECRET) as TokenPayload;
+  return jwt.verify(token, getJwtSecret()) as TokenPayload;
 }
 
 export function getAdminIdFromRequest(request: NextRequest): string | null {

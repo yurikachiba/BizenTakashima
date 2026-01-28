@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 import { prisma, ensureConnection } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
+import { sanitizeContent, hasDangerousContent } from '@/lib/sanitize';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,10 +16,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'リクエストの形式が不正です' }, { status: 400 });
     }
 
+    // Sanitize all entries to prevent XSS
     const allEntries: { page: string; key: string; value: string }[] = [];
     for (const [page, entries] of Object.entries(data)) {
       for (const [key, value] of Object.entries(entries)) {
-        allEntries.push({ page, key, value: String(value) });
+        const stringValue = String(value);
+        if (hasDangerousContent(stringValue)) {
+          console.warn(
+            `Dangerous content detected in import - page "${page}", key "${key}". Content has been sanitized.`,
+          );
+        }
+        allEntries.push({ page, key, value: sanitizeContent(stringValue) });
       }
     }
 
