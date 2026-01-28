@@ -53,19 +53,30 @@ router.put('/:page', authenticateToken, async (req, res) => {
     const { page } = req.params;
     const data = req.body;
 
-    const operations = Object.entries(data).map(([key, value]) =>
-      prisma.content.upsert({
-        where: { page_key: { page, key } },
-        update: { value: String(value) },
-        create: { page, key, value: String(value) }
-      })
+    const entries = Object.entries(data);
+    if (entries.length === 0) {
+      return res.json({ message: '保存するコンテンツがありません' });
+    }
+
+    // Use interactive transaction with extended timeout for many upserts
+    await prisma.$transaction(
+      async (tx) => {
+        for (const [key, value] of entries) {
+          await tx.content.upsert({
+            where: { page_key: { page, key } },
+            update: { value: String(value) },
+            create: { page, key, value: String(value) }
+          });
+        }
+      },
+      { timeout: 30000, maxWait: 10000 }
     );
 
-    await prisma.$transaction(operations);
     res.json({ message: `${page}のコンテンツを保存しました` });
   } catch (err) {
     console.error('Update content error:', err);
-    res.status(500).json({ error: 'サーバーエラー' });
+    const detail = err instanceof Error ? err.message : undefined;
+    res.status(500).json({ error: 'コンテンツの保存中にエラーが発生しました', detail });
   }
 });
 
@@ -74,24 +85,32 @@ router.post('/import', authenticateToken, async (req, res) => {
   try {
     const data = req.body;
 
-    const operations = [];
+    const allEntries = [];
     for (const [page, entries] of Object.entries(data)) {
       for (const [key, value] of Object.entries(entries)) {
-        operations.push(
-          prisma.content.upsert({
-            where: { page_key: { page, key } },
-            update: { value: String(value) },
-            create: { page, key, value: String(value) }
-          })
-        );
+        allEntries.push({ page, key, value: String(value) });
       }
     }
 
-    await prisma.$transaction(operations);
-    res.json({ message: 'コンテンツをインポートしました', count: operations.length });
+    // Use interactive transaction with extended timeout for bulk import
+    await prisma.$transaction(
+      async (tx) => {
+        for (const { page, key, value } of allEntries) {
+          await tx.content.upsert({
+            where: { page_key: { page, key } },
+            update: { value },
+            create: { page, key, value }
+          });
+        }
+      },
+      { timeout: 60000, maxWait: 10000 }
+    );
+
+    res.json({ message: 'コンテンツをインポートしました', count: allEntries.length });
   } catch (err) {
     console.error('Import content error:', err);
-    res.status(500).json({ error: 'サーバーエラー' });
+    const detail = err instanceof Error ? err.message : undefined;
+    res.status(500).json({ error: 'インポート中にエラーが発生しました', detail });
   }
 });
 

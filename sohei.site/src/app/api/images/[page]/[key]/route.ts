@@ -42,7 +42,14 @@ export async function PUT(request: NextRequest, { params }: Params) {
     if (authResult instanceof NextResponse) return authResult;
 
     const { page, key } = await params;
-    const formData = await request.formData();
+
+    let formData: FormData;
+    try {
+      formData = await request.formData();
+    } catch {
+      return NextResponse.json({ error: 'リクエストの形式が不正です' }, { status: 400 });
+    }
+
     const file = formData.get('image') as File | null;
 
     if (!file) {
@@ -70,7 +77,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
     return NextResponse.json({ message: '画像を保存しました' });
   } catch (err) {
     console.error('Upload image error:', err);
-    return NextResponse.json({ error: 'サーバーエラー' }, { status: 500 });
+    const detail = err instanceof Error ? err.message : undefined;
+    return NextResponse.json({ error: '画像の保存中にエラーが発生しました', detail }, { status: 500 });
   }
 }
 
