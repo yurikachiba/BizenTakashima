@@ -537,6 +537,28 @@ body {
     border-color: #e6a23c;
 }
 
+.editor-input {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: var(--font);
+    line-height: 1.7;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.editor-input:focus {
+    border-color: var(--accent);
+}
+
+.editor-input.modified {
+    border-color: #e6a23c;
+}
+
 /* ============================================
    画像エディタ
    ============================================ */

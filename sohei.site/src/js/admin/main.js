@@ -415,12 +415,12 @@ async function loadAllContent() {
 }
 
 async function savePageContent(pageId) {
-    const textareas = document.querySelectorAll('#tab-' + pageId + ' .editor-textarea');
+    const fields = document.querySelectorAll('#tab-' + pageId + ' .editor-textarea, #tab-' + pageId + ' .editor-input');
     const pageData = {};
-    textareas.forEach(function (ta) {
-        const key = ta.getAttribute('data-key');
+    fields.forEach(function (el) {
+        const key = el.getAttribute('data-key');
         if (key) {
-            pageData[key] = ta.value;
+            pageData[key] = el.value;
         }
     });
 
@@ -435,9 +435,9 @@ async function savePageContent(pageId) {
             showToast(getPageLabel(pageId) + ' を保存しました', 'success');
 
             // 変更マーカーをリセット
-            textareas.forEach(function (ta) {
-                ta.classList.remove('modified');
-                ta.setAttribute('data-original', ta.value);
+            fields.forEach(function (el) {
+                el.classList.remove('modified');
+                el.setAttribute('data-original', el.value);
             });
         } else {
             showToast('保存に失敗しました', 'error');
@@ -457,13 +457,13 @@ async function loadPageContent(pageId) {
         if (!res.ok) return;
         const pageData = await res.json();
 
-        const textareas = document.querySelectorAll('#tab-' + pageId + ' .editor-textarea');
-        textareas.forEach(function (ta) {
-            const key = ta.getAttribute('data-key');
+        const fields = document.querySelectorAll('#tab-' + pageId + ' .editor-textarea, #tab-' + pageId + ' .editor-input');
+        fields.forEach(function (el) {
+            const key = el.getAttribute('data-key');
             if (key && pageData[key] !== undefined) {
-                ta.value = pageData[key];
+                el.value = pageData[key];
             }
-            ta.setAttribute('data-original', ta.value);
+            el.setAttribute('data-original', el.value);
         });
     } catch {
         // API不可の場合はローカルの初期値のまま
@@ -471,12 +471,12 @@ async function loadPageContent(pageId) {
 }
 
 function resetPageContent(pageId) {
-    const textareas = document.querySelectorAll('#tab-' + pageId + ' .editor-textarea');
-    textareas.forEach(function (ta) {
-        const original = ta.getAttribute('data-original');
+    const fields = document.querySelectorAll('#tab-' + pageId + ' .editor-textarea, #tab-' + pageId + ' .editor-input');
+    fields.forEach(function (el) {
+        const original = el.getAttribute('data-original');
         if (original !== null) {
-            ta.value = original;
-            ta.classList.remove('modified');
+            el.value = original;
+            el.classList.remove('modified');
         }
     });
     showToast('変更を元に戻しました', '');
@@ -740,7 +740,7 @@ function closeMobileSidebar() {
 
 function setupChangeDetection() {
     document.addEventListener('input', function (e) {
-        if (e.target.classList.contains('editor-textarea')) {
+        if (e.target.classList.contains('editor-textarea') || e.target.classList.contains('editor-input')) {
             const original = e.target.getAttribute('data-original') || '';
             if (e.target.value !== original) {
                 e.target.classList.add('modified');
@@ -889,9 +889,9 @@ async function init() {
         }
     }
 
-    // 全テキストエリアの初期値を保存
-    document.querySelectorAll('.editor-textarea').forEach(function (ta) {
-        ta.setAttribute('data-original', ta.value);
+    // 全テキストエリア・入力欄の初期値を保存
+    document.querySelectorAll('.editor-textarea, .editor-input').forEach(function (el) {
+        el.setAttribute('data-original', el.value);
     });
 }
 
