@@ -22,6 +22,8 @@ jobs:
           cache-dependency-path: sohei.site/package-lock.json
       - run: npm ci --ignore-scripts
       - run: npx prisma generate
+        env:
+          DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci"
       - run: npx next lint
 
   typecheck:
@@ -39,6 +41,8 @@ jobs:
           cache-dependency-path: sohei.site/package-lock.json
       - run: npm ci --ignore-scripts
       - run: npx prisma generate
+        env:
+          DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci"
       - run: npx tsc --noEmit
 
   format:
@@ -72,6 +76,8 @@ jobs:
           cache-dependency-path: sohei.site/package-lock.json
       - run: npm ci --ignore-scripts
       - run: npx prisma validate
+        env:
+          DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci"
 
   security:
     name: Security Audit
