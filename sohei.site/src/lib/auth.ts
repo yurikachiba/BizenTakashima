@@ -8,7 +8,7 @@ interface TokenPayload {
 }
 
 export function signToken(adminId: string): string {
-  return jwt.sign({ adminId }, JWT_SECRET, { expiresIn: '30m' });
+  return jwt.sign({ adminId }, JWT_SECRET, { expiresIn: '7d' });
 }
 
 export function verifyToken(token: string): TokenPayload {
