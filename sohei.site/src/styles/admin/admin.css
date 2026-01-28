@@ -1042,12 +1042,20 @@ body {
 }
 
 .editor-group__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 16px;
   font-weight: 700;
   margin-bottom: 16px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border);
   color: var(--text-primary);
+}
+
+.editor-group__title svg {
+  flex-shrink: 0;
+  opacity: 0.6;
 }
 
 .editor-fields {
@@ -1135,6 +1143,248 @@ body {
 .editor-field__input:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 2px var(--accent-bg);
+}
+
+/* ============================================
+   見出しエディタ
+   ============================================ */
+
+.editor-field--heading {
+  border-left: 3px solid #6366f1;
+}
+
+.editor-field__type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.editor-field__type-badge--heading {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+}
+
+.editor-field__type-badge--link {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.editor-field__type-badge--instagram {
+  background: linear-gradient(135deg, rgba(131, 58, 180, 0.15), rgba(253, 29, 29, 0.15), rgba(252, 176, 69, 0.15));
+  color: #e879a8;
+}
+
+.editor-field__type-badge--youtube {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.editor-field__input--heading {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.editor-field__preview-heading {
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: rgba(99, 102, 241, 0.06);
+  border-radius: var(--radius-sm);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.03em;
+  border-left: 3px solid #6366f1;
+  min-height: 42px;
+  line-height: 1.4;
+}
+
+/* ============================================
+   リンクエディタ
+   ============================================ */
+
+.editor-field--link {
+  border-left: 3px solid #22c55e;
+}
+
+.link-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.link-field-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.link-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  min-width: 48px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.link-url-input-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.editor-field__input--url {
+  padding-right: 36px;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  color: #60a5fa;
+}
+
+.link-open-btn {
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  color: var(--text-muted);
+  transition: all var(--transition);
+  text-decoration: none;
+}
+
+.link-open-btn:hover {
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+/* ============================================
+   Instagram エディタ
+   ============================================ */
+
+.editor-field--instagram {
+  border-left: 3px solid #e879a8;
+}
+
+.instagram-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.instagram-preview {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.instagram-preview__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.instagram-preview__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+  flex-shrink: 0;
+}
+
+.instagram-preview__meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.instagram-preview__username {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.instagram-preview__location {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.instagram-preview__image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: linear-gradient(135deg, rgba(131, 58, 180, 0.08), rgba(253, 29, 29, 0.08), rgba(252, 176, 69, 0.08));
+  color: #e879a8;
+}
+
+.instagram-preview__image svg {
+  width: 40px;
+  height: 40px;
+  opacity: 0.5;
+}
+
+.instagram-preview__url {
+  padding: 10px 14px;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-top: 1px solid var(--border);
+}
+
+.instagram-help {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 0 2px;
+}
+
+/* ============================================
+   YouTube エディタ
+   ============================================ */
+
+.editor-field--youtube {
+  border-left: 3px solid #ef4444;
+}
+
+.youtube-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.youtube-preview {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #000;
+}
+
+.youtube-preview__iframe {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: none;
+  display: block;
+}
+
+.youtube-help {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 0 2px;
 }
 
 /* ============================================

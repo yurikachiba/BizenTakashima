@@ -48,15 +48,23 @@ const PAGE_CONTENT_KEYS: Record<string, string[]> = {
     'index.artist_intro',
     'index.heading_stores',
     'index.store_0_name',
+    'index.store_0_url',
     'index.store_1_name',
+    'index.store_1_url',
     'index.store_2_name',
+    'index.store_2_url',
     'index.heading_exhibitions',
     'index.exhibition_0_name',
+    'index.exhibition_0_url',
     'index.exhibition_1_name',
+    'index.exhibition_1_url',
     'index.exhibition_2_name',
+    'index.exhibition_2_url',
     'index.exhibition_3_name',
+    'index.exhibition_3_url',
     'index.heading_contact',
     'index.contact_text',
+    'index.instagram_url',
     'index.copyright',
   ],
   work: [
@@ -94,6 +102,8 @@ const PAGE_CONTENT_KEYS: Record<string, string[]> = {
     'production.heading_h2',
     'production.byline',
     'production.intro',
+    'production.youtube_0',
+    'production.youtube_1',
     'production.step_0',
     'production.step_1',
     'production.step_2',
@@ -186,15 +196,24 @@ const DEFAULT_CONTENT: Record<string, string> = {
   'index.artist_intro': '人間国宝の伊勢崎 淳先生に師事し、その後独立した備前焼作家 高島 聡平。そんな彼の実績をご紹介。',
   'index.heading_stores': '常設販売店',
   'index.store_0_name': '器まえさか',
+  'index.store_0_url': 'https://rtrp.jp/spots/bfbacd09-9164-44f1-b30f-be4c8352fc1e/',
   'index.store_1_name': '川口陶楽苑',
+  'index.store_1_url': 'https://tourakuen.jp/products/search.php',
   'index.store_2_name': 'うつわや涼一石',
+  'index.store_2_url': 'https://ryoisseki.com/',
   'index.heading_exhibitions': '過去の展示会',
   'index.exhibition_0_name': '柿傳ギャラリー\n(高島聡平 展)',
+  'index.exhibition_0_url': 'https://www.kakiden.com/gallery/archives/50770/',
   'index.exhibition_1_name': '柿傳ギャラリー\n(BIZENの八人展 II)',
+  'index.exhibition_1_url': 'https://www.kakiden.com/gallery/archives/64427/',
   'index.exhibition_2_name': 'うつわや涼一石',
+  'index.exhibition_2_url':
+    'https://ryoisseki.com/%E3%82%B9%E3%82%B1%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB/%E5%82%99%E5%89%8D%E8%90%8C%E8%8A%BD%E3%80%8C%E9%AB%98%E5%B3%B6%E8%81%A1%E5%B9%B3%E3%80%8D%E5%B1%95/',
   'index.exhibition_3_name': 'send',
+  'index.exhibition_3_url': 'http://sendkushiro.com/?p=2751',
   'index.heading_contact': 'お問い合わせ',
   'index.contact_text': '',
+  'index.instagram_url': 'https://www.instagram.com/p/CzjLvCaPF2S/',
   'index.copyright': '',
 
   // -- Work --
@@ -239,6 +258,8 @@ const DEFAULT_CONTENT: Record<string, string> = {
   'production.heading_h1': '制作の様子',
   'production.heading_h2': '',
   'production.byline': '解説：高島 聡平',
+  'production.youtube_0': 'https://www.youtube.com/embed/UINddZBlXKA?si=ONc5cd0J6_H_zpGw',
+  'production.youtube_1': 'https://www.youtube.com/embed/i8zNkNUtsZI?si=Fkihce3k8HsTUReE',
   'production.intro':
     '備前焼とは釉薬を使わずに焼き締める、岡山県備前市周辺で採れた土で制作されたものを指します。ここでは、使用出来るようになるまでの流れを簡単に紹介しようと思います。',
   'production.step_0':
@@ -364,16 +385,24 @@ const CONTENT_LABELS: Record<string, string> = {
   'index.heading_artist': '「作家紹介」見出し',
   'index.artist_intro': '作家紹介の説明',
   'index.heading_stores': '「常設販売店」見出し',
-  'index.store_0_name': '販売店 1',
-  'index.store_1_name': '販売店 2',
-  'index.store_2_name': '販売店 3',
+  'index.store_0_name': '販売店 1 名前',
+  'index.store_0_url': '販売店 1 URL',
+  'index.store_1_name': '販売店 2 名前',
+  'index.store_1_url': '販売店 2 URL',
+  'index.store_2_name': '販売店 3 名前',
+  'index.store_2_url': '販売店 3 URL',
   'index.heading_exhibitions': '「過去の展示会」見出し',
-  'index.exhibition_0_name': '展示会 1',
-  'index.exhibition_1_name': '展示会 2',
-  'index.exhibition_2_name': '展示会 3',
-  'index.exhibition_3_name': '展示会 4',
+  'index.exhibition_0_name': '展示会 1 名前',
+  'index.exhibition_0_url': '展示会 1 URL',
+  'index.exhibition_1_name': '展示会 2 名前',
+  'index.exhibition_1_url': '展示会 2 URL',
+  'index.exhibition_2_name': '展示会 3 名前',
+  'index.exhibition_2_url': '展示会 3 URL',
+  'index.exhibition_3_name': '展示会 4 名前',
+  'index.exhibition_3_url': '展示会 4 URL',
   'index.heading_contact': '「お問い合わせ」見出し',
   'index.contact_text': 'お問い合わせ本文',
+  'index.instagram_url': 'Instagram 投稿URL',
   'index.copyright': 'コピーライト',
   'work.heading_h1': 'ページタイトル',
   'work.heading_list': '作品一覧の見出し',
@@ -407,6 +436,8 @@ const CONTENT_LABELS: Record<string, string> = {
   'production.heading_h2': 'サブタイトル',
   'production.byline': '解説者名',
   'production.intro': 'イントロ文',
+  'production.youtube_0': 'YouTube動画 1（菊練り）',
+  'production.youtube_1': 'YouTube動画 2（成形）',
   'production.step_0': '工程 01 説明',
   'production.step_1': '工程 02 説明',
   'production.step_2': '工程 03 説明',
@@ -622,6 +653,140 @@ const IconUpload = () => (
     <polyline points="16 16 12 12 8 16" />
     <line x1="12" y1="12" x2="12" y2="21" />
     <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3" />
+  </svg>
+);
+
+const IconHeading = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M4 12h8" />
+    <path d="M4 18V6" />
+    <path d="M12 18V6" />
+    <path d="M17 12l3-2v8" />
+  </svg>
+);
+
+const IconLink = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
+    <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
+  </svg>
+);
+
+const IconLinkSmall = () => (
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
+    <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
+  </svg>
+);
+
+const IconExternalLink = () => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+    <polyline points="15 3 21 3 21 9" />
+    <line x1="10" y1="14" x2="21" y2="3" />
+  </svg>
+);
+
+const IconInstagram = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+  </svg>
+);
+
+const IconYoutube = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.43z" />
+    <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" />
+  </svg>
+);
+
+const IconImage = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+    <circle cx="8.5" cy="8.5" r="1.5" />
+    <polyline points="21 15 16 10 5 21" />
+  </svg>
+);
+
+const IconText = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="4 7 4 4 20 4 20 7" />
+    <line x1="9" y1="20" x2="15" y2="20" />
+    <line x1="12" y1="4" x2="12" y2="20" />
   </svg>
 );
 
@@ -1281,17 +1446,99 @@ export default function AdminPageClient() {
   // ============================================
   // Content Editor
   // ============================================
+
+  const isHeadingKey = (key: string) => key.includes('heading_');
+  const isUrlKey = (key: string) => key.endsWith('_url') && !key.includes('instagram') && !key.includes('youtube');
+  const isInstagramKey = (key: string) => key.includes('instagram_url');
+  const isYoutubeKey = (key: string) => key.includes('youtube_');
+  const isLongText = (key: string) =>
+    key.includes('philosophy') ||
+    key.includes('features') ||
+    key.includes('new_attempts') ||
+    key.includes('step_') ||
+    key.includes('intro') ||
+    key.includes('.a_') ||
+    (key.includes('faq_') && !key.includes('faq_q_')) ||
+    key.includes('quote') ||
+    key.includes('profile');
+
+  const renderFieldInput = (page: string, key: string) => {
+    const pageContent = editedContent[page] || {};
+    const value = pageContent[key] || '';
+    const originalValue = content[page]?.[key] || '';
+    const isModified = value !== originalValue;
+    const label = CONTENT_LABELS[key] || key;
+
+    return (
+      <div key={key} className={`editor-field ${isModified ? 'editor-field--modified' : ''}`}>
+        <div className="editor-field__header">
+          <label className="editor-field__label">{label}</label>
+          {isModified && <span className="editor-field__modified-dot" />}
+        </div>
+        {isLongText(key) ? (
+          <textarea
+            className="editor-field__textarea"
+            rows={4}
+            value={value}
+            onChange={(e) => handleContentChange(page, key, e.target.value)}
+            placeholder={DEFAULT_CONTENT[key] || ''}
+          />
+        ) : (
+          <input
+            type="text"
+            className="editor-field__input"
+            value={value}
+            onChange={(e) => handleContentChange(page, key, e.target.value)}
+            placeholder={DEFAULT_CONTENT[key] || ''}
+          />
+        )}
+      </div>
+    );
+  };
+
   const renderEditor = (page: string) => {
     const keys = PAGE_CONTENT_KEYS[page] || [];
     const imageKeys = PAGE_IMAGE_KEYS[page] || [];
     const pageContent = editedContent[page] || {};
     const hasChanges = keys.some((key) => (pageContent[key] || '') !== (content[page]?.[key] || ''));
 
+    // Categorize keys
+    const headingKeys = keys.filter(isHeadingKey);
+    const linkPairs: { nameKey: string; urlKey: string }[] = [];
+    const instagramKeys = keys.filter(isInstagramKey);
+    const youtubeKeys = keys.filter(isYoutubeKey);
+    const textKeys: string[] = [];
+
+    // Build link pairs (name + url) and collect remaining text keys
+    const usedKeys = new Set<string>();
+    headingKeys.forEach((k) => usedKeys.add(k));
+    instagramKeys.forEach((k) => usedKeys.add(k));
+    youtubeKeys.forEach((k) => usedKeys.add(k));
+
+    for (const key of keys) {
+      if (usedKeys.has(key)) continue;
+      if (isUrlKey(key)) {
+        usedKeys.add(key);
+        // Find matching name key
+        const nameKey = key.replace(/_url$/, '_name');
+        if (keys.includes(nameKey)) {
+          usedKeys.add(nameKey);
+          linkPairs.push({ nameKey, urlKey: key });
+        }
+      }
+    }
+
+    for (const key of keys) {
+      if (!usedKeys.has(key)) {
+        textKeys.push(key);
+      }
+    }
+
     return (
       <div className="tab-content">
         <div className="page-header">
           <div className="page-title">{PAGE_NAMES[page]} 編集</div>
-          <div className="page-subtitle">テキストと画像を編集できます</div>
+          <div className="page-subtitle">テキスト・画像・リンク・埋め込みを編集できます</div>
         </div>
 
         <div className="editor-toolbar">
@@ -1313,7 +1560,10 @@ export default function AdminPageClient() {
         {/* Image Section */}
         {imageKeys.length > 0 && (
           <div className="editor-group">
-            <div className="editor-group__title">画像</div>
+            <div className="editor-group__title">
+              <IconImage />
+              画像
+            </div>
             <div className="image-grid">
               {imageKeys.map((key) => {
                 const imgSrc = uploadedImages[key] || DEFAULT_IMAGES[key];
@@ -1365,54 +1615,257 @@ export default function AdminPageClient() {
           </div>
         )}
 
-        {/* Content Fields */}
-        <div className="editor-group">
-          <div className="editor-group__title">テキスト</div>
-          <div className="editor-fields">
-            {keys.map((key) => {
-              const value = pageContent[key] || '';
-              const originalValue = content[page]?.[key] || '';
-              const isModified = value !== originalValue;
-              const label = CONTENT_LABELS[key] || key;
-              const isLong =
-                key.includes('philosophy') ||
-                key.includes('features') ||
-                key.includes('new_attempts') ||
-                key.includes('step_') ||
-                key.includes('intro') ||
-                key.includes('.a_') ||
-                (key.includes('faq_') && !key.includes('faq_q_')) ||
-                key.includes('quote') ||
-                key.includes('profile');
-
-              return (
-                <div key={key} className={`editor-field ${isModified ? 'editor-field--modified' : ''}`}>
-                  <div className="editor-field__header">
-                    <label className="editor-field__label">{label}</label>
-                    {isModified && <span className="editor-field__modified-dot" />}
-                  </div>
-                  {isLong ? (
-                    <textarea
-                      className="editor-field__textarea"
-                      rows={4}
-                      value={value}
-                      onChange={(e) => handleContentChange(page, key, e.target.value)}
-                      placeholder={DEFAULT_CONTENT[key] || ''}
-                    />
-                  ) : (
+        {/* Heading Section */}
+        {headingKeys.length > 0 && (
+          <div className="editor-group">
+            <div className="editor-group__title">
+              <IconHeading />
+              見出し
+            </div>
+            <div className="editor-fields">
+              {headingKeys.map((key) => {
+                const value = pageContent[key] || '';
+                const originalValue = content[page]?.[key] || '';
+                const isModified = value !== originalValue;
+                const label = CONTENT_LABELS[key] || key;
+                return (
+                  <div
+                    key={key}
+                    className={`editor-field editor-field--heading ${isModified ? 'editor-field--modified' : ''}`}
+                  >
+                    <div className="editor-field__header">
+                      <label className="editor-field__label">
+                        <span className="editor-field__type-badge editor-field__type-badge--heading">H</span>
+                        {label}
+                      </label>
+                      {isModified && <span className="editor-field__modified-dot" />}
+                    </div>
                     <input
                       type="text"
-                      className="editor-field__input"
+                      className="editor-field__input editor-field__input--heading"
                       value={value}
                       onChange={(e) => handleContentChange(page, key, e.target.value)}
                       placeholder={DEFAULT_CONTENT[key] || ''}
                     />
-                  )}
-                </div>
-              );
-            })}
+                    <div className="editor-field__preview-heading">{value || DEFAULT_CONTENT[key] || ''}</div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Link Section */}
+        {linkPairs.length > 0 && (
+          <div className="editor-group">
+            <div className="editor-group__title">
+              <IconLink />
+              リンク
+            </div>
+            <div className="editor-fields">
+              {linkPairs.map(({ nameKey, urlKey }) => {
+                const nameValue = pageContent[nameKey] || '';
+                const urlValue = pageContent[urlKey] || '';
+                const nameOriginal = content[page]?.[nameKey] || '';
+                const urlOriginal = content[page]?.[urlKey] || '';
+                const isModified = nameValue !== nameOriginal || urlValue !== urlOriginal;
+                const nameLabel = CONTENT_LABELS[nameKey] || nameKey;
+                return (
+                  <div
+                    key={urlKey}
+                    className={`editor-field editor-field--link ${isModified ? 'editor-field--modified' : ''}`}
+                  >
+                    <div className="editor-field__header">
+                      <label className="editor-field__label">
+                        <span className="editor-field__type-badge editor-field__type-badge--link">
+                          <IconLinkSmall />
+                        </span>
+                        {nameLabel.replace(/ (名前|URL)$/, '')}
+                      </label>
+                      {isModified && <span className="editor-field__modified-dot" />}
+                    </div>
+                    <div className="link-field-group">
+                      <div className="link-field-row">
+                        <span className="link-field-label">表示名</span>
+                        <input
+                          type="text"
+                          className="editor-field__input"
+                          value={nameValue}
+                          onChange={(e) => handleContentChange(page, nameKey, e.target.value)}
+                          placeholder={DEFAULT_CONTENT[nameKey] || '名前を入力'}
+                        />
+                      </div>
+                      <div className="link-field-row">
+                        <span className="link-field-label">URL</span>
+                        <div className="link-url-input-wrapper">
+                          <input
+                            type="url"
+                            className="editor-field__input editor-field__input--url"
+                            value={urlValue}
+                            onChange={(e) => handleContentChange(page, urlKey, e.target.value)}
+                            placeholder={DEFAULT_CONTENT[urlKey] || 'https://'}
+                          />
+                          {urlValue && (
+                            <a
+                              href={urlValue}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="link-open-btn"
+                              title="リンクを開く"
+                            >
+                              <IconExternalLink />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Instagram Section */}
+        {instagramKeys.length > 0 && (
+          <div className="editor-group">
+            <div className="editor-group__title">
+              <IconInstagram />
+              Instagram 埋め込み
+            </div>
+            <div className="editor-fields">
+              {instagramKeys.map((key) => {
+                const value = pageContent[key] || '';
+                const originalValue = content[page]?.[key] || '';
+                const isModified = value !== originalValue;
+                const displayUrl = value || DEFAULT_CONTENT[key] || '';
+                return (
+                  <div
+                    key={key}
+                    className={`editor-field editor-field--instagram ${isModified ? 'editor-field--modified' : ''}`}
+                  >
+                    <div className="editor-field__header">
+                      <label className="editor-field__label">
+                        <span className="editor-field__type-badge editor-field__type-badge--instagram">
+                          <IconInstagram />
+                        </span>
+                        Instagram 投稿URL
+                      </label>
+                      {isModified && <span className="editor-field__modified-dot" />}
+                    </div>
+                    <div className="instagram-field-group">
+                      <div className="link-url-input-wrapper">
+                        <input
+                          type="url"
+                          className="editor-field__input editor-field__input--url"
+                          value={value}
+                          onChange={(e) => handleContentChange(page, key, e.target.value)}
+                          placeholder="https://www.instagram.com/p/XXXXXXXXXX/"
+                        />
+                        {displayUrl && (
+                          <a
+                            href={displayUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="link-open-btn"
+                            title="Instagramで開く"
+                          >
+                            <IconExternalLink />
+                          </a>
+                        )}
+                      </div>
+                      <div className="instagram-preview">
+                        <div className="instagram-preview__header">
+                          <div className="instagram-preview__avatar" />
+                          <div className="instagram-preview__meta">
+                            <div className="instagram-preview__username">@takashima_sohei</div>
+                            <div className="instagram-preview__location">Instagram</div>
+                          </div>
+                        </div>
+                        <div className="instagram-preview__image">
+                          <IconInstagram />
+                        </div>
+                        <div className="instagram-preview__url">{displayUrl}</div>
+                      </div>
+                      <div className="instagram-help">
+                        投稿ページのURLを入力してください（例: https://www.instagram.com/p/XXXXXXXXXX/）
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* YouTube Section */}
+        {youtubeKeys.length > 0 && (
+          <div className="editor-group">
+            <div className="editor-group__title">
+              <IconYoutube />
+              YouTube 埋め込み
+            </div>
+            <div className="editor-fields">
+              {youtubeKeys.map((key) => {
+                const value = pageContent[key] || '';
+                const originalValue = content[page]?.[key] || '';
+                const isModified = value !== originalValue;
+                const label = CONTENT_LABELS[key] || key;
+                const displayUrl = value || DEFAULT_CONTENT[key] || '';
+                return (
+                  <div
+                    key={key}
+                    className={`editor-field editor-field--youtube ${isModified ? 'editor-field--modified' : ''}`}
+                  >
+                    <div className="editor-field__header">
+                      <label className="editor-field__label">
+                        <span className="editor-field__type-badge editor-field__type-badge--youtube">
+                          <IconYoutube />
+                        </span>
+                        {label}
+                      </label>
+                      {isModified && <span className="editor-field__modified-dot" />}
+                    </div>
+                    <div className="youtube-field-group">
+                      <input
+                        type="url"
+                        className="editor-field__input editor-field__input--url"
+                        value={value}
+                        onChange={(e) => handleContentChange(page, key, e.target.value)}
+                        placeholder="https://www.youtube.com/embed/XXXXXXXXXX"
+                      />
+                      {displayUrl && (
+                        <div className="youtube-preview">
+                          <iframe
+                            src={displayUrl}
+                            title={label}
+                            className="youtube-preview__iframe"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                        </div>
+                      )}
+                      <div className="youtube-help">
+                        YouTube埋め込み用URLを入力してください（例: https://www.youtube.com/embed/XXXXXXXXXX）
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Text Content Fields */}
+        {textKeys.length > 0 && (
+          <div className="editor-group">
+            <div className="editor-group__title">
+              <IconText />
+              テキスト
+            </div>
+            <div className="editor-fields">{textKeys.map((key) => renderFieldInput(page, key))}</div>
+          </div>
+        )}
       </div>
     );
   };

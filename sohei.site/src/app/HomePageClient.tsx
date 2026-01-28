@@ -268,17 +268,25 @@ export default function HomePageClient() {
               </h2>
               <ul className="info-block__list">
                 <li>
-                  <a target="_blank" href="https://rtrp.jp/spots/bfbacd09-9164-44f1-b30f-be4c8352fc1e/">
+                  <a
+                    target="_blank"
+                    href={getContent(
+                      'index.store_0_url',
+                      'https://rtrp.jp/spots/bfbacd09-9164-44f1-b30f-be4c8352fc1e/',
+                    )}
+                  >
                     {getContent('index.store_0_name', '器まえさか')}
                   </a>
                 </li>
                 <li>
-                  <a target="_blank" href="https://tourakuen.jp/products/search.php">
+                  <a target="_blank" href={getContent('index.store_1_url', 'https://tourakuen.jp/products/search.php')}>
                     {getContent('index.store_1_name', '川口陶楽苑')}
                   </a>
                 </li>
                 <li>
-                  <a href="https://ryoisseki.com/">{getContent('index.store_2_name', 'うつわや涼一石')}</a>
+                  <a target="_blank" href={getContent('index.store_2_url', 'https://ryoisseki.com/')}>
+                    {getContent('index.store_2_name', 'うつわや涼一石')}
+                  </a>
                 </li>
               </ul>
             </div>
@@ -288,25 +296,34 @@ export default function HomePageClient() {
               </h2>
               <ul className="info-block__list">
                 <li>
-                  <a target="_blank" href="https://www.kakiden.com/gallery/archives/50770/">
+                  <a
+                    target="_blank"
+                    href={getContent('index.exhibition_0_url', 'https://www.kakiden.com/gallery/archives/50770/')}
+                  >
                     {getContent('index.exhibition_0_name', '柿傳ギャラリー\n(高島聡平 展)')}
                   </a>
                 </li>
                 <li>
-                  <a target="_blank" href="https://www.kakiden.com/gallery/archives/64427/">
+                  <a
+                    target="_blank"
+                    href={getContent('index.exhibition_1_url', 'https://www.kakiden.com/gallery/archives/64427/')}
+                  >
                     {getContent('index.exhibition_1_name', '柿傳ギャラリー\n(BIZENの八人展 Ⅱ)')}
                   </a>
                 </li>
                 <li>
                   <a
                     target="_blank"
-                    href="https://ryoisseki.com/%E3%82%B9%E3%82%B1%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB/%E5%82%99%E5%89%8D%E8%90%8C%E8%8A%BD%E3%80%8C%E9%AB%98%E5%B3%B6%E8%81%A1%E5%B9%B3%E3%80%8D%E5%B1%95/"
+                    href={getContent(
+                      'index.exhibition_2_url',
+                      'https://ryoisseki.com/%E3%82%B9%E3%82%B1%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB/%E5%82%99%E5%89%8D%E8%90%8C%E8%8A%BD%E3%80%8C%E9%AB%98%E5%B3%B6%E8%81%A1%E5%B9%B3%E3%80%8D%E5%B1%95/',
+                    )}
                   >
                     {getContent('index.exhibition_2_name', 'うつわや涼一石')}
                   </a>
                 </li>
                 <li>
-                  <a target="_blank" href="http://sendkushiro.com/?p=2751">
+                  <a target="_blank" href={getContent('index.exhibition_3_url', 'http://sendkushiro.com/?p=2751')}>
                     {getContent('index.exhibition_3_name', 'send')}
                   </a>
                 </li>
