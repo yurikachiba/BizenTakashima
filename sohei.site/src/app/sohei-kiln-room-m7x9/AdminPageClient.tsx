@@ -821,15 +821,29 @@ export default function AdminPageClient() {
   const [analyticsTab, setAnalyticsTab] = useState<'overview' | 'traffic' | 'audience'>('overview');
   const tokenRef = useRef<string>('');
 
-  const fetchWithAuth = useCallback(async (url: string, options: RequestInit = {}) => {
-    return fetch(`${API_BASE}${url}`, {
-      ...options,
-      headers: {
-        ...options.headers,
-        Authorization: `Bearer ${tokenRef.current}`,
-      },
-    });
+  const forceLogout = useCallback((message: string) => {
+    tokenRef.current = '';
+    sessionStorage.removeItem('admin_token');
+    setAuthenticated(false);
+    showToast(message, 'error');
   }, []);
+
+  const fetchWithAuth = useCallback(
+    async (url: string, options: RequestInit = {}) => {
+      const res = await fetch(`${API_BASE}${url}`, {
+        ...options,
+        headers: {
+          ...options.headers,
+          Authorization: `Bearer ${tokenRef.current}`,
+        },
+      });
+      if (res.status === 401 || res.status === 403) {
+        forceLogout('セッションが切れました。再度ログインしてください');
+      }
+      return res;
+    },
+    [forceLogout],
+  );
 
   const loadContent = useCallback(async () => {
     try {
@@ -903,16 +917,25 @@ export default function AdminPageClient() {
       fetch(`${API_BASE}/api/auth/verify`, {
         headers: { Authorization: `Bearer ${saved}` },
       })
-        .then((res) => {
+        .then(async (res) => {
           if (res.ok) {
+            const data = await res.json();
+            if (data.token) {
+              tokenRef.current = data.token;
+              sessionStorage.setItem('admin_token', data.token);
+            }
             setAuthenticated(true);
             loadContent();
             loadImages();
           } else {
+            tokenRef.current = '';
             sessionStorage.removeItem('admin_token');
           }
         })
-        .catch(() => sessionStorage.removeItem('admin_token'));
+        .catch(() => {
+          tokenRef.current = '';
+          sessionStorage.removeItem('admin_token');
+        });
     }
   }, [loadContent, loadImages]);
 
@@ -968,11 +991,12 @@ export default function AdminPageClient() {
       if (res.ok) {
         showToast(`${PAGE_NAMES[page]}を保存しました`);
         loadContent();
-      } else {
-        showToast('保存に失敗しました', 'error');
+      } else if (res.status !== 401 && res.status !== 403) {
+        const data = await res.json().catch(() => null);
+        showToast(data?.error || '保存に失敗しました', 'error');
       }
     } catch {
-      showToast('サーバーエラー', 'error');
+      showToast('サーバーに接続できません', 'error');
     }
   };
 
@@ -1000,11 +1024,12 @@ export default function AdminPageClient() {
           setUploadedImages((prev) => ({ ...prev, [key]: reader.result as string }));
         };
         reader.readAsDataURL(file);
-      } else {
-        showToast('画像の保存に失敗しました', 'error');
+      } else if (res.status !== 401 && res.status !== 403) {
+        const data = await res.json().catch(() => null);
+        showToast(data?.error || '画像の保存に失敗しました', 'error');
       }
     } catch {
-      showToast('サーバーエラー', 'error');
+      showToast('サーバーに接続できません', 'error');
     }
   };
 
