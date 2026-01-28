@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { signToken } from '@/lib/auth';
+import { ensureAdmin } from '@/lib/seed';
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,6 +10,8 @@ export async function POST(request: NextRequest) {
     if (!password) {
       return NextResponse.json({ error: 'パスワードが必要です' }, { status: 400 });
     }
+
+    await ensureAdmin();
 
     const admin = await prisma.admin.findFirst();
     if (!admin) {
@@ -24,6 +27,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ token });
   } catch (err) {
     console.error('Login error:', err);
-    return NextResponse.json({ error: 'サーバーエラー' }, { status: 500 });
+    const message =
+      err instanceof Error && err.message.includes('connect')
+        ? 'データベースに接続できません'
+        : 'サーバーエラー';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
