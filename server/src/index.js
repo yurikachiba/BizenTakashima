@@ -6,6 +6,7 @@ const { PrismaClient } = require('@prisma/client');
 
 const authRoutes = require('./routes/auth');
 const contentRoutes = require('./routes/content');
+const imageRoutes = require('./routes/images');
 const analyticsRoutes = require('./routes/analytics');
 
 const prisma = new PrismaClient();
@@ -53,11 +54,12 @@ app.use(cors({
   },
   credentials: true
 }));
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '10mb' }));
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/content', contentRoutes);
+app.use('/api/images', imageRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
 // Health check
