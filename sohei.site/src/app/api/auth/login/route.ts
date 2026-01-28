@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { signToken } from '@/lib/auth';
+import { prisma, ensureConnection } from '@/lib/prisma';
 
 const DEFAULT_ADMIN_PASSWORD = process.env.DEFAULT_ADMIN_PASSWORD;
 const FALLBACK_ADMIN_ID = 'env-admin';
@@ -16,7 +17,6 @@ type DbLoginResult =
 
 async function tryDatabaseLogin(password: string): Promise<DbLoginResult> {
   try {
-    const { prisma, ensureConnection } = await import('@/lib/prisma');
 
     await ensureConnection();
     let admin = await prisma.admin.findFirst();
