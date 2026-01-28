@@ -71,7 +71,6 @@ export default function HomePageClient() {
                 unoptimized
               />
             </h1>
-            <p className="hero__subtitle gsap-hero-sub">備前焼作家</p>
           </div>
           <div className="hero__scroll-indicator">
             <span></span>
