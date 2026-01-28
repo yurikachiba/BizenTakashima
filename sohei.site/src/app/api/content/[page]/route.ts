@@ -59,9 +59,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   } catch (err) {
     console.error('Update content error:', err);
     const detail = err instanceof Error ? err.message : undefined;
-    return NextResponse.json(
-      { error: 'コンテンツの保存中にエラーが発生しました', detail },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'コンテンツの保存中にエラーが発生しました', detail }, { status: 500 });
   }
 }

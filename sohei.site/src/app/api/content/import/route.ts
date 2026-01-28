@@ -43,9 +43,6 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     console.error('Import content error:', err);
     const detail = err instanceof Error ? err.message : undefined;
-    return NextResponse.json(
-      { error: 'インポート中にエラーが発生しました', detail },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'インポート中にエラーが発生しました', detail }, { status: 500 });
   }
 }

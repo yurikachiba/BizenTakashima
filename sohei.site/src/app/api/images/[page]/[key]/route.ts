@@ -78,10 +78,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
   } catch (err) {
     console.error('Upload image error:', err);
     const detail = err instanceof Error ? err.message : undefined;
-    return NextResponse.json(
-      { error: '画像の保存中にエラーが発生しました', detail },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: '画像の保存中にエラーが発生しました', detail }, { status: 500 });
   }
 }
 
