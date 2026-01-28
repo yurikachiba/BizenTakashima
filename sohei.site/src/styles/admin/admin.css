@@ -47,6 +47,10 @@ body {
     z-index: 1000;
 }
 
+#auth-overlay[hidden] {
+    display: none;
+}
+
 .auth-box {
     background: var(--bg-card);
     border: 1px solid var(--border);
