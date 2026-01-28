@@ -1,31 +1,30 @@
-// .background3 {
-//     display: block;
-//     background-image: url('../img/background3.png');
-//     /*背景画像*/
-//     background-attachment: fixed;
-//     /*背景画像を固定*/
-//     background-repeat: no-repeat;
-//     /*背景画像リピートしない*/
-//     background-position: center top;
-//     /*背景画像の開始位置*/
-//     width: 393px;
-//     margin: 0 auto;
-//     padding-bottom: 120px;
-// }
+@use 'variable' as *;
+@use 'mixin' as *;
 
+.interview_header {
+  position: fixed;
+  z-index: 50;
+  width: 100%;
+}
 
+.interview_main_div {
+  font-family: 'New Tegomin', serif;
 
-// .background3 {
-//     background-image: url(../img/background3.png);
-//     // background-size: cover;
-//     background-position: center top;
-//     background-attachment: fixed;
-//     width: 393px;
-//     margin: 0 auto;
-//     background-repeat: no-repeat;
-//     padding-bottom: 120px;
-// }
+  @include pc {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+}
 
-// .interview {
-//     color: #fff;
-// }
+.interview-div {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.text-4-interview {
+  font-family: 'Noto Sans JP', sans-serif;
+  line-height: 2;
+  color: $font-color-2;
+  font-size: 14px;
+  text-align: left;
+}

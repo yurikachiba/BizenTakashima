@@ -1,83 +1,143 @@
-@use "_variable" as *;
-@use "_mixin.scss" as *;
-@import url('https://fonts.googleapis.com/css2?family=New+Tegomin&family=Noto+Sans+JP&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500&display=swap');
+@use 'variable' as *;
+@use 'mixin' as *;
+
+.workIntroduction_header {
+  position: fixed;
+  z-index: 50;
+  width: 100%;
+}
+
+.workIntroduction_main_div {
+  font-family: 'New Tegomin', serif;
+
+  @include pc {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+}
+
+.otherPage-h1 {
+  padding: 60px 0 30px;
+  text-align: center;
+  font-size: 24px;
+  color: $font-color;
+  letter-spacing: 0.2em;
+  font-family: 'New Tegomin', serif;
+}
+
+.otherPageTopImage {
+  width: 90%;
+  display: block;
+  margin: 0 auto;
+}
+
+.otherPage-h2 {
+  text-align: center;
+  margin-top: 70px;
+  margin-bottom: 30px;
+  font-size: 20px;
+  color: $font-color;
+  letter-spacing: 0.2em;
+  font-family: 'New Tegomin', serif;
+}
+
+.flex-box-3 {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 5%;
+
+  div {
+    width: 45%;
+
+    @include pc {
+      width: 30%;
+    }
+  }
+}
+
+.workListImg {
+  width: 100%;
+  display: block;
+  margin: 0 auto;
+
+  @include pc {
+    width: 90%;
+  }
+}
 
 .caption {
-    margin-top: 20px;
-    margin-bottom: 80px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 13px;
 }
 
+.width333px {
+  @include pc {
+    width: 333px;
+  }
+}
 
+.heading {
+  font-size: 18px;
+  color: $font-color;
+  margin-top: 50px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-family: 'New Tegomin', serif;
+  letter-spacing: 0.2em;
+}
 
-
+.please {
+  width: 80%;
+  margin: 0 auto;
+}
 
 .accordion_div {
-    display: flex;
-    justify-content: center;
+  width: 80%;
+  margin: 30px auto 120px;
 }
 
-.qa-006 {
-    font-family: $zenOld;
-}
+details.qa-006 {
+  border: none;
+  border-bottom: 1px solid $font-color;
+  padding: 0;
 
-.qa-006 summary {
+  summary {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative;
-    padding: 1em 2em 1em 3em;
-    color: #333333;
-    font-weight: 600;
+    padding: 15px 0;
     cursor: pointer;
-}
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 14px;
+    color: $font-color;
+    line-height: 1.8;
+    list-style: none;
 
-.qa-006 summary::before,
-.qa-006 p::before {
-    position: absolute;
-    left: 1em;
-    font-weight: 600;
-    font-size: 1.3em;
-}
+    &::-webkit-details-marker {
+      display: none;
+    }
 
-.qa-006 summary::before {
-    color: #75bbff;
-    content: "Q";
-}
+    &::after {
+      content: '+';
+      font-size: 20px;
+      margin-left: 10px;
+      transition: transform 0.3s;
+      color: $font-color;
+    }
+  }
 
-.qa-006 summary::after {
-    transform: translateY(-25%) rotate(45deg);
-    width: 7px;
-    height: 7px;
-    margin-left: 10px;
-    border-bottom: 3px solid #333333b3;
-    border-right: 3px solid #333333b3;
-    content: '';
-    transition: transform .5s;
-}
+  &[open] summary::after {
+    content: '−';
+  }
 
-.qa-006[open] summary::after {
-    transform: rotate(225deg);
-}
-
-.qa-006 p {
-    position: relative;
-    transform: translateY(-10px);
-    opacity: 0;
-    margin: 0;
-    padding: .3em 3em 1.5em;
-    color: #333;
-    transition: transform .5s, opacity .5s;
-}
-
-.qa-006[open] p {
-    transform: none;
-    opacity: 1;
-}
-
-.qa-006 p::before {
-    color: #ff8d8d;
-    line-height: 1.2;
-    content: "A";
+  p {
+    padding: 0 0 15px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    line-height: 2;
+    color: $font-color-2;
+  }
 }
