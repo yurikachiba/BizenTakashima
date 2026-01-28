@@ -64,13 +64,15 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
           });
           return;
         } catch (err) {
+          console.warn(`Save entry attempt ${attempt}/${retries} failed for key "${key}":`, err);
           if (attempt === retries) throw err;
           await new Promise((resolve) => setTimeout(resolve, 100 * Math.pow(2, attempt - 1)));
         }
       }
     };
 
-    // Try interactive transaction first, fall back to individual upserts on connection error
+    // Try interactive transaction first, fall back to individual upserts on error
+    // Use shorter timeout (8s) to fit within Vercel's function timeout
     try {
       await prisma.$transaction(
         async (tx: Prisma.TransactionClient) => {
@@ -82,16 +84,23 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
             });
           }
         },
-        { timeout: 30000, maxWait: 10000 },
+        { timeout: 8000, maxWait: 5000 },
       );
       return NextResponse.json({ message: `${page}のコンテンツを保存しました` });
     } catch (txErr) {
-      console.warn('Transaction save failed, retrying with individual upserts:', txErr);
+      const txError = txErr as { message?: string; code?: string };
+      console.warn('Transaction save failed, retrying with individual upserts:', txError.message, txError.code);
     }
 
     // Fallback: save entries individually with retry
-    for (const [key, value] of sanitizedEntries) {
-      await saveEntry(key, value);
+    try {
+      for (const [key, value] of sanitizedEntries) {
+        await saveEntry(key, value);
+      }
+    } catch (fallbackErr) {
+      const fbError = fallbackErr as { message?: string; code?: string };
+      console.error('Fallback save also failed:', fbError.message, fbError.code);
+      throw fallbackErr;
     }
 
     return NextResponse.json({ message: `${page}のコンテンツを保存しました` });
