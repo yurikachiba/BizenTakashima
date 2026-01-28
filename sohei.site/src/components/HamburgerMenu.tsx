@@ -4,30 +4,47 @@ import Link from 'next/link';
 
 export default function HamburgerMenu() {
   return (
-    <div className="hamburger-menu">
-      <input type="checkbox" id="menu-btn-check" />
-      <label htmlFor="menu-btn-check" className="menu-btn">
-        <span></span>
+    <nav className="nav">
+      <input type="checkbox" id="nav-toggle" className="nav__checkbox" />
+      <label htmlFor="nav-toggle" className="nav__button">
+        <span className="nav__icon"></span>
       </label>
-      <div className="menu-content">
-        <ul>
-          <li>
-            <Link href="/">トップページ</Link>
-          </li>
-          <li>
-            <Link href="/work">作品紹介</Link>
-          </li>
-          <li>
-            <Link href="/process">制作の様子</Link>
-          </li>
-          <li>
-            <Link href="/interview">インタビュー</Link>
-          </li>
-          <li>
-            <Link href="/artist">作家紹介</Link>
-          </li>
-        </ul>
+      <div className="nav__overlay">
+        <div className="nav__content">
+          <ul className="nav__list">
+            <li className="nav__item">
+              <Link href="/" className="nav__link">
+                <span className="nav__link-en">Top</span>
+                <span className="nav__link-ja">トップページ</span>
+              </Link>
+            </li>
+            <li className="nav__item">
+              <Link href="/work" className="nav__link">
+                <span className="nav__link-en">Works</span>
+                <span className="nav__link-ja">作品紹介</span>
+              </Link>
+            </li>
+            <li className="nav__item">
+              <Link href="/process" className="nav__link">
+                <span className="nav__link-en">Process</span>
+                <span className="nav__link-ja">制作の様子</span>
+              </Link>
+            </li>
+            <li className="nav__item">
+              <Link href="/interview" className="nav__link">
+                <span className="nav__link-en">Interview</span>
+                <span className="nav__link-ja">インタビュー</span>
+              </Link>
+            </li>
+            <li className="nav__item">
+              <Link href="/artist" className="nav__link">
+                <span className="nav__link-en">Artist</span>
+                <span className="nav__link-ja">作家紹介</span>
+              </Link>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
+    </nav>
   );
 }

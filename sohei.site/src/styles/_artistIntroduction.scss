@@ -1,3 +1,55 @@
-.blockquote {
-  background-color: #d9d9d9;
+@use 'variable' as *;
+@use 'mixin' as *;
+
+// =============================================
+// Artist Page
+// =============================================
+.artist-quote {
+  background-color: $bg-warm;
+  padding: 32px 24px;
+  border-left: 3px solid $color-earth;
+
+  @include pc {
+    padding: 40px 48px;
+  }
+
+  p {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 14px;
+    line-height: 2.2;
+    color: $font-color-2;
+    font-style: italic;
+    letter-spacing: 0.04em;
+
+    @include pc {
+      font-size: 15px;
+    }
+  }
+}
+
+.artist-timeline {
+  &__item {
+    padding: 16px 0;
+    border-bottom: 1px solid rgba($font-color, 0.08);
+
+    &:first-child {
+      padding-top: 0;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    p {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 14px;
+      line-height: 2;
+      color: $font-color-2;
+      letter-spacing: 0.04em;
+
+      @include pc {
+        font-size: 15px;
+      }
+    }
+  }
 }

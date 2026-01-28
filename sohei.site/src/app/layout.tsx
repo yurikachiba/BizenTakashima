@@ -35,12 +35,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ja">
       <head>
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#1a1714" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* eslint-disable-next-line @next/next/no-page-custom-font -- App Router root layout applies to all pages */}
         <link
-          href="https://fonts.googleapis.com/css2?family=New+Tegomin&family=Noto+Sans+JP:wght@400;700&family=Zen+Old+Mincho:wght@400;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&family=Zen+Old+Mincho:wght@400;700&display=swap"
           rel="stylesheet"
         />
       </head>

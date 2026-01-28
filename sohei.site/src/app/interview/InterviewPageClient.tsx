@@ -42,7 +42,6 @@ const QA_ITEMS = [
     aKey: 'interview.a_5',
     q: '修行中はどのような指導がありましたか？',
     a: '先生からは自分の作品作りに関しての具体的な指示はなく、作品の印象、焼き色との相性などのアドバイスを頂くことはありました。今考えれば、人の意見を十分に聞き、反芻し、その言葉に向き合い、その結果で自分から出てくるものからしか作品は生まれないと気付くきっかけになったと思います。',
-    isLast: true,
   },
 ];
 
@@ -52,45 +51,47 @@ export default function InterviewPageClient() {
 
   return (
     <>
-      <header className="interview_header">
+      <header className="site-header">
         <HamburgerMenu />
       </header>
-      <div className="interview_main_div background">
+
+      {/* Hero */}
+      <div className="page-hero">
+        <div className="page-hero__image">
+          <Image
+            src="/img/interview_top.png"
+            alt="高島の顔写真"
+            width={1200}
+            height={600}
+            priority
+            data-image-key="interview.top_image"
+            unoptimized
+          />
+        </div>
+        <div className="page-hero__overlay"></div>
+        <h1 className="page-hero__title" data-content-key="interview.heading_h1">
+          {getContent('interview.heading_h1', 'インタビュー')}
+        </h1>
+      </div>
+
+      <div className="page-content">
         <main>
-          <section>
-            <h1 className="otherPage-h1" data-content-key="interview.heading_h1">
-              {getContent('interview.heading_h1', 'インタビュー')}
-            </h1>
-            <div className="pc_site_img">
-              <Image
-                className="otherPageTopImage"
-                src="/img/interview_top.png"
-                alt="高島の顔写真"
-                width={800}
-                height={600}
-                data-image-key="interview.top_image"
-                unoptimized
-              />
-            </div>
-            <div className="interview-div">
+          <section className="page-section">
+            <div className="interview-qa">
               {QA_ITEMS.map((item, i) => (
-                <div key={i}>
-                  <p
-                    className={`text-4-interview ${i === 0 ? 'marginT30px' : ''} marginB20px`}
-                    data-content-key={item.qKey}
-                  >
-                    <span className="fontBold blue">Q.</span>
-                    <br />
-                    {getContent(item.qKey, item.q)}
-                  </p>
-                  <p
-                    className={`text-4-interview ${item.isLast ? 'marginB120px' : 'marginB50px'}`}
-                    data-content-key={item.aKey}
-                  >
-                    <span className="fontBold red">高島：</span>
-                    <br />
-                    {getContent(item.aKey, item.a)}
-                  </p>
+                <div key={i} className="interview-qa__block reveal">
+                  <div className="interview-qa__question">
+                    <span className="interview-qa__label interview-qa__label--q">Q</span>
+                    <p data-content-key={item.qKey}>
+                      {getContent(item.qKey, item.q)}
+                    </p>
+                  </div>
+                  <div className="interview-qa__answer">
+                    <span className="interview-qa__label interview-qa__label--a">A</span>
+                    <p data-content-key={item.aKey}>
+                      {getContent(item.aKey, item.a)}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>

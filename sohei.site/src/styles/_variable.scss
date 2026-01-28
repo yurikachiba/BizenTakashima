@@ -1,5 +1,35 @@
-$font-color: #333333;
-$font-color-2: #555555;
-$background-color: #f5f5f0;
-$accent-color: #9e4020;
-$link-color: #1a0dab;
+// === Bizen-inspired Japanese Design System ===
+
+// Base colors
+$color-ink: #1a1714; // 墨色 - deep ink black
+$color-charcoal: #2c2825; // 炭色 - charcoal
+$color-earth: #8b7355; // 土色 - earth/clay
+$color-bizen: #a0522d; // 備前 - terracotta
+$color-warm: #c4956a; // 暖色 - warm accent
+$color-ash: #b8ada0; // 灰色 - ash gray
+
+// Background colors
+$bg-cream: #f7f3ed; // 生成り - natural cream
+$bg-warm: #eee8df; // 和紙 - washi paper
+$bg-dark: #1a1714; // 墨 - dark background
+$bg-section: #f0ebe3; // セクション背景
+
+// Text colors
+$font-color: #2c2825;
+$font-color-2: #5a524a;
+$font-color-light: #f7f3ed;
+$font-color-muted: #8b8279;
+
+// Accent
+$accent-color: #a0522d;
+$accent-hover: #8b4726;
+
+// Spacing
+$section-padding-sp: 60px 0;
+$section-padding-pc: 120px 0;
+$content-width: 1100px;
+$content-narrow: 800px;
+
+// Transitions
+$transition-smooth: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+$transition-fast: all 0.3s ease;

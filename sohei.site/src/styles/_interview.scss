@@ -1,30 +1,87 @@
 @use 'variable' as *;
 @use 'mixin' as *;
 
-.interview_header {
-  position: fixed;
-  z-index: 50;
-  width: 100%;
-}
+// =============================================
+// Interview Q&A
+// =============================================
+.interview-qa {
+  &__block {
+    margin-bottom: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba($font-color, 0.1);
 
-.interview_main_div {
-  font-family: 'New Tegomin', serif;
+    @include pc {
+      margin-bottom: 56px;
+      padding-bottom: 56px;
+    }
 
-  @include pc {
-    max-width: 900px;
-    margin: 0 auto;
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
   }
-}
 
-.interview-div {
-  width: 80%;
-  margin: 0 auto;
-}
+  &__question,
+  &__answer {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
 
-.text-4-interview {
-  font-family: 'Noto Sans JP', sans-serif;
-  line-height: 2;
-  color: $font-color-2;
-  font-size: 14px;
-  text-align: left;
+    @include pc {
+      gap: 24px;
+    }
+
+    p {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 14px;
+      line-height: 2;
+      color: $font-color-2;
+      letter-spacing: 0.04em;
+      flex: 1;
+
+      @include pc {
+        font-size: 15px;
+      }
+    }
+  }
+
+  &__question {
+    margin-bottom: 24px;
+
+    p {
+      font-weight: 500;
+      color: $font-color;
+    }
+  }
+
+  &__label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 2px;
+
+    @include pc {
+      width: 36px;
+      height: 36px;
+      font-size: 15px;
+    }
+
+    &--q {
+      background-color: $bg-dark;
+      color: $font-color-light;
+    }
+
+    &--a {
+      background-color: $bg-warm;
+      color: $color-earth;
+    }
+  }
 }

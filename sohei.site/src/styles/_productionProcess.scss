@@ -1,26 +1,70 @@
 @use 'variable' as *;
 @use 'mixin' as *;
 
-.iframe_productionProcess {
-  width: 90%;
-  display: block;
-  margin: 20px auto;
-  aspect-ratio: 16 / 9;
-  border: none;
+// =============================================
+// Process Page
+// =============================================
+.process-byline {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 16px;
+  color: $font-color-muted;
+  letter-spacing: 0.2em;
+  text-align: center;
+  margin-bottom: 60px;
 
   @include pc {
-    width: 90%;
+    font-size: 18px;
+    margin-bottom: 80px;
   }
 }
 
-.sp_marginB50px_productionprocess {
-  @include sp {
-    margin-bottom: 50px;
-  }
+.process-timeline {
+  position: relative;
 }
 
-.pc_marginB80px_productionprocess {
+.process-step {
+  margin-bottom: 60px;
+  position: relative;
+
   @include pc {
     margin-bottom: 80px;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__number {
+    display: block;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 36px;
+    font-weight: 300;
+    color: $color-ash;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+
+    @include pc {
+      font-size: 48px;
+      margin-bottom: 24px;
+    }
+  }
+
+  &__image {
+    overflow: hidden;
+    margin-bottom: 24px;
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  }
+
+  &__video {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: none;
+    margin-bottom: 24px;
+    display: block;
   }
 }
