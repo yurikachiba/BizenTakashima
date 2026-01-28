@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
       { source: '/productionProcess.html', destination: '/process', permanent: true },
       { source: '/interview.html', destination: '/interview', permanent: true },
       { source: '/artistIntroduction.html', destination: '/artist', permanent: true },
+      { source: '/sohei-kiln-room-m7x9.html', destination: '/sohei-kiln-room-m7x9', permanent: true },
     ];
   },
   async headers() {
