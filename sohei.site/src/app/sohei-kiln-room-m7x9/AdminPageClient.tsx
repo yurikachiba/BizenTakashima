@@ -822,6 +822,7 @@ export default function AdminPageClient() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<Record<string, string>>({});
   const [analyticsTab, setAnalyticsTab] = useState<'overview' | 'traffic' | 'audience'>('overview');
+  const [savingPages, setSavingPages] = useState<Set<string>>(new Set());
   const tokenRef = useRef<string>('');
 
   const forceLogout = useCallback((message: string) => {
@@ -832,18 +833,25 @@ export default function AdminPageClient() {
   }, []);
 
   const fetchWithAuth = useCallback(
-    async (url: string, options: RequestInit = {}) => {
-      const res = await fetch(`${API_BASE}${url}`, {
-        ...options,
-        headers: {
-          ...options.headers,
-          Authorization: `Bearer ${tokenRef.current}`,
-        },
-      });
-      if (res.status === 401 || res.status === 403) {
-        forceLogout('セッションが切れました。再度ログインしてください');
+    async (url: string, options: RequestInit = {}, timeoutMs = 30000) => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const res = await fetch(`${API_BASE}${url}`, {
+          ...options,
+          signal: controller.signal,
+          headers: {
+            ...options.headers,
+            Authorization: `Bearer ${tokenRef.current}`,
+          },
+        });
+        if (res.status === 401 || res.status === 403) {
+          forceLogout('セッションが切れました。再度ログインしてください');
+        }
+        return res;
+      } finally {
+        clearTimeout(timeoutId);
       }
-      return res;
     },
     [forceLogout],
   );
@@ -901,19 +909,24 @@ export default function AdminPageClient() {
 
   const loadImages = useCallback(async () => {
     const allKeys = Object.values(PAGE_IMAGE_KEYS).flat();
-    const loaded: Record<string, string> = {};
-    for (const key of allKeys) {
-      const page = key.split('.')[0];
-      try {
+    // Load all images in parallel for better performance
+    const results = await Promise.allSettled(
+      allKeys.map(async (key) => {
+        const page = key.split('.')[0];
         const res = await fetch(`${API_BASE}/api/images/${page}/${key}`);
         if (res.ok) {
           const blob = await res.blob();
           if (blob.size > 0) {
-            loaded[key] = URL.createObjectURL(blob);
+            return { key, url: URL.createObjectURL(blob) };
           }
         }
-      } catch {
-        /* silent */
+        return null;
+      }),
+    );
+    const loaded: Record<string, string> = {};
+    for (const result of results) {
+      if (result.status === 'fulfilled' && result.value) {
+        loaded[result.value.key] = result.value.url;
       }
     }
     setUploadedImages(loaded);
@@ -999,6 +1012,9 @@ export default function AdminPageClient() {
   };
 
   const handleSave = async (page: string) => {
+    // Prevent duplicate saves
+    if (savingPages.has(page)) return;
+
     // Only send changed keys to reduce DB operations
     const original = content[page] || {};
     const edited = editedContent[page] || {};
@@ -1013,36 +1029,53 @@ export default function AdminPageClient() {
       return;
     }
 
+    // Mark as saving
+    setSavingPages((prev) => new Set(prev).add(page));
+
     const maxRetries = 2;
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      try {
-        const res = await fetchWithAuth(`/api/content/${page}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(changedContent),
-        });
-        if (res.ok) {
-          showToast(`${PAGE_NAMES[page]}を保存しました`);
-          loadContent();
+    try {
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          const res = await fetchWithAuth(`/api/content/${page}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(changedContent),
+          });
+          if (res.ok) {
+            showToast(`${PAGE_NAMES[page]}を保存しました`);
+            loadContent();
+            return;
+          }
+          if (res.status === 401 || res.status === 403) return;
+          // Retry on server errors
+          if (res.status >= 500 && attempt < maxRetries) {
+            await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+            continue;
+          }
+          const data = await res.json().catch(() => null);
+          showToast(data?.error || '保存に失敗しました', 'error');
+          return;
+        } catch (err) {
+          // Check for timeout (AbortError)
+          if (err instanceof Error && err.name === 'AbortError') {
+            showToast('保存がタイムアウトしました。再度お試しください', 'error');
+            return;
+          }
+          if (attempt < maxRetries) {
+            await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+            continue;
+          }
+          showToast('サーバーに接続できません', 'error');
           return;
         }
-        if (res.status === 401 || res.status === 403) return;
-        // Retry on server errors
-        if (res.status >= 500 && attempt < maxRetries) {
-          await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
-          continue;
-        }
-        const data = await res.json().catch(() => null);
-        showToast(data?.error || '保存に失敗しました', 'error');
-        return;
-      } catch {
-        if (attempt < maxRetries) {
-          await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
-          continue;
-        }
-        showToast('サーバーに接続できません', 'error');
-        return;
       }
+    } finally {
+      // Remove from saving set
+      setSavingPages((prev) => {
+        const next = new Set(prev);
+        next.delete(page);
+        return next;
+      });
     }
   };
 
@@ -1645,11 +1678,28 @@ export default function AdminPageClient() {
             {hasChanges && <span className="unsaved-badge">未保存の変更があります</span>}
           </div>
           <div className="editor-toolbar__actions">
-            <button className="toolbar-btn toolbar-btn--primary" onClick={() => handleSave(page)}>
-              <IconSave />
-              保存
+            <button
+              className="toolbar-btn toolbar-btn--primary"
+              onClick={() => handleSave(page)}
+              disabled={savingPages.has(page)}
+            >
+              {savingPages.has(page) ? (
+                <>
+                  <span className="spinner-small" />
+                  保存中...
+                </>
+              ) : (
+                <>
+                  <IconSave />
+                  保存
+                </>
+              )}
             </button>
-            <button className="toolbar-btn toolbar-btn--secondary" onClick={() => handleReset(page)}>
+            <button
+              className="toolbar-btn toolbar-btn--secondary"
+              onClick={() => handleReset(page)}
+              disabled={savingPages.has(page)}
+            >
               <IconReset />
               リセット
             </button>

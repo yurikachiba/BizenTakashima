@@ -82,32 +82,33 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       }
     };
 
-    // Try interactive transaction first, fall back to individual upserts on error
+    // Try interactive transaction first, fall back to parallel upserts on error
     // Use shorter timeout (8s) to fit within Vercel's function timeout
     try {
       await prisma.$transaction(
         async (tx: Prisma.TransactionClient) => {
-          for (const [key, value] of sanitizedEntries) {
-            await tx.content.upsert({
-              where: { page_key: { page, key } },
-              update: { value },
-              create: { page, key, value },
-            });
-          }
+          // Execute upserts in parallel within transaction for better performance
+          await Promise.all(
+            sanitizedEntries.map(([key, value]) =>
+              tx.content.upsert({
+                where: { page_key: { page, key } },
+                update: { value },
+                create: { page, key, value },
+              }),
+            ),
+          );
         },
         { timeout: 8000, maxWait: 5000 },
       );
       return NextResponse.json({ message: `${page}のコンテンツを保存しました` });
     } catch (txErr) {
       const txError = txErr as { message?: string; code?: string };
-      console.warn('Transaction save failed, retrying with individual upserts:', txError.message, txError.code);
+      console.warn('Transaction save failed, retrying with parallel upserts:', txError.message, txError.code);
     }
 
-    // Fallback: save entries individually with retry
+    // Fallback: save entries in parallel with retry
     try {
-      for (const [key, value] of sanitizedEntries) {
-        await saveEntry(key, value);
-      }
+      await Promise.all(sanitizedEntries.map(([key, value]) => saveEntry(key, value)));
     } catch (fallbackErr) {
       const fbError = fallbackErr as { message?: string; code?: string };
       console.error('Fallback save also failed:', fbError.message, fbError.code);
