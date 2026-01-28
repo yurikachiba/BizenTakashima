@@ -154,8 +154,8 @@ export default function ProcessPageClient() {
             </div>
           </section>
         </main>
-        <Footer />
       </div>
+      <Footer />
       <ScrollAnimations />
     </>
   );

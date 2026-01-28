@@ -212,8 +212,8 @@ export default function WorkPageClient() {
             </div>
           </section>
         </main>
-        <Footer />
       </div>
+      <Footer />
       <ScrollAnimations />
     </>
   );

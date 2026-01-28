@@ -93,8 +93,8 @@ export default function InterviewPageClient() {
             </div>
           </section>
         </main>
-        <Footer />
       </div>
+      <Footer />
       <ScrollAnimations />
     </>
   );

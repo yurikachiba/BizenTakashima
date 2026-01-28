@@ -83,8 +83,8 @@ export default function ArtistPageClient() {
             </div>
           </section>
         </main>
-        <Footer />
       </div>
+      <Footer />
       <ScrollAnimations />
     </>
   );
