@@ -247,10 +247,23 @@ function createImageEditors(pageId) {
     container.querySelectorAll('.image-upload-input').forEach(function (input) {
         input.addEventListener('change', function (e) {
             if (!e.target.files[0]) return;
+            var file = e.target.files[0];
             var item = e.target.closest('.image-editor-item');
             var key = item.getAttribute('data-image-key');
             var page = item.getAttribute('data-page');
-            uploadImage(page, key, e.target.files[0]).then(function (ok) {
+
+            // Show local preview immediately
+            var preview = item.querySelector('.image-preview');
+            var placeholder = item.querySelector('.image-placeholder');
+            var previewUrl = URL.createObjectURL(file);
+            preview.src = previewUrl;
+            preview.hidden = false;
+            placeholder.hidden = true;
+            preview.onload = function () {
+                URL.revokeObjectURL(previewUrl);
+            };
+
+            uploadImage(page, key, file).then(function (ok) {
                 if (ok) loadPageImages(page);
             });
             e.target.value = '';
