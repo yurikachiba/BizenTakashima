@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
 
@@ -27,20 +28,40 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     if (authResult instanceof NextResponse) return authResult;
 
     const { page } = await params;
-    const data = await request.json();
 
-    const operations = Object.entries(data).map(([key, value]) =>
-      prisma.content.upsert({
-        where: { page_key: { page, key } },
-        update: { value: String(value) },
-        create: { page, key, value: String(value) },
-      }),
+    let data: Record<string, unknown>;
+    try {
+      data = await request.json();
+    } catch {
+      return NextResponse.json({ error: 'リクエストの形式が不正です' }, { status: 400 });
+    }
+
+    const entries = Object.entries(data);
+    if (entries.length === 0) {
+      return NextResponse.json({ message: '保存するコンテンツがありません' });
+    }
+
+    // Use interactive transaction with extended timeout for many upserts
+    await prisma.$transaction(
+      async (tx: Prisma.TransactionClient) => {
+        for (const [key, value] of entries) {
+          await tx.content.upsert({
+            where: { page_key: { page, key } },
+            update: { value: String(value) },
+            create: { page, key, value: String(value) },
+          });
+        }
+      },
+      { timeout: 30000, maxWait: 10000 },
     );
 
-    await prisma.$transaction(operations);
     return NextResponse.json({ message: `${page}のコンテンツを保存しました` });
   } catch (err) {
     console.error('Update content error:', err);
-    return NextResponse.json({ error: 'サーバーエラー' }, { status: 500 });
+    const detail = err instanceof Error ? err.message : undefined;
+    return NextResponse.json(
+      { error: 'コンテンツの保存中にエラーが発生しました', detail },
+      { status: 500 },
+    );
   }
 }

@@ -982,21 +982,36 @@ export default function AdminPageClient() {
   };
 
   const handleSave = async (page: string) => {
-    try {
-      const res = await fetchWithAuth(`/api/content/${page}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editedContent[page] || {}),
-      });
-      if (res.ok) {
-        showToast(`${PAGE_NAMES[page]}を保存しました`);
-        loadContent();
-      } else if (res.status !== 401 && res.status !== 403) {
+    const maxRetries = 2;
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const res = await fetchWithAuth(`/api/content/${page}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(editedContent[page] || {}),
+        });
+        if (res.ok) {
+          showToast(`${PAGE_NAMES[page]}を保存しました`);
+          loadContent();
+          return;
+        }
+        if (res.status === 401 || res.status === 403) return;
+        // Retry on server errors
+        if (res.status >= 500 && attempt < maxRetries) {
+          await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+          continue;
+        }
         const data = await res.json().catch(() => null);
         showToast(data?.error || '保存に失敗しました', 'error');
+        return;
+      } catch {
+        if (attempt < maxRetries) {
+          await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+          continue;
+        }
+        showToast('サーバーに接続できません', 'error');
+        return;
       }
-    } catch {
-      showToast('サーバーに接続できません', 'error');
     }
   };
 
@@ -1009,27 +1024,40 @@ export default function AdminPageClient() {
   };
 
   const handleImageUpload = async (page: string, key: string, file: File) => {
-    const formData = new FormData();
-    formData.append('image', file);
-    try {
-      const res = await fetchWithAuth(`/api/images/${page}/${key}`, {
-        method: 'PUT',
-        body: formData,
-      });
-      if (res.ok) {
-        showToast('画像を保存しました');
-        // Show preview immediately
-        const reader = new FileReader();
-        reader.onload = () => {
-          setUploadedImages((prev) => ({ ...prev, [key]: reader.result as string }));
-        };
-        reader.readAsDataURL(file);
-      } else if (res.status !== 401 && res.status !== 403) {
+    const maxRetries = 2;
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      const formData = new FormData();
+      formData.append('image', file);
+      try {
+        const res = await fetchWithAuth(`/api/images/${page}/${key}`, {
+          method: 'PUT',
+          body: formData,
+        });
+        if (res.ok) {
+          showToast('画像を保存しました');
+          const reader = new FileReader();
+          reader.onload = () => {
+            setUploadedImages((prev) => ({ ...prev, [key]: reader.result as string }));
+          };
+          reader.readAsDataURL(file);
+          return;
+        }
+        if (res.status === 401 || res.status === 403) return;
+        if (res.status >= 500 && attempt < maxRetries) {
+          await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+          continue;
+        }
         const data = await res.json().catch(() => null);
         showToast(data?.error || '画像の保存に失敗しました', 'error');
+        return;
+      } catch {
+        if (attempt < maxRetries) {
+          await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+          continue;
+        }
+        showToast('サーバーに接続できません', 'error');
+        return;
       }
-    } catch {
-      showToast('サーバーに接続できません', 'error');
     }
   };
 
