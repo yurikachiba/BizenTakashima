@@ -15,35 +15,83 @@ export default function ScrollAnimations() {
 
       gsap.registerPlugin(ScrollTrigger);
 
-      // Title animation
-      const gsapEl = document.querySelector('.gsap');
-      if (gsapEl) {
-        gsap.from(gsapEl, {
+      // Hero title animation
+      const heroTitle = document.querySelector('.gsap-hero');
+      if (heroTitle) {
+        gsap.from(heroTitle, {
           opacity: 0,
-          duration: 2,
-          y: 30,
+          y: 40,
+          duration: 1.8,
+          ease: 'power3.out',
         });
       }
 
-      // Parallax background
-      const background = document.querySelector('.background') as HTMLElement | null;
-      if (background) {
-        const handleScroll = () => {
-          const scrollY = window.scrollY;
-          background.style.backgroundPositionY = `${scrollY * 0.5}px`;
-        };
-        window.addEventListener('scroll', handleScroll, { passive: true });
+      // Hero subtitle animation
+      const heroSub = document.querySelector('.gsap-hero-sub');
+      if (heroSub) {
+        gsap.from(heroSub, {
+          opacity: 0,
+          y: 20,
+          duration: 1.2,
+          delay: 0.8,
+          ease: 'power3.out',
+        });
       }
 
-      // Scroll-triggered fade-in
-      const scrollElements = document.querySelectorAll('.scroll, .scroll2, .scroll3, .scroll4, .scroll5');
-      scrollElements.forEach((el) => {
+      // Parallax hero background
+      const heroBg = document.querySelector('.hero__bg') as HTMLElement | null;
+      if (heroBg) {
+        gsap.to(heroBg, {
+          yPercent: 20,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.hero',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+          },
+        });
+      }
+
+      // Reveal animations on scroll
+      const revealElements = document.querySelectorAll('.reveal');
+      revealElements.forEach((el) => {
         ScrollTrigger.create({
           trigger: el,
-          start: 'top 80%',
-          onEnter: () => el.classList.add('active'),
+          start: 'top 85%',
+          onEnter: () => el.classList.add('is-visible'),
         });
       });
+
+      // Section card image parallax
+      const cardImages = document.querySelectorAll('.section-card__image img');
+      cardImages.forEach((img) => {
+        gsap.to(img, {
+          yPercent: -8,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: img.parentElement,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true,
+          },
+        });
+      });
+
+      // Page header image parallax (for sub-pages)
+      const pageHeroImg = document.querySelector('.page-hero__image img');
+      if (pageHeroImg) {
+        gsap.to(pageHeroImg, {
+          yPercent: 15,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.page-hero',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+          },
+        });
+      }
     }
 
     initGSAP();

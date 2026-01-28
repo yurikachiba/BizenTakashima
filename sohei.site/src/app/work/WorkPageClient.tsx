@@ -55,7 +55,6 @@ const WORKS = [
     caption: '灰釉 茶盌',
     imageKey: 'work.image_6',
     captionKey: 'work.caption_6',
-    extraClass: 'width333px',
   },
   {
     src: '/img/bizen_oldColor_hyotokkuri.png',
@@ -70,7 +69,6 @@ const WORKS = [
     caption: '備前 ピッチャー',
     imageKey: 'work.image_8',
     captionKey: 'work.caption_8',
-    isLast: true,
   },
 ];
 
@@ -119,46 +117,49 @@ export default function WorkPageClient() {
 
   return (
     <>
-      <header className="workIntroduction_header">
+      <header className="site-header">
         <HamburgerMenu />
       </header>
-      <div className="workIntroduction_main_div background">
-        <main>
-          <h1 className="otherPage-h1" data-content-key="work.heading_h1">
-            {getContent('work.heading_h1', '作品紹介')}
-          </h1>
-          <div className="pc_site_img">
-            <Image
-              className="otherPageTopImage"
-              src="/img/WorkIntroduction.png"
-              alt="高島が作った備前焼の壺"
-              width={800}
-              height={600}
-              unoptimized
-            />
-          </div>
 
-          <section>
-            <h2 className="otherPage-h2" data-content-key="work.heading_list">
+      {/* Hero */}
+      <div className="page-hero">
+        <div className="page-hero__image">
+          <Image
+            src="/img/WorkIntroduction.png"
+            alt="高島が作った備前焼の壺"
+            width={1200}
+            height={600}
+            priority
+            unoptimized
+          />
+        </div>
+        <div className="page-hero__overlay"></div>
+        <h1 className="page-hero__title" data-content-key="work.heading_h1">
+          {getContent('work.heading_h1', '作品紹介')}
+        </h1>
+      </div>
+
+      <div className="page-content">
+        <main>
+          {/* Gallery */}
+          <section className="page-section">
+            <h2 className="page-section-heading reveal" data-content-key="work.heading_list">
               {getContent('work.heading_list', '作品一覧')}
             </h2>
-            <div className="flex-box-3">
+            <div className="work-gallery">
               {WORKS.map((work, i) => (
-                <div key={i}>
-                  <Image
-                    className={`workListImg${work.extraClass ? ` ${work.extraClass}` : ''}`}
-                    src={work.src}
-                    alt={work.alt}
-                    width={400}
-                    height={400}
-                    data-image-key={work.imageKey}
-                    unoptimized
-                  />
-                  <p
-                    className={`text textA caption${work.isLast ? ' marginB120px' : ''}`}
-                    style={work.isLast ? { marginTop: '20px' } : undefined}
-                    data-content-key={work.captionKey}
-                  >
+                <div key={i} className="work-gallery__item reveal">
+                  <div className="work-gallery__image">
+                    <Image
+                      src={work.src}
+                      alt={work.alt}
+                      width={400}
+                      height={400}
+                      data-image-key={work.imageKey}
+                      unoptimized
+                    />
+                  </div>
+                  <p className="work-gallery__caption" data-content-key={work.captionKey}>
                     {getContent(work.captionKey, work.caption)}
                   </p>
                 </div>
@@ -166,12 +167,13 @@ export default function WorkPageClient() {
             </div>
           </section>
 
-          <section>
-            <h2 className="otherPage-h2" data-content-key="work.heading_features">
+          {/* Features */}
+          <section className="page-section">
+            <h2 className="page-section-heading reveal" data-content-key="work.heading_features">
               {getContent('work.heading_features', '作品の特徴')}
             </h2>
-            <div className="textA">
-              <p className="text-2 text marginB120px" data-content-key="work.features">
+            <div className="reveal">
+              <p className="text-body" data-content-key="work.features">
                 {getContent(
                   'work.features',
                   '最近はお抹茶の茶碗や急須など、茶器を制作することに力を注いでいます。急須を作るには色々な細かい技術が必要になるので、急須作りで培ったバランス感覚を他の作品に反映させています。軽くて使いやすくなるように設計し、日常的に使えるものを制作しています。使えない、使いたくないと思われるものは作らないように努力しています。薄さ、重さを用途に合わせて最適な形に設計しています。どこに厚みを持たせるかを考え抜いて作っています。',
@@ -180,12 +182,13 @@ export default function WorkPageClient() {
             </div>
           </section>
 
-          <section>
-            <h2 className="otherPage-h2" data-content-key="work.heading_new_attempts">
+          {/* New Attempts */}
+          <section className="page-section">
+            <h2 className="page-section-heading reveal" data-content-key="work.heading_new_attempts">
               {getContent('work.heading_new_attempts', '新しい試み')}
             </h2>
-            <div className="textA">
-              <p className="text-2 text marginB120px" data-content-key="work.new_attempts">
+            <div className="reveal">
+              <p className="text-body" data-content-key="work.new_attempts">
                 {getContent(
                   'work.new_attempts',
                   '新しい試みとして、「薪を使用しない備前焼」というものも制作しています。備前焼の魅力は薪窯でこそ表現出来るものだと思いますが、薪を使用せずに、灯油窯や電気窯で焼成しても、重厚な雰囲気の持った備前焼を作ることができる方法を発見し、実験を続けています。',
@@ -194,19 +197,18 @@ export default function WorkPageClient() {
             </div>
           </section>
 
-          <section>
-            <h2 className="otherPage-h2" data-content-key="work.heading_faq">
+          {/* FAQ */}
+          <section className="page-section">
+            <h2 className="page-section-heading reveal" data-content-key="work.heading_faq">
               {getContent('work.heading_faq', '器を使う上でのお願い')}
             </h2>
-            <div className="accordion_div">
-              <div>
-                {FAQ_ITEMS.map((item, i) => (
-                  <details key={i} className="qa-006">
-                    <summary data-content-key={item.qKey}>{getContent(item.qKey, item.q)}</summary>
-                    <p data-content-key={item.aKey}>{getContent(item.aKey, item.a)}</p>
-                  </details>
-                ))}
-              </div>
+            <div className="faq reveal">
+              {FAQ_ITEMS.map((item, i) => (
+                <details key={i} className="faq__item">
+                  <summary data-content-key={item.qKey}>{getContent(item.qKey, item.q)}</summary>
+                  <p data-content-key={item.aKey}>{getContent(item.aKey, item.a)}</p>
+                </details>
+              ))}
             </div>
           </section>
         </main>

@@ -1,456 +1,797 @@
 @use 'variable' as *;
 @use 'mixin' as *;
 
-.background {
-  background: url('/img/background.png');
-  @include pc {
-    background: url('/img/pc_background.png');
-  }
-}
-
-.background2 {
-  background-color: #eae5df;
-}
-
-.top_header {
+// =============================================
+// Navigation
+// =============================================
+.site-header {
   position: fixed;
-  z-index: 50;
+  top: 0;
+  left: 0;
   width: 100%;
+  z-index: 100;
+}
 
-  .top_header_h1 {
+.nav {
+  &__checkbox {
+    display: none;
+  }
+
+  &__button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba($bg-dark, 0.7);
+    backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
-    position: absolute;
-    z-index: 3;
-    padding: 10px;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 200;
+    transition: $transition-fast;
 
-    .top_header_h1_img {
-      height: 25px;
+    @include hover {
+      background: rgba($bg-dark, 0.9);
     }
+  }
+
+  &__icon {
+    position: relative;
+    width: 20px;
+    height: 2px;
+    background: $font-color-light;
+    transition: $transition-fast;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 2px;
+      background: $font-color-light;
+      transition: $transition-fast;
+    }
+
+    &::before {
+      top: -6px;
+    }
+
+    &::after {
+      top: 6px;
+    }
+  }
+
+  &__checkbox:checked ~ &__button &__icon {
+    background: transparent;
+
+    &::before {
+      top: 0;
+      transform: rotate(45deg);
+    }
+
+    &::after {
+      top: 0;
+      transform: rotate(-45deg);
+    }
+  }
+
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba($bg-dark, 0.92);
+    backdrop-filter: blur(20px);
+    z-index: 150;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  &__checkbox:checked ~ &__overlay {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  &__list {
+    text-align: center;
+  }
+
+  &__item {
+    margin-bottom: 32px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    @for $i from 1 through 5 {
+      &:nth-child(#{$i}) {
+        transition-delay: #{$i * 0.08}s;
+      }
+    }
+  }
+
+  &__checkbox:checked ~ &__overlay &__item {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &__link {
+    display: block;
+    color: $font-color-light;
+    transition: $transition-fast;
+
+    @include hover {
+      opacity: 0.7;
+    }
+  }
+
+  &__link-en {
+    display: block;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    margin-bottom: 4px;
+
+    @include pc {
+      font-size: 36px;
+    }
+  }
+
+  &__link-ja {
+    display: block;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: $color-ash;
   }
 }
 
-.hamburger-menu {
-  z-index: 50;
+// =============================================
+// Top Page
+// =============================================
+.top-page {
+  background-color: $bg-cream;
 }
 
-#menu-btn-check {
-  display: none;
-}
-
-.menu-btn {
-  position: fixed;
-  display: flex;
-  height: 40px;
-  width: 40px;
-  justify-content: center;
-  align-items: center;
-  z-index: 90;
-  cursor: pointer;
-  right: 10px;
-  top: 10px;
-  background-color: rgba(234, 229, 223, 0.8);
-  border-radius: 50%;
-}
-
-.menu-btn span,
-.menu-btn span:before,
-.menu-btn span:after {
-  content: '';
-  display: block;
-  height: 2px;
-  width: 20px;
-  border-radius: 3px;
-  background-color: #333;
-  position: absolute;
-  transition: 0.5s;
-}
-
-.menu-btn span:before {
-  bottom: 6px;
-}
-
-.menu-btn span:after {
-  top: 6px;
-}
-
-#menu-btn-check:checked ~ .menu-btn span {
-  background-color: rgba(255, 255, 255, 0);
-}
-
-#menu-btn-check:checked ~ .menu-btn span::before {
-  bottom: 0;
-  transform: rotate(45deg);
-}
-
-#menu-btn-check:checked ~ .menu-btn span::after {
-  top: 0;
-  transform: rotate(-45deg);
-}
-
-.menu-content {
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 100%;
-  z-index: 80;
-  background-color: rgba(234, 229, 223, 0.8);
-  transition: all 0.5s;
-}
-
-.menu-content ul {
-  padding: 70px 10px 0;
-}
-
-.menu-content ul li {
-  border-bottom: solid 1px #333;
-  list-style: none;
-}
-
-.menu-content ul li a {
-  display: block;
-  width: 100%;
-  font-size: 15px;
-  box-sizing: border-box;
-  color: $font-color;
-  text-decoration: none;
-  padding: 9px 15px 10px 0;
+// =============================================
+// Hero
+// =============================================
+.hero {
   position: relative;
-  font-family: 'New Tegomin', serif;
-  letter-spacing: 0.1em;
-}
-
-.menu-content ul li a::before {
-  content: '';
-  width: 7px;
-  height: 7px;
-  border-top: solid 2px $font-color;
-  border-right: solid 2px $font-color;
-  transform: rotate(45deg);
-  position: absolute;
-  right: 12px;
-  top: 16px;
-}
-
-#menu-btn-check:checked ~ .menu-content {
-  left: 0;
-}
-
-.fv {
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
   overflow: hidden;
 
-  .gsap {
+  &__bg {
     position: absolute;
-    z-index: 3;
-    top: 40%;
-    left: 50%;
+    inset: 0;
+    will-change: transform;
+  }
+
+  &__img {
     width: 100%;
-    transform: translate(-50%, -50%);
-  }
+    height: 100%;
+    object-fit: cover;
 
-  .title_sp {
-    width: 60%;
-    display: block;
-    margin: 0 auto;
-
-    @include pc {
-      display: none;
+    &--sp {
+      @include pc {
+        display: none !important;
+      }
+      @include tab {
+        display: none !important;
+      }
     }
 
-    @include tab {
-      display: none;
-    }
-  }
-
-  .title_pc {
-    display: none;
-
-    @include pc {
-      display: block;
-      width: 40%;
-      margin: 0 auto;
+    &--pc {
+      display: none !important;
+      @include pc {
+        display: block !important;
+      }
     }
 
-    @include tab {
-      display: block;
-      width: 50%;
-      margin: 0 auto;
+    &--tab {
+      display: none !important;
+      @include tab {
+        display: block !important;
+      }
     }
   }
 
-  .fv_sp {
-    width: 100%;
-
-    @include pc {
-      display: none;
-    }
-
-    @include tab {
-      display: none;
-    }
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba($bg-dark, 0.15) 0%, rgba($bg-dark, 0.3) 50%, rgba($bg-dark, 0.5) 100%);
   }
 
-  .fv_pc {
-    display: none;
-
-    @include pc {
-      display: block;
-      width: 100%;
-    }
-  }
-
-  .fv_tublet {
-    display: none;
-
-    @include tab {
-      display: block;
-      width: 100%;
-    }
-  }
-}
-
-.top_main_div {
-  font-family: 'New Tegomin', serif;
-}
-
-.top_main_div_omoi {
-  padding: 60px 0;
-
-  @include pc {
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  img {
-    width: 90%;
-  }
-
-  .top_main_div_omoi_h2 {
-    text-align: center;
-    margin-top: 30px;
-    font-size: 20px;
-    color: $font-color;
-    letter-spacing: 0.2em;
-    font-family: 'New Tegomin', serif;
-  }
-}
-
-.top_main_div_pageIntroduction {
-  @include pc {
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  h2 {
-    font-size: 22px;
-    color: $font-color;
-    text-align: center;
-    font-family: 'New Tegomin', serif;
-    letter-spacing: 0.2em;
-  }
-}
-
-.flex-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 80px;
-
-  .flex-item {
-    width: 90%;
-    text-align: center;
-  }
-
-  img {
-    width: 90%;
-  }
-}
-
-.top-page-guidance-div-2 {
-  margin: 0 auto;
-  width: 80%;
-}
-
-.text {
-  font-family: 'Noto Sans JP', sans-serif;
-  line-height: 2;
-  color: $font-color-2;
-  font-size: 14px;
-}
-
-.text-2 {
-  @include pc {
-    text-align: left;
-  }
-  text-align: left;
-}
-
-.text-flex {
-  font-family: 'Noto Sans JP', sans-serif;
-  line-height: 2;
-  color: $font-color-2;
-  font-size: 14px;
-  text-align: left;
-}
-
-.text-5 {
-  font-family: 'Noto Sans JP', sans-serif;
-  line-height: 2;
-  color: $font-color-2;
-  font-size: 14px;
-  text-align: center;
-}
-
-.signature {
-  width: 200px;
-}
-
-.btn {
-  display: inline-block;
-  text-decoration: none;
-  outline: none;
-  font-family: 'Noto Sans JP', sans-serif;
-}
-
-.btn--orange {
-  color: $font-color;
-  border-bottom: 1px solid;
-  font-size: 14px;
-  letter-spacing: 0.2em;
-}
-
-.btnDiv {
-  margin-bottom: 30px;
-  margin-top: 20px;
-}
-
-.btnDiv2 {
-  margin-top: 20px;
-}
-
-.top_main_div_salesStore {
-  width: 100%;
-
-  .top_main_div_salesStore_div {
-    margin: 0 auto;
-    padding: 50px 0;
-  }
-
-  .top_main_div_salesStore_div_div {
-    width: 80%;
-    margin: 0 auto;
+  &__content {
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  &__title {
+    width: 100%;
+    text-align: center;
+  }
+
+  &__title-img {
+    margin: 0 auto;
+    filter: brightness(0) invert(1);
+    opacity: 0.95;
+
+    &--sp {
+      width: 65%;
+      @include pc {
+        display: none !important;
+      }
+      @include tab {
+        display: none !important;
+      }
+    }
+
+    &--pc {
+      display: none !important;
+      @include pc {
+        display: block !important;
+        width: 35%;
+        margin: 0 auto;
+      }
+      @include tab {
+        display: block !important;
+        width: 45%;
+        margin: 0 auto;
+      }
+    }
+  }
+
+  &__subtitle {
+    margin-top: 16px;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.5em;
+    color: rgba($font-color-light, 0.8);
 
     @include pc {
-      flex-direction: row;
-      justify-content: center;
-      gap: 80px;
-      max-width: 900px;
+      font-size: 14px;
+      letter-spacing: 0.6em;
+    }
+  }
+
+  &__scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+
+    span {
+      display: block;
+      width: 1px;
+      height: 60px;
+      background: rgba($font-color-light, 0.4);
+      position: relative;
+      overflow: hidden;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: -100%;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: $font-color-light;
+        animation: scrollDown 2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+      }
     }
   }
 }
 
-.external_h3 {
+@keyframes scrollDown {
+  0% {
+    top: -100%;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+// =============================================
+// Section Heading (shared)
+// =============================================
+.section-heading {
+  font-family: 'Shippori Mincho', serif;
   font-size: 22px;
+  font-weight: 600;
   color: $font-color;
-  font-family: 'New Tegomin', serif;
   letter-spacing: 0.2em;
-  text-align: center;
+  margin-bottom: 24px;
+
+  @include pc {
+    font-size: 26px;
+    margin-bottom: 32px;
+  }
 }
 
-.top_storesAndEvents {
-  margin-bottom: 40px;
+// =============================================
+// Philosophy Section
+// =============================================
+.philosophy {
+  padding: 80px 0;
+  background-color: $bg-cream;
+
+  @include pc {
+    padding: 140px 0;
+  }
+
+  &__inner {
+    max-width: $content-width;
+    margin: 0 auto;
+    padding: 0 24px;
+
+    @include pc {
+      display: flex;
+      align-items: center;
+      gap: 80px;
+      padding: 0 60px;
+    }
+  }
+
+  &__image {
+    overflow: hidden;
+    margin-bottom: 40px;
+
+    @include pc {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  }
+
+  &__text {
+    @include pc {
+      flex: 1;
+    }
+  }
+
+  &__signature {
+    margin-bottom: 24px;
+
+    img {
+      width: 160px;
+
+      @include pc {
+        width: 180px;
+      }
+    }
+  }
 }
 
-.external-li {
-  margin-top: 20px;
-  text-align: center;
+// =============================================
+// Section Cards (Navigation)
+// =============================================
+.sections-nav {
+  padding: 40px 0 80px;
+  background-color: $bg-cream;
 
-  .extenal-link {
-    font-family: 'Noto Sans JP', sans-serif;
-    line-height: 2;
-    color: $font-color-2;
-    font-size: 14px;
-    display: inline-block;
+  @include pc {
+    padding: 40px 0 140px;
+  }
+}
+
+.section-card {
+  margin-bottom: 0;
+
+  @include pc {
+    display: flex;
+    align-items: stretch;
+    min-height: 500px;
+  }
+
+  &__image {
+    overflow: hidden;
     position: relative;
-    transition: 0.3s;
+    aspect-ratio: 4 / 3;
+
+    @include pc {
+      flex: 1;
+      aspect-ratio: auto;
+    }
+
+    img {
+      width: 100%;
+      height: 110%;
+      object-fit: cover;
+      will-change: transform;
+    }
   }
 
-  .extenal-link::after {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    content: '';
-    width: 0;
-    height: 1px;
-    background-color: $font-color;
-    transition: 0.3s;
-    transform: translateX(-50%);
+  &__body {
+    padding: 40px 24px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: $bg-cream;
+
+    @include pc {
+      flex: 1;
+      padding: 60px 80px;
+    }
   }
 
-  .extenal-link:hover::after {
-    width: 100%;
+  &__number {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: $color-ash;
+    line-height: 1;
+    margin-bottom: 16px;
+    letter-spacing: 0.05em;
+
+    @include pc {
+      font-size: 64px;
+      margin-bottom: 24px;
+    }
+  }
+
+  &__title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: $font-color;
+    letter-spacing: 0.15em;
+    margin-bottom: 16px;
+
+    @include pc {
+      font-size: 28px;
+      margin-bottom: 24px;
+    }
+  }
+
+  &__desc {
+    margin-bottom: 24px;
+
+    @include pc {
+      margin-bottom: 32px;
+    }
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    color: $font-color;
+    padding-bottom: 4px;
+    border-bottom: 1px solid $font-color;
+    transition: $transition-fast;
+    align-self: flex-start;
+
+    svg {
+      transition: transform 0.3s ease;
+    }
+
+    @include hover {
+      color: $accent-color;
+      border-color: $accent-color;
+
+      svg {
+        transform: translateX(4px);
+      }
+    }
+  }
+
+  // Reverse layout for alternating cards
+  &--reverse {
+    @include pc {
+      flex-direction: row-reverse;
+    }
+
+    .section-card__body {
+      background-color: $bg-warm;
+    }
   }
 }
 
-.flex-box-2 {
-  display: flex;
-  flex-direction: column;
+// =============================================
+// Info Section (Stores & Exhibitions)
+// =============================================
+.info-section {
+  background-color: $bg-dark;
+  padding: 80px 0;
+
+  @include pc {
+    padding: 120px 0;
+  }
+
+  &__inner {
+    max-width: $content-width;
+    margin: 0 auto;
+    padding: 0 24px;
+
+    @include pc {
+      display: flex;
+      gap: 80px;
+      padding: 0 60px;
+      justify-content: center;
+    }
+  }
 }
 
-.instagram-center {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0;
+.info-block {
+  margin-bottom: 60px;
+
+  @include pc {
+    margin-bottom: 0;
+    flex: 1;
+    max-width: 400px;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: $font-color-light;
+    letter-spacing: 0.2em;
+    margin-bottom: 32px;
+    text-align: center;
+
+    @include pc {
+      font-size: 22px;
+    }
+  }
+
+  &__list {
+    li {
+      text-align: center;
+      margin-bottom: 16px;
+
+      a {
+        font-family: 'Noto Sans JP', sans-serif;
+        font-size: 14px;
+        line-height: 2;
+        color: $color-ash;
+        letter-spacing: 0.05em;
+        position: relative;
+        display: inline-block;
+        transition: $transition-fast;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          width: 0;
+          height: 1px;
+          background: $font-color-light;
+          transition: all 0.3s ease;
+          transform: translateX(-50%);
+        }
+
+        @include hover {
+          color: $font-color-light;
+
+          &::after {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
 }
 
+// =============================================
+// Footer
+// =============================================
 .footer {
-  padding: 80px 0 30px;
+  background-color: $bg-dark;
+  border-top: 1px solid rgba($color-ash, 0.15);
+
+  &__contact {
+    padding: 80px 24px;
+    text-align: center;
+
+    @include pc {
+      padding: 100px 40px;
+    }
+  }
+
+  &__contact-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: $font-color-light;
+    letter-spacing: 0.2em;
+    margin-bottom: 16px;
+
+    @include pc {
+      font-size: 26px;
+    }
+  }
+
+  &__contact-text {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 14px;
+    line-height: 2;
+    color: $color-ash;
+    margin-bottom: 32px;
+  }
+
+  &__instagram {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__bottom {
+    padding: 40px 24px 32px;
+    text-align: center;
+    border-top: 1px solid rgba($color-ash, 0.1);
+  }
+
+  &__back-to-top {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba($color-ash, 0.3);
+    border-radius: 50%;
+    color: $color-ash;
+    margin-bottom: 32px;
+    transition: $transition-fast;
+    cursor: pointer;
+    background: none;
+
+    @include hover {
+      border-color: $font-color-light;
+      color: $font-color-light;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 24px;
+    margin-bottom: 24px;
+
+    a {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 12px;
+      color: $color-ash;
+      letter-spacing: 0.1em;
+      transition: $transition-fast;
+
+      @include hover {
+        color: $font-color-light;
+      }
+    }
+  }
+
+  &__copyright {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    color: $font-color-muted;
+    letter-spacing: 0.05em;
+  }
+}
+
+// =============================================
+// Sub-page shared styles
+// =============================================
+.page-hero {
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  min-height: 300px;
+  overflow: hidden;
+
+  @include pc {
+    height: 60vh;
+    min-height: 400px;
+  }
+
+  &__image {
+    position: absolute;
+    inset: 0;
+
+    img {
+      width: 100%;
+      height: 120%;
+      object-fit: cover;
+      will-change: transform;
+    }
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba($bg-dark, 0.1) 0%, rgba($bg-dark, 0.4) 100%);
+  }
+
+  &__title {
+    position: absolute;
+    bottom: 40px;
+    left: 24px;
+    z-index: 2;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: $font-color-light;
+    letter-spacing: 0.2em;
+
+    @include pc {
+      bottom: 60px;
+      left: 60px;
+      font-size: 36px;
+    }
+  }
+}
+
+.page-content {
+  background-color: $bg-cream;
+  padding: 60px 0 100px;
+
+  @include pc {
+    padding: 100px 0 140px;
+  }
+}
+
+.page-section {
+  max-width: $content-narrow;
+  margin: 0 auto 80px;
+  padding: 0 24px;
+
+  @include pc {
+    margin-bottom: 100px;
+    padding: 0 40px;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.page-section-heading {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: $font-color;
+  letter-spacing: 0.2em;
+  margin-bottom: 32px;
   text-align: center;
 
-  div {
-    margin-bottom: 5px;
+  @include pc {
+    font-size: 24px;
+    margin-bottom: 40px;
   }
-
-  a {
-    font-family: 'Noto Sans JP', sans-serif;
-    color: $font-color-2;
-    font-size: 12px;
-  }
-
-  p {
-    font-family: 'Noto Sans JP', sans-serif;
-    color: $font-color-2;
-    font-size: 12px;
-    margin-top: 10px;
-  }
-}
-
-#back-to-top {
-  display: inline-block;
-  margin-bottom: 20px;
-
-  img {
-    width: 40px;
-    height: 40px;
-  }
-}
-
-.scroll,
-.scroll2,
-.scroll3,
-.scroll4,
-.scroll5 {
-  opacity: 0;
-  transition: opacity 0.8s ease;
-}
-
-.scroll.active,
-.scroll2.active,
-.scroll3.active,
-.scroll4.active,
-.scroll5.active {
-  opacity: 1;
 }

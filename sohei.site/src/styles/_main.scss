@@ -1,91 +1,78 @@
 @use 'variable' as *;
 @use 'mixin' as *;
 
-.textA {
+// === Typography ===
+.font-mincho {
+  font-family: 'Shippori Mincho', 'Zen Old Mincho', serif;
+}
+
+.font-body {
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+// === Layout helpers ===
+.container {
+  width: 100%;
+  max-width: $content-width;
+  margin: 0 auto;
+  padding: 0 24px;
+
+  @include pc {
+    padding: 0 40px;
+  }
+}
+
+.container-narrow {
+  width: 100%;
+  max-width: $content-narrow;
+  margin: 0 auto;
+  padding: 0 24px;
+
+  @include pc {
+    padding: 0 40px;
+  }
+}
+
+// === Text styles ===
+.text-body {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 14px;
+  line-height: 2;
+  color: $font-color-2;
+  letter-spacing: 0.04em;
+
+  @include pc {
+    font-size: 15px;
+    line-height: 2.2;
+  }
+}
+
+.text-center {
   text-align: center;
 }
 
-.marginT10px {
-  margin-top: 10px;
-}
+// === Scroll reveal ===
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.8s cubic-bezier(0.25, 0.1, 0.25, 1),
+    transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
 
-.marginT20px {
-  margin-top: 20px;
-}
-
-.marginT30px {
-  margin-top: 30px;
-}
-
-.marginT40px {
-  margin-top: 40px;
-}
-
-.marginT120px {
-  margin-top: 120px;
-}
-
-.marginB10px {
-  margin-bottom: 10px;
-}
-
-.marginB20px {
-  margin-bottom: 20px;
-}
-
-.marginB30px {
-  margin-bottom: 30px;
-}
-
-.marginB50px {
-  margin-bottom: 50px;
-}
-
-.marginB100px {
-  margin-bottom: 100px;
-}
-
-.marginB120px {
-  margin-bottom: 120px;
-}
-
-.fontBold {
-  font-weight: bold;
-}
-
-.font18px {
-  font-size: 18px;
-}
-
-.blue {
-  color: #0000ff;
-}
-
-.red {
-  color: #ff0000;
-}
-
-.pc_site_img {
-  @include pc {
-    text-align: center;
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.sp_site_img {
-  @include sp {
-    text-align: center;
-  }
+.reveal-delay-1 {
+  transition-delay: 0.15s;
 }
 
-.margin-display {
-  display: block;
-  margin: 0 auto;
+.reveal-delay-2 {
+  transition-delay: 0.3s;
 }
 
-.positionR {
-  position: relative;
-}
-
-.zenOld {
-  font-family: 'Zen Old Mincho', serif;
+.reveal-delay-3 {
+  transition-delay: 0.45s;
 }

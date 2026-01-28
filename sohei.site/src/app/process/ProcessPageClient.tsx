@@ -98,56 +98,60 @@ export default function ProcessPageClient() {
 
   return (
     <>
-      <header className="workIntroduction_header">
+      <header className="site-header">
         <HamburgerMenu />
       </header>
-      <div className="workIntroduction_main_div background">
+
+      {/* Hero */}
+      <div className="page-hero">
+        <div className="page-hero__image">
+          <Image src="/img/kilnFiring.png" alt="窯焚きの写真" width={1200} height={600} priority unoptimized />
+        </div>
+        <div className="page-hero__overlay"></div>
+        <h1 className="page-hero__title" data-content-key="production.heading_h1">
+          {getContent('production.heading_h1', '制作の様子')}
+        </h1>
+      </div>
+
+      <div className="page-content">
         <main>
-          <h1 className="otherPage-h1" data-content-key="production.heading_h1">
-            {getContent('production.heading_h1', '制作の様子')}
-          </h1>
-          <section>
-            <h2 className="marginB30px" data-content-key="production.heading_h2">
-              {getContent('production.heading_h2', '備前焼制作においての知識')}
-            </h2>
-            <p className="textA zenOld font18px marginB20px" data-content-key="production.byline">
+          <section className="page-section">
+            <p className="process-byline reveal" data-content-key="production.byline">
               {getContent('production.byline', '解説：高島 聡平')}
             </p>
 
-            {STEPS.map((step, i) => {
-              const textKey = stepTextKeys[i];
-              const isLast = i === STEPS.length - 1;
-              return (
-                <div key={i}>
-                  <Image
-                    className="workListImg"
-                    src={step.img}
-                    alt={step.alt}
-                    width={800}
-                    height={600}
-                    data-image-key={step.key}
-                    unoptimized
-                  />
-                  {step.youtube && (
-                    <iframe
-                      className="iframe_productionProcess"
-                      src={step.youtube}
-                      title="YouTube video player"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                    ></iframe>
-                  )}
-                  <div className="top-page-guidance-div-2">
-                    <p
-                      className={`text-2 text ${isLast ? 'marginB120px marginT20px' : 'sp_marginB50px_productionprocess pc_marginB80px_productionprocess'}`}
-                      data-content-key={textKey}
-                    >
+            <div className="process-timeline">
+              {STEPS.map((step, i) => {
+                const textKey = stepTextKeys[i];
+                return (
+                  <div key={i} className="process-step reveal">
+                    <span className="process-step__number">{String(i + 1).padStart(2, '0')}</span>
+                    <div className="process-step__image">
+                      <Image
+                        src={step.img}
+                        alt={step.alt}
+                        width={800}
+                        height={600}
+                        data-image-key={step.key}
+                        unoptimized
+                      />
+                    </div>
+                    {(step as { youtube?: string }).youtube && (
+                      <iframe
+                        className="process-step__video"
+                        src={(step as { youtube: string }).youtube}
+                        title="YouTube video player"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                      ></iframe>
+                    )}
+                    <p className="text-body" data-content-key={textKey}>
                       {getContent(textKey, STEP_TEXTS[textKey] || '')}
                     </p>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </section>
         </main>
         <Footer />
