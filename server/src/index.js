@@ -2,14 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
-const { PrismaClient } = require('@prisma/client');
 
 const authRoutes = require('./routes/auth');
 const contentRoutes = require('./routes/content');
 const imageRoutes = require('./routes/images');
 const analyticsRoutes = require('./routes/analytics');
-
-const prisma = new PrismaClient();
+const prisma = require('./lib/prisma');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -65,6 +63,24 @@ app.use('/api/analytics', analyticsRoutes);
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  // Handle JSON parse errors
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    console.error('JSON parse error:', err.message);
+    return res.status(400).json({ error: '不正なJSONフォーマットです' });
+  }
+
+  // Handle CORS errors
+  if (err.message === 'Not allowed by CORS') {
+    return res.status(403).json({ error: 'CORSエラー: このオリジンからのアクセスは許可されていません' });
+  }
+
+  // Handle other errors
+  console.error('Server error:', err);
+  res.status(500).json({ error: 'サーバーエラーが発生しました' });
 });
 
 // Graceful shutdown

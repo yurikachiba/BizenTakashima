@@ -1,6 +1,12 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'change-this-secret';
+function getJwtSecret() {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET環境変数が設定されていません');
+  }
+  return secret;
+}
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
@@ -11,12 +17,16 @@ function authenticateToken(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, getJwtSecret());
     req.adminId = decoded.adminId;
     next();
   } catch (err) {
+    if (err.message === 'JWT_SECRET環境変数が設定されていません') {
+      console.error('JWT_SECRET is not configured');
+      return res.status(500).json({ error: 'サーバー設定エラー' });
+    }
     return res.status(403).json({ error: 'トークンが無効です' });
   }
 }
 
-module.exports = { authenticateToken, JWT_SECRET };
+module.exports = { authenticateToken, getJwtSecret };

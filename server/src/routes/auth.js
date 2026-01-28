@@ -1,11 +1,10 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { PrismaClient } = require('@prisma/client');
-const { authenticateToken, JWT_SECRET } = require('../middleware/auth');
+const { authenticateToken, getJwtSecret } = require('../middleware/auth');
+const prisma = require('../lib/prisma');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
@@ -25,7 +24,7 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'パスワードが正しくありません' });
     }
 
-    const token = jwt.sign({ adminId: admin.id }, JWT_SECRET, { expiresIn: '30m' });
+    const token = jwt.sign({ adminId: admin.id }, getJwtSecret(), { expiresIn: '30m' });
     res.json({ token });
   } catch (err) {
     console.error('Login error:', err);
