@@ -44,9 +44,15 @@ export default function ArtistPageClient() {
           </section>
 
           <section>
-            <div className="blockquote" style={{ padding: '20px', margin: '0 auto 50px', width: '80%', borderRadius: '8px' }}>
+            <div
+              className="blockquote"
+              style={{ padding: '20px', margin: '0 auto 50px', width: '80%', borderRadius: '8px' }}
+            >
               <p className="text-2 text" data-content-key="artist.quote" style={{ fontStyle: 'italic' }}>
-                {getContent('artist.quote', '日本陶磁協会誌「陶説」にて「備前の正統を歩みながら、旧来の概念に囚われない自由で新鮮な感覚は、これからの備前の新しい世界を切り拓いていく大きな力となるでしょう。」と評価される。')}
+                {getContent(
+                  'artist.quote',
+                  '日本陶磁協会誌「陶説」にて「備前の正統を歩みながら、旧来の概念に囚われない自由で新鮮な感覚は、これからの備前の新しい世界を切り拓いていく大きな力となるでしょう。」と評価される。',
+                )}
               </p>
             </div>
           </section>

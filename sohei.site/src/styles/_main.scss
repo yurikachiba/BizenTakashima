@@ -1,91 +1,91 @@
-@use "variable" as *;
-@use "mixin" as *;
+@use 'variable' as *;
+@use 'mixin' as *;
 
 .textA {
-    text-align: center;
+  text-align: center;
 }
 
 .marginT10px {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 .marginT20px {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 .marginT30px {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
 .marginT40px {
-    margin-top: 40px;
+  margin-top: 40px;
 }
 
 .marginT120px {
-    margin-top: 120px;
+  margin-top: 120px;
 }
 
 .marginB10px {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .marginB20px {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .marginB30px {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 .marginB50px {
-    margin-bottom: 50px;
+  margin-bottom: 50px;
 }
 
 .marginB100px {
-    margin-bottom: 100px;
+  margin-bottom: 100px;
 }
 
 .marginB120px {
-    margin-bottom: 120px;
+  margin-bottom: 120px;
 }
 
 .fontBold {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .font18px {
-    font-size: 18px;
+  font-size: 18px;
 }
 
 .blue {
-    color: #0000FF;
+  color: #0000ff;
 }
 
 .red {
-    color: #FF0000;
+  color: #ff0000;
 }
 
 .pc_site_img {
-    @include pc {
-        text-align: center;
-    }
+  @include pc {
+    text-align: center;
+  }
 }
 
 .sp_site_img {
-    @include sp {
-        text-align: center;
-    }
+  @include sp {
+    text-align: center;
+  }
 }
 
 .margin-display {
-    display: block;
-    margin: 0 auto;
+  display: block;
+  margin: 0 auto;
 }
 
 .positionR {
-    position: relative;
+  position: relative;
 }
 
 .zenOld {
-    font-family: "Zen Old Mincho", serif;
+  font-family: 'Zen Old Mincho', serif;
 }

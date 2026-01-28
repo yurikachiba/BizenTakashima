@@ -75,12 +75,20 @@ export default function InterviewPageClient() {
             <div className="interview-div">
               {QA_ITEMS.map((item, i) => (
                 <div key={i}>
-                  <p className={`text-4-interview ${i === 0 ? 'marginT30px' : ''} marginB20px`} data-content-key={item.qKey}>
-                    <span className="fontBold blue">Q.</span><br />
+                  <p
+                    className={`text-4-interview ${i === 0 ? 'marginT30px' : ''} marginB20px`}
+                    data-content-key={item.qKey}
+                  >
+                    <span className="fontBold blue">Q.</span>
+                    <br />
                     {getContent(item.qKey, item.q)}
                   </p>
-                  <p className={`text-4-interview ${item.isLast ? 'marginB120px' : 'marginB50px'}`} data-content-key={item.aKey}>
-                    <span className="fontBold red">高島：</span><br />
+                  <p
+                    className={`text-4-interview ${item.isLast ? 'marginB120px' : 'marginB50px'}`}
+                    data-content-key={item.aKey}
+                  >
+                    <span className="fontBold red">高島：</span>
+                    <br />
                     {getContent(item.aKey, item.a)}
                   </p>
                 </div>

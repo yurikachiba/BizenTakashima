@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
             where: { page_key: { page, key } },
             update: { value: String(value) },
             create: { page, key, value: String(value) },
-          })
+          }),
         );
       }
     }

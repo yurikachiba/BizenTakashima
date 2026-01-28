@@ -1,26 +1,26 @@
-@use "variable" as *;
-@use "mixin" as *;
+@use 'variable' as *;
+@use 'mixin' as *;
 
 .iframe_productionProcess {
-    width: 90%;
-    display: block;
-    margin: 20px auto;
-    aspect-ratio: 16 / 9;
-    border: none;
+  width: 90%;
+  display: block;
+  margin: 20px auto;
+  aspect-ratio: 16 / 9;
+  border: none;
 
-    @include pc {
-        width: 90%;
-    }
+  @include pc {
+    width: 90%;
+  }
 }
 
 .sp_marginB50px_productionprocess {
-    @include sp {
-        margin-bottom: 50px;
-    }
+  @include sp {
+    margin-bottom: 50px;
+  }
 }
 
 .pc_marginB80px_productionprocess {
-    @include pc {
-        margin-bottom: 80px;
-    }
+  @include pc {
+    margin-bottom: 80px;
+  }
 }

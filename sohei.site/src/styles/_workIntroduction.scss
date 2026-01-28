@@ -1,143 +1,143 @@
-@use "variable" as *;
-@use "mixin" as *;
+@use 'variable' as *;
+@use 'mixin' as *;
 
 .workIntroduction_header {
-    position: fixed;
-    z-index: 50;
-    width: 100%;
+  position: fixed;
+  z-index: 50;
+  width: 100%;
 }
 
 .workIntroduction_main_div {
-    font-family: "New Tegomin", serif;
+  font-family: 'New Tegomin', serif;
 
-    @include pc {
-        max-width: 900px;
-        margin: 0 auto;
-    }
+  @include pc {
+    max-width: 900px;
+    margin: 0 auto;
+  }
 }
 
 .otherPage-h1 {
-    padding: 60px 0 30px;
-    text-align: center;
-    font-size: 24px;
-    color: $font-color;
-    letter-spacing: 0.2em;
-    font-family: "New Tegomin", serif;
+  padding: 60px 0 30px;
+  text-align: center;
+  font-size: 24px;
+  color: $font-color;
+  letter-spacing: 0.2em;
+  font-family: 'New Tegomin', serif;
 }
 
 .otherPageTopImage {
-    width: 90%;
-    display: block;
-    margin: 0 auto;
+  width: 90%;
+  display: block;
+  margin: 0 auto;
 }
 
 .otherPage-h2 {
-    text-align: center;
-    margin-top: 70px;
-    margin-bottom: 30px;
-    font-size: 20px;
-    color: $font-color;
-    letter-spacing: 0.2em;
-    font-family: "New Tegomin", serif;
+  text-align: center;
+  margin-top: 70px;
+  margin-bottom: 30px;
+  font-size: 20px;
+  color: $font-color;
+  letter-spacing: 0.2em;
+  font-family: 'New Tegomin', serif;
 }
 
 .flex-box-3 {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    padding: 0 5%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 5%;
 
-    div {
-        width: 45%;
+  div {
+    width: 45%;
 
-        @include pc {
-            width: 30%;
-        }
+    @include pc {
+      width: 30%;
     }
+  }
 }
 
 .workListImg {
-    width: 100%;
-    display: block;
-    margin: 0 auto;
+  width: 100%;
+  display: block;
+  margin: 0 auto;
 
-    @include pc {
-        width: 90%;
-    }
+  @include pc {
+    width: 90%;
+  }
 }
 
 .caption {
-    margin-top: 10px;
-    margin-bottom: 20px;
-    font-size: 13px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 13px;
 }
 
 .width333px {
-    @include pc {
-        width: 333px;
-    }
+  @include pc {
+    width: 333px;
+  }
 }
 
 .heading {
-    font-size: 18px;
-    color: $font-color;
-    margin-top: 50px;
-    margin-bottom: 10px;
-    text-align: center;
-    font-family: "New Tegomin", serif;
-    letter-spacing: 0.2em;
+  font-size: 18px;
+  color: $font-color;
+  margin-top: 50px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-family: 'New Tegomin', serif;
+  letter-spacing: 0.2em;
 }
 
 .please {
-    width: 80%;
-    margin: 0 auto;
+  width: 80%;
+  margin: 0 auto;
 }
 
 .accordion_div {
-    width: 80%;
-    margin: 30px auto 120px;
+  width: 80%;
+  margin: 30px auto 120px;
 }
 
 details.qa-006 {
-    border: none;
-    border-bottom: 1px solid $font-color;
-    padding: 0;
+  border: none;
+  border-bottom: 1px solid $font-color;
+  padding: 0;
 
-    summary {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 0;
-        cursor: pointer;
-        font-family: "Noto Sans JP", sans-serif;
-        font-size: 14px;
-        color: $font-color;
-        line-height: 1.8;
-        list-style: none;
+  summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    cursor: pointer;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 14px;
+    color: $font-color;
+    line-height: 1.8;
+    list-style: none;
 
-        &::-webkit-details-marker {
-            display: none;
-        }
-
-        &::after {
-            content: "+";
-            font-size: 20px;
-            margin-left: 10px;
-            transition: transform 0.3s;
-            color: $font-color;
-        }
+    &::-webkit-details-marker {
+      display: none;
     }
 
-    &[open] summary::after {
-        content: "−";
+    &::after {
+      content: '+';
+      font-size: 20px;
+      margin-left: 10px;
+      transition: transform 0.3s;
+      color: $font-color;
     }
+  }
 
-    p {
-        padding: 0 0 15px;
-        font-family: "Noto Sans JP", sans-serif;
-        font-size: 13px;
-        line-height: 2;
-        color: $font-color-2;
-    }
+  &[open] summary::after {
+    content: '−';
+  }
+
+  p {
+    padding: 0 0 15px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    line-height: 2;
+    color: $font-color-2;
+  }
 }

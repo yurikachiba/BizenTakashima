@@ -34,7 +34,7 @@ export function useContentLoader(pageName?: string) {
     (key: string, fallback: string): string => {
       return content[key] || fallback;
     },
-    [content]
+    [content],
   );
 
   return { content, loaded, getContent };

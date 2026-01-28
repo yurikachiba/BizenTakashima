@@ -38,15 +38,23 @@ export default function Footer() {
           </a>
         </div>
         <div>
-          <div><Link href="/">トップページ</Link></div>
-          <div><Link href="/work">作品紹介</Link></div>
-          <div><Link href="/process">制作の様子</Link></div>
-          <div><Link href="/interview">インタビュー</Link></div>
-          <div><Link href="/artist">作家紹介</Link></div>
+          <div>
+            <Link href="/">トップページ</Link>
+          </div>
+          <div>
+            <Link href="/work">作品紹介</Link>
+          </div>
+          <div>
+            <Link href="/process">制作の様子</Link>
+          </div>
+          <div>
+            <Link href="/interview">インタビュー</Link>
+          </div>
+          <div>
+            <Link href="/artist">作家紹介</Link>
+          </div>
         </div>
-        <p data-content-key="index.copyright">
-          {getContent('index.copyright', '\u00A9TakashimaSohei. 2023.')}
-        </p>
+        <p data-content-key="index.copyright">{getContent('index.copyright', '\u00A9TakashimaSohei. 2023.')}</p>
       </div>
     </footer>
   );

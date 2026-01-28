@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ page: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ page: string }> }) {
   try {
     const { page } = await params;
     const contents = await prisma.content.findMany({
@@ -24,10 +21,7 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ page: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ page: string }> }) {
   try {
     const authResult = requireAuth(request);
     if (authResult instanceof NextResponse) return authResult;
@@ -40,7 +34,7 @@ export async function PUT(
         where: { page_key: { page, key } },
         update: { value: String(value) },
         create: { page, key, value: String(value) },
-      })
+      }),
     );
 
     await prisma.$transaction(operations);

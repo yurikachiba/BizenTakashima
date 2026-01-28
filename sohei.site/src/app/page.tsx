@@ -99,7 +99,7 @@ export default function HomePage() {
               <p className="text-2 text" data-content-key="index.philosophy">
                 {getContent(
                   'index.philosophy',
-                  '備前焼の美しさは、原始的であることや、荒々しい表面、素朴な色合いなどが挙げられます。しかし、これらの美的要素に過度に執着すると、使い勝手が損なわれる場合があります。私は、その鑑賞と実用性のバランスを自分の感性を元に整え、焼き物の魅力を最大限に引き出し、使いやすいと思っていただける作品をお客様に提供するために日々努力しています。'
+                  '備前焼の美しさは、原始的であることや、荒々しい表面、素朴な色合いなどが挙げられます。しかし、これらの美的要素に過度に執着すると、使い勝手が損なわれる場合があります。私は、その鑑賞と実用性のバランスを自分の感性を元に整え、焼き物の魅力を最大限に引き出し、使いやすいと思っていただける作品をお客様に提供するために日々努力しています。',
                 )}
               </p>
             </div>
@@ -119,16 +119,19 @@ export default function HomePage() {
                 />
               </div>
               <div className="flex-item">
-                <h2 data-content-key="index.heading_work">
-                  {getContent('index.heading_work', '作品紹介')}
-                </h2>
+                <h2 data-content-key="index.heading_work">{getContent('index.heading_work', '作品紹介')}</h2>
                 <div className="top-page-guidance-div-2">
                   <p className="text-flex" data-content-key="index.work_intro">
-                    {getContent('index.work_intro', '高島の作品写真や、作品の特徴や新しい試み、器を使う上での注意点をご紹介。')}
+                    {getContent(
+                      'index.work_intro',
+                      '高島の作品写真や、作品の特徴や新しい試み、器を使う上での注意点をご紹介。',
+                    )}
                   </p>
                 </div>
                 <div className="textA btnDiv">
-                  <Link href="/work" className="btn btn--orange">詳細を見る</Link>
+                  <Link href="/work" className="btn btn--orange">
+                    詳細を見る
+                  </Link>
                 </div>
               </div>
             </div>
@@ -151,11 +154,16 @@ export default function HomePage() {
                 </h2>
                 <div className="top-page-guidance-div-2">
                   <p className="text-flex" data-content-key="index.production_intro">
-                    {getContent('index.production_intro', '高島の作品の作り方の動画や、備前焼ができるまでの流れを画像と共にご紹介。')}
+                    {getContent(
+                      'index.production_intro',
+                      '高島の作品の作り方の動画や、備前焼ができるまでの流れを画像と共にご紹介。',
+                    )}
                   </p>
                 </div>
                 <div className="textA btnDiv">
-                  <Link href="/process" className="btn btn--orange">詳細を見る</Link>
+                  <Link href="/process" className="btn btn--orange">
+                    詳細を見る
+                  </Link>
                 </div>
               </div>
             </div>
@@ -178,11 +186,16 @@ export default function HomePage() {
                 </h2>
                 <div className="top-page-guidance-div-2">
                   <p className="text-flex" data-content-key="index.interview_intro">
-                    {getContent('index.interview_intro', '高島の作品や岡山に対する想いや、師匠との関係などを少しご紹介。')}
+                    {getContent(
+                      'index.interview_intro',
+                      '高島の作品や岡山に対する想いや、師匠との関係などを少しご紹介。',
+                    )}
                   </p>
                 </div>
                 <div className="textA btnDiv">
-                  <Link href="/interview" className="btn btn--orange">詳細を見る</Link>
+                  <Link href="/interview" className="btn btn--orange">
+                    詳細を見る
+                  </Link>
                 </div>
               </div>
             </div>
@@ -200,16 +213,19 @@ export default function HomePage() {
                 />
               </div>
               <div className="flex-item">
-                <h2 data-content-key="index.heading_artist">
-                  {getContent('index.heading_artist', '作家紹介')}
-                </h2>
+                <h2 data-content-key="index.heading_artist">{getContent('index.heading_artist', '作家紹介')}</h2>
                 <div className="top-page-guidance-div-2">
                   <p className="text-flex" data-content-key="index.artist_intro">
-                    {getContent('index.artist_intro', '人間国宝の伊勢崎 淳先生に師事し、その後独立した備前焼作家 高島 聡平。そんな彼の実績をご紹介。')}
+                    {getContent(
+                      'index.artist_intro',
+                      '人間国宝の伊勢崎 淳先生に師事し、その後独立した備前焼作家 高島 聡平。そんな彼の実績をご紹介。',
+                    )}
                   </p>
                 </div>
                 <div className="textA btnDiv2">
-                  <Link href="/artist" className="btn btn--orange">詳細を見る</Link>
+                  <Link href="/artist" className="btn btn--orange">
+                    詳細を見る
+                  </Link>
                 </div>
               </div>
             </div>
@@ -224,7 +240,11 @@ export default function HomePage() {
                   </h2>
                   <ul className="top_storesAndEvents">
                     <li className="external-li" style={{ marginTop: '40px' }}>
-                      <a target="_blank" className="extenal-link" href="https://rtrp.jp/spots/bfbacd09-9164-44f1-b30f-be4c8352fc1e/">
+                      <a
+                        target="_blank"
+                        className="extenal-link"
+                        href="https://rtrp.jp/spots/bfbacd09-9164-44f1-b30f-be4c8352fc1e/"
+                      >
                         {getContent('index.store_0_name', '器まえさか')}
                       </a>
                     </li>
@@ -246,17 +266,29 @@ export default function HomePage() {
                   </h2>
                   <ul className="top_storesAndEvents">
                     <li className="external-li" style={{ marginTop: '40px' }}>
-                      <a target="_blank" className="extenal-link" href="https://www.kakiden.com/gallery/archives/50770/">
+                      <a
+                        target="_blank"
+                        className="extenal-link"
+                        href="https://www.kakiden.com/gallery/archives/50770/"
+                      >
                         {getContent('index.exhibition_0_name', '柿傳ギャラリー\n(高島聡平 展)')}
                       </a>
                     </li>
                     <li className="external-li">
-                      <a target="_blank" className="extenal-link" href="https://www.kakiden.com/gallery/archives/64427/">
+                      <a
+                        target="_blank"
+                        className="extenal-link"
+                        href="https://www.kakiden.com/gallery/archives/64427/"
+                      >
                         {getContent('index.exhibition_1_name', '柿傳ギャラリー\n(BIZENの八人展 Ⅱ)')}
                       </a>
                     </li>
                     <li className="external-li">
-                      <a target="_blank" className="extenal-link" href="https://ryoisseki.com/%E3%82%B9%E3%82%B1%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB/%E5%82%99%E5%89%8D%E8%90%8C%E8%8A%BD%E3%80%8C%E9%AB%98%E5%B3%B6%E8%81%A1%E5%B9%B3%E3%80%8D%E5%B1%95/">
+                      <a
+                        target="_blank"
+                        className="extenal-link"
+                        href="https://ryoisseki.com/%E3%82%B9%E3%82%B1%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB/%E5%82%99%E5%89%8D%E8%90%8C%E8%8A%BD%E3%80%8C%E9%AB%98%E5%B3%B6%E8%81%A1%E5%B9%B3%E3%80%8D%E5%B1%95/"
+                      >
                         {getContent('index.exhibition_2_name', 'うつわや涼一石')}
                       </a>
                     </li>
