@@ -67,6 +67,9 @@ export function hasDangerousContent(input: string): boolean {
   }
 
   for (const pattern of DANGEROUS_PATTERNS) {
+    // Reset lastIndex to 0 before each test to avoid issues with global flag
+    // Without this, the regex may start searching from a previous match position
+    pattern.lastIndex = 0;
     if (pattern.test(input)) {
       return true;
     }
