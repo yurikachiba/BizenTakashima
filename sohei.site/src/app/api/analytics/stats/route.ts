@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, ensureConnection } from '@/lib/prisma';
+import { prisma, withTimeout } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
+
+const DB_TIMEOUT_MS = 8000; // 8 second timeout for analytics queries
 
 export async function GET(request: NextRequest) {
   try {
     const result = requireAuth(request);
     if (result instanceof NextResponse) return result;
-
-    await ensureConnection();
 
     const days = parseInt(request.nextUrl.searchParams.get('days') || '7');
     const since = new Date();
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     const yesterdayStart = new Date(todayStart);
     yesterdayStart.setDate(yesterdayStart.getDate() - 1);
 
-    // Execute all independent queries in parallel for better performance
+    // Execute all independent queries in parallel with timeout for serverless
     const [
       totalVisits,
       prevTotalVisits,
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
       languageLogs,
       contentCount,
       lastUpdated,
-    ] = await Promise.all([
+    ] = await withTimeout(Promise.all([
       prisma.visitorLog.count({
         where: { createdAt: { gte: since } },
       }),
@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
         orderBy: { updatedAt: 'desc' },
         select: { updatedAt: true },
       }),
-    ]);
+    ]), DB_TIMEOUT_MS);
 
     const uniqueVisitors = uniqueIPs.length;
     const prevUniqueVisitors = prevUniqueIPs.length;
@@ -204,6 +204,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (err) {
     console.error('Stats error:', err);
-    return NextResponse.json({ error: 'サーバーエラー' }, { status: 500 });
+    const message = err instanceof Error && err.message === 'Database timeout'
+      ? 'データベースの応答がありません。しばらく待ってから再試行してください。'
+      : 'サーバーエラー';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

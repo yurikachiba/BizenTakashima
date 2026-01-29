@@ -13,6 +13,14 @@ export const prisma =
 // Cache the Prisma client globally to prevent connection pool exhaustion in serverless environments
 globalForPrisma.prisma = prisma;
 
+// Helper to add timeout to any promise (for fast failure in serverless)
+export function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error('Database timeout')), ms)),
+  ]);
+}
+
 // Helper function to check if error is a connection error
 function isConnectionError(err: unknown): boolean {
   const error = err as { code?: string; message?: string };

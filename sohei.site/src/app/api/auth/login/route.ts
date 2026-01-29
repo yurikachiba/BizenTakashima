@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { signToken } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { prisma, withTimeout } from '@/lib/prisma';
 
 const DEFAULT_ADMIN_PASSWORD = process.env.DEFAULT_ADMIN_PASSWORD;
 const FALLBACK_ADMIN_ID = 'env-admin';
@@ -15,14 +15,6 @@ type DbLoginResult =
   | { ok: true; token: string }
   | { ok: false; reason: 'wrong_password' }
   | { ok: false; reason: 'db_error' };
-
-// Helper to add timeout to any promise
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  return Promise.race([
-    promise,
-    new Promise<T>((_, reject) => setTimeout(() => reject(new Error('Database timeout')), ms)),
-  ]);
-}
 
 async function tryDatabaseLogin(password: string): Promise<DbLoginResult> {
   try {

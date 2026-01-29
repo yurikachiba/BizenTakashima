@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, ensureConnection } from '@/lib/prisma';
+import { prisma, withTimeout } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
+
+const DB_TIMEOUT_MS = 5000;
 
 export async function GET() {
   try {
-    await ensureConnection();
-    const contents = await prisma.content.findMany({
+    const contents = await withTimeout(prisma.content.findMany({
       orderBy: [{ page: 'asc' }, { key: 'asc' }],
-    });
+    }), DB_TIMEOUT_MS);
 
     const grouped: Record<string, Record<string, string>> = {};
     for (const item of contents) {
@@ -40,8 +41,7 @@ export async function DELETE(request: NextRequest) {
     const result = requireAuth(request);
     if (result instanceof NextResponse) return result;
 
-    await ensureConnection();
-    const deleteResult = await prisma.content.deleteMany();
+    const deleteResult = await withTimeout(prisma.content.deleteMany(), DB_TIMEOUT_MS);
     return NextResponse.json({ message: '全コンテンツを削除しました', count: deleteResult.count });
   } catch (err) {
     console.error('Delete content error:', err);
