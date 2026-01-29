@@ -37,8 +37,8 @@ function isDatabaseColdStart(err: unknown): boolean {
 
 // Helper function to ensure database connection with retry
 // Uses a simple query to verify the connection is actually working (more reliable in serverless)
-// Render.com free tier databases sleep after 15 minutes and can take up to 30 seconds to wake up
-export async function ensureConnection(retries = 6): Promise<void> {
+// Optimized for serverless environments with shorter timeouts (Vercel: 10-60s)
+export async function ensureConnection(retries = 3): Promise<void> {
   let lastError: unknown;
 
   for (let attempt = 1; attempt <= retries; attempt++) {
@@ -76,11 +76,9 @@ export async function ensureConnection(retries = 6): Promise<void> {
         // Ignore disconnect errors
       }
 
-      // Exponential backoff with longer delays for database wake-up
-      // Cold start: 3s, 6s, 12s, 24s, 48s = total ~93 seconds max wait
-      // Regular: 2s, 4s, 8s, 16s, 32s = total ~62 seconds max wait
-      // This accommodates Render free tier database spin-up time (~30-50s)
-      const baseDelay = isColdStart ? 3000 : 2000;
+      // Shorter exponential backoff for serverless environments
+      // 2s, 4s, 8s = total ~14 seconds max wait (fits within serverless timeouts)
+      const baseDelay = 2000;
       await new Promise((resolve) => setTimeout(resolve, baseDelay * Math.pow(2, attempt - 1)));
     }
   }
