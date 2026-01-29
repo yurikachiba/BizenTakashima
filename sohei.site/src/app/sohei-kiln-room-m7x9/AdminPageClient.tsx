@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import '@/styles/admin/admin.css';
 
-// API_BASE for database operations (via Render.com Express server)
-const API_BASE = 'https://bizentakashima.onrender.com';
+// API_BASE for database operations (Next.js API routes on same domain)
+const API_BASE = '';
 // Images are served from Vercel's Next.js API routes (not available on Render.com)
 const IMAGES_API_BASE = '';
 

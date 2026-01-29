@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-// Use Render.com server for content to ensure consistency with admin panel
-const API_BASE = 'https://bizentakashima.onrender.com';
+// Use relative URLs for API routes (Next.js API routes on same domain)
+const API_BASE = '';
 
 interface ContentData {
   [key: string]: string;
