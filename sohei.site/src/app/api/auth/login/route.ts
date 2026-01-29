@@ -17,7 +17,6 @@ type DbLoginResult =
 
 async function tryDatabaseLogin(password: string): Promise<DbLoginResult> {
   try {
-
     await ensureConnection();
     let admin = await prisma.admin.findFirst();
     if (!admin) {
