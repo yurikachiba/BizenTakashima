@@ -125,13 +125,7 @@ export default function WorkPageClient() {
       {/* Hero */}
       <div className="page-hero">
         <div className="page-hero__image">
-          <Image
-            src="/img/WorkIntroduction.png"
-            alt="高島が作った備前焼の壺"
-            width={1200}
-            height={600}
-            priority
-          />
+          <Image src="/img/WorkIntroduction.png" alt="高島が作った備前焼の壺" width={1200} height={600} priority />
         </div>
         <div className="page-hero__overlay"></div>
         <h1 className="page-hero__title" data-content-key="work.heading_h1">
@@ -150,13 +144,7 @@ export default function WorkPageClient() {
               {WORKS.map((work, i) => (
                 <div key={i} className="work-gallery__item reveal">
                   <div className="work-gallery__image">
-                    <Image
-                      src={work.src}
-                      alt={work.alt}
-                      width={400}
-                      height={400}
-                      data-image-key={work.imageKey}
-                    />
+                    <Image src={work.src} alt={work.alt} width={400} height={400} data-image-key={work.imageKey} />
                   </div>
                   <p className="work-gallery__caption" data-content-key={work.captionKey}>
                     {getContent(work.captionKey, work.caption)}

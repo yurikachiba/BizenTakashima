@@ -133,13 +133,7 @@ export default function ProcessPageClient() {
                   <div key={i} className="process-step reveal">
                     <span className="process-step__number">{String(i + 1).padStart(2, '0')}</span>
                     <div className="process-step__image">
-                      <Image
-                        src={step.img}
-                        alt={step.alt}
-                        width={800}
-                        height={600}
-                        data-image-key={step.key}
-                      />
+                      <Image src={step.img} alt={step.alt} width={800} height={600} data-image-key={step.key} />
                     </div>
                     {(step as { youtubeKey?: string }).youtubeKey && (
                       <iframe

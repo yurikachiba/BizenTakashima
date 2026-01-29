@@ -56,7 +56,7 @@ export default function HomePageClient() {
                 width={600}
                 height={200}
                 priority
-                />
+              />
               <Image
                 className="hero__title-img hero__title-img--pc"
                 src="/img/pc_fv_title.png"
@@ -64,7 +64,7 @@ export default function HomePageClient() {
                 width={800}
                 height={200}
                 priority
-                />
+              />
             </h1>
           </div>
           <div className="hero__scroll-indicator">
@@ -82,7 +82,7 @@ export default function HomePageClient() {
                 width={800}
                 height={600}
                 data-image-key="index.philosophy_image"
-                />
+              />
             </div>
             <div className="philosophy__text reveal reveal-delay-1">
               <h2 className="section-heading" data-content-key="index.heading_philosophy">
@@ -112,7 +112,7 @@ export default function HomePageClient() {
                 width={800}
                 height={600}
                 data-image-key="index.work_image"
-                />
+              />
             </div>
             <div className="section-card__body">
               <span className="section-card__number">01</span>
@@ -149,7 +149,7 @@ export default function HomePageClient() {
                 width={800}
                 height={600}
                 data-image-key="index.production_image"
-                />
+              />
             </div>
             <div className="section-card__body">
               <span className="section-card__number">02</span>
@@ -186,7 +186,7 @@ export default function HomePageClient() {
                 width={800}
                 height={600}
                 data-image-key="index.interview_image"
-                />
+              />
             </div>
             <div className="section-card__body">
               <span className="section-card__number">03</span>
@@ -220,7 +220,7 @@ export default function HomePageClient() {
                 width={800}
                 height={600}
                 data-image-key="index.artist_image"
-                />
+              />
             </div>
             <div className="section-card__body">
               <span className="section-card__number">04</span>
