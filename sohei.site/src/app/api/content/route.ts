@@ -4,14 +4,29 @@ import { requireAuth } from '@/lib/auth';
 
 const DB_TIMEOUT_MS = 5000;
 
+// Type for Content model (matches Prisma schema)
+interface ContentRecord {
+  id: string;
+  page: string;
+  key: string;
+  value: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Type for deleteMany result
+interface DeleteManyResult {
+  count: number;
+}
+
 export async function GET() {
   try {
-    const contents = await withTimeout(
+    const contents = (await withTimeout(
       prisma.content.findMany({
         orderBy: [{ page: 'asc' }, { key: 'asc' }],
       }),
       DB_TIMEOUT_MS,
-    );
+    )) as ContentRecord[];
 
     const grouped: Record<string, Record<string, string>> = {};
     for (const item of contents) {
@@ -44,7 +59,7 @@ export async function DELETE(request: NextRequest) {
     const result = requireAuth(request);
     if (result instanceof NextResponse) return result;
 
-    const deleteResult = await withTimeout(prisma.content.deleteMany(), DB_TIMEOUT_MS);
+    const deleteResult = (await withTimeout(prisma.content.deleteMany(), DB_TIMEOUT_MS)) as DeleteManyResult;
     return NextResponse.json({ message: '全コンテンツを削除しました', count: deleteResult.count });
   } catch (err) {
     console.error('Delete content error:', err);
