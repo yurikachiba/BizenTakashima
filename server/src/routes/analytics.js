@@ -37,19 +37,33 @@ router.get('/stats', authenticateToken, async (req, res) => {
     const since = new Date();
     since.setDate(since.getDate() - days);
 
+    // Calculate previous period for comparison
+    const prevSince = new Date();
+    prevSince.setDate(prevSince.getDate() - days * 2);
+    const prevEnd = new Date();
+    prevEnd.setDate(prevEnd.getDate() - days);
+
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
+
+    const yesterdayStart = new Date(todayStart);
+    yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+    const yesterdayEnd = new Date(todayStart);
 
     // Run all DB queries in parallel for better performance
     const [
       totalVisits,
+      prevTotalVisits,
       uniqueIPs,
+      prevUniqueIPs,
       todayVisits,
+      yesterdayVisits,
       byPage,
       logs,
       referrerLogs,
       directCount,
       deviceLogs,
+      languageLogs,
       contentCount,
       lastUpdated
     ] = await Promise.all([
@@ -57,15 +71,29 @@ router.get('/stats', authenticateToken, async (req, res) => {
       prisma.visitorLog.count({
         where: { createdAt: { gte: since } }
       }),
+      // Previous period total visits
+      prisma.visitorLog.count({
+        where: { createdAt: { gte: prevSince, lt: prevEnd } }
+      }),
       // Unique visitors (by IP)
       prisma.visitorLog.findMany({
         where: { createdAt: { gte: since }, ipAddress: { not: null } },
         distinct: ['ipAddress'],
         select: { ipAddress: true }
       }),
+      // Previous period unique visitors
+      prisma.visitorLog.findMany({
+        where: { createdAt: { gte: prevSince, lt: prevEnd }, ipAddress: { not: null } },
+        distinct: ['ipAddress'],
+        select: { ipAddress: true }
+      }),
       // Today's visits
       prisma.visitorLog.count({
         where: { createdAt: { gte: todayStart } }
+      }),
+      // Yesterday's visits
+      prisma.visitorLog.count({
+        where: { createdAt: { gte: yesterdayStart, lt: yesterdayEnd } }
       }),
       // Visits grouped by page
       prisma.visitorLog.groupBy({
@@ -96,6 +124,11 @@ router.get('/stats', authenticateToken, async (req, res) => {
         where: { createdAt: { gte: since }, userAgent: { not: null } },
         select: { userAgent: true, screenSize: true }
       }),
+      // Language logs
+      prisma.visitorLog.findMany({
+        where: { createdAt: { gte: since }, language: { not: null } },
+        select: { language: true }
+      }),
       // Content stats
       prisma.content.count(),
       prisma.content.findFirst({
@@ -105,6 +138,27 @@ router.get('/stats', authenticateToken, async (req, res) => {
     ]);
 
     const uniqueVisitors = uniqueIPs.length;
+    const prevUniqueVisitors = prevUniqueIPs.length;
+    const avgVisitsPerDay = days > 0 ? Math.round(totalVisits / days) : 0;
+
+    // Process hourly stats
+    const hourly = Array(24).fill(0);
+    for (const log of logs) {
+      const hour = log.createdAt.getHours();
+      hourly[hour]++;
+    }
+
+    // Process language stats
+    const languageCounts = {};
+    for (const log of languageLogs) {
+      const lang = log.language || 'unknown';
+      if (!languageCounts[lang]) languageCounts[lang] = 0;
+      languageCounts[lang]++;
+    }
+    const languages = Object.entries(languageCounts)
+      .map(function (entry) { return { language: entry[0], count: entry[1] }; })
+      .sort(function (a, b) { return b.count - a.count; })
+      .slice(0, 10);
 
     // Process daily stats
     const daily = {};
@@ -171,14 +225,20 @@ router.get('/stats', authenticateToken, async (req, res) => {
 
     res.json({
       totalVisits,
+      prevTotalVisits,
       uniqueVisitors,
+      prevUniqueVisitors,
       todayVisits,
+      yesterdayVisits,
+      avgVisitsPerDay,
       byPage: byPage.map(function (p) { return { page: p.page, count: p._count.id }; }),
       daily,
+      hourly,
       referrers,
       devices: deviceCounts,
       browsers,
       screens,
+      languages,
       contentStats: {
         totalEntries: contentCount,
         lastUpdated: lastUpdated?.updatedAt || null
