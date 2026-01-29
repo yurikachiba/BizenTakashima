@@ -40,63 +40,66 @@ export async function GET(request: NextRequest) {
       languageLogs,
       contentCount,
       lastUpdated,
-    ] = await withTimeout(Promise.all([
-      prisma.visitorLog.count({
-        where: { createdAt: { gte: since } },
-      }),
-      prisma.visitorLog.count({
-        where: { createdAt: { gte: prevSince, lt: prevUntil } },
-      }),
-      prisma.visitorLog.findMany({
-        where: { createdAt: { gte: since }, ipAddress: { not: null } },
-        distinct: ['ipAddress'],
-        select: { ipAddress: true },
-      }),
-      prisma.visitorLog.findMany({
-        where: { createdAt: { gte: prevSince, lt: prevUntil }, ipAddress: { not: null } },
-        distinct: ['ipAddress'],
-        select: { ipAddress: true },
-      }),
-      prisma.visitorLog.count({
-        where: { createdAt: { gte: todayStart } },
-      }),
-      prisma.visitorLog.count({
-        where: { createdAt: { gte: yesterdayStart, lt: todayStart } },
-      }),
-      prisma.visitorLog.groupBy({
-        by: ['page'],
-        _count: { id: true },
-        where: { createdAt: { gte: since } },
-        orderBy: { _count: { id: 'desc' } },
-      }),
-      prisma.visitorLog.findMany({
-        where: { createdAt: { gte: since } },
-        select: { createdAt: true, page: true },
-      }),
-      prisma.visitorLog.findMany({
-        where: { createdAt: { gte: since }, referrer: { not: null } },
-        select: { referrer: true },
-      }),
-      prisma.visitorLog.count({
-        where: {
-          createdAt: { gte: since },
-          OR: [{ referrer: null }, { referrer: '' }],
-        },
-      }),
-      prisma.visitorLog.findMany({
-        where: { createdAt: { gte: since }, userAgent: { not: null } },
-        select: { userAgent: true, screenSize: true },
-      }),
-      prisma.visitorLog.findMany({
-        where: { createdAt: { gte: since }, language: { not: null } },
-        select: { language: true },
-      }),
-      prisma.content.count(),
-      prisma.content.findFirst({
-        orderBy: { updatedAt: 'desc' },
-        select: { updatedAt: true },
-      }),
-    ]), DB_TIMEOUT_MS);
+    ] = await withTimeout(
+      Promise.all([
+        prisma.visitorLog.count({
+          where: { createdAt: { gte: since } },
+        }),
+        prisma.visitorLog.count({
+          where: { createdAt: { gte: prevSince, lt: prevUntil } },
+        }),
+        prisma.visitorLog.findMany({
+          where: { createdAt: { gte: since }, ipAddress: { not: null } },
+          distinct: ['ipAddress'],
+          select: { ipAddress: true },
+        }),
+        prisma.visitorLog.findMany({
+          where: { createdAt: { gte: prevSince, lt: prevUntil }, ipAddress: { not: null } },
+          distinct: ['ipAddress'],
+          select: { ipAddress: true },
+        }),
+        prisma.visitorLog.count({
+          where: { createdAt: { gte: todayStart } },
+        }),
+        prisma.visitorLog.count({
+          where: { createdAt: { gte: yesterdayStart, lt: todayStart } },
+        }),
+        prisma.visitorLog.groupBy({
+          by: ['page'],
+          _count: { id: true },
+          where: { createdAt: { gte: since } },
+          orderBy: { _count: { id: 'desc' } },
+        }),
+        prisma.visitorLog.findMany({
+          where: { createdAt: { gte: since } },
+          select: { createdAt: true, page: true },
+        }),
+        prisma.visitorLog.findMany({
+          where: { createdAt: { gte: since }, referrer: { not: null } },
+          select: { referrer: true },
+        }),
+        prisma.visitorLog.count({
+          where: {
+            createdAt: { gte: since },
+            OR: [{ referrer: null }, { referrer: '' }],
+          },
+        }),
+        prisma.visitorLog.findMany({
+          where: { createdAt: { gte: since }, userAgent: { not: null } },
+          select: { userAgent: true, screenSize: true },
+        }),
+        prisma.visitorLog.findMany({
+          where: { createdAt: { gte: since }, language: { not: null } },
+          select: { language: true },
+        }),
+        prisma.content.count(),
+        prisma.content.findFirst({
+          orderBy: { updatedAt: 'desc' },
+          select: { updatedAt: true },
+        }),
+      ]),
+      DB_TIMEOUT_MS,
+    );
 
     const uniqueVisitors = uniqueIPs.length;
     const prevUniqueVisitors = prevUniqueIPs.length;
@@ -204,9 +207,10 @@ export async function GET(request: NextRequest) {
     });
   } catch (err) {
     console.error('Stats error:', err);
-    const message = err instanceof Error && err.message === 'Database timeout'
-      ? 'データベースの応答がありません。しばらく待ってから再試行してください。'
-      : 'サーバーエラー';
+    const message =
+      err instanceof Error && err.message === 'Database timeout'
+        ? 'データベースの応答がありません。しばらく待ってから再試行してください。'
+        : 'サーバーエラー';
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

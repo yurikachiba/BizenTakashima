@@ -6,9 +6,12 @@ const DB_TIMEOUT_MS = 5000;
 
 export async function GET() {
   try {
-    const contents = await withTimeout(prisma.content.findMany({
-      orderBy: [{ page: 'asc' }, { key: 'asc' }],
-    }), DB_TIMEOUT_MS);
+    const contents = await withTimeout(
+      prisma.content.findMany({
+        orderBy: [{ page: 'asc' }, { key: 'asc' }],
+      }),
+      DB_TIMEOUT_MS,
+    );
 
     const grouped: Record<string, Record<string, string>> = {};
     for (const item of contents) {
