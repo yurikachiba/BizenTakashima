@@ -40,8 +40,15 @@ async function tryDatabaseLogin(password: string): Promise<DbLoginResult> {
 }
 
 export async function POST(request: NextRequest) {
+  let body: { password?: string };
   try {
-    const { password } = await request.json();
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: '不正なリクエスト形式です' }, { status: 400 });
+  }
+
+  try {
+    const { password } = body;
     if (!password) {
       return NextResponse.json({ error: 'パスワードが必要です' }, { status: 400 });
     }
