@@ -11,7 +11,6 @@ export const metadata: Metadata = {
       '備前焼作家、高島聡平の公式サイトの作家紹介ページです。ここでは、高島の実績やプロフィールをご紹介します。',
     images: ['/img/thumbnail.png'],
   },
-  robots: { index: false },
 };
 
 export default function ArtistPage() {
