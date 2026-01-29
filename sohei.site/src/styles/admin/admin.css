@@ -1384,10 +1384,9 @@ body {
   font-size: 11px;
   color: var(--text-muted);
   font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   border-top: 1px solid var(--border);
+  word-break: break-all;
+  line-height: 1.5;
 }
 
 .instagram-help {

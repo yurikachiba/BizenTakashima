@@ -5,6 +5,17 @@ import Script from 'next/script';
 import { useEffect } from 'react';
 import { useContentLoader } from '@/lib/content-loader';
 
+// Type declaration for Instagram embed script
+declare global {
+  interface Window {
+    instgrm?: {
+      Embeds?: {
+        process?: () => void;
+      };
+    };
+  }
+}
+
 const DEFAULT_INSTAGRAM_URL = 'https://www.instagram.com/p/CzjLvCaPF2S/';
 
 export default function Footer() {
@@ -70,9 +81,34 @@ function InstagramEmbed({ url }: { url: string }) {
     ? `${url.replace(/\/$/, '')}/?utm_source=ig_embed&utm_campaign=loading`
     : `${DEFAULT_INSTAGRAM_URL.replace(/\/$/, '')}/?utm_source=ig_embed&utm_campaign=loading`;
 
+  // Re-process Instagram embeds after client-side navigation
+  useEffect(() => {
+    // Check if Instagram embed script is loaded and process embeds
+    const processEmbeds = () => {
+      if (window.instgrm?.Embeds?.process) {
+        window.instgrm.Embeds.process();
+      }
+    };
+
+    // Process immediately if script is already loaded
+    processEmbeds();
+
+    // Also process after a short delay to handle race conditions
+    const timer = setTimeout(processEmbeds, 500);
+    return () => clearTimeout(timer);
+  }, [permalink]);
+
   return (
     <>
-      <Script src="https://www.instagram.com/embed.js" strategy="lazyOnload" />
+      <Script
+        src="https://www.instagram.com/embed.js"
+        strategy="lazyOnload"
+        onLoad={() => {
+          if (window.instgrm?.Embeds?.process) {
+            window.instgrm.Embeds.process();
+          }
+        }}
+      />
       <blockquote
         className="instagram-media"
         data-instgrm-permalink={permalink}
