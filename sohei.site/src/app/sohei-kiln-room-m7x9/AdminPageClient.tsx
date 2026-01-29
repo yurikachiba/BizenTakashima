@@ -220,7 +220,7 @@ const DEFAULT_CONTENT: Record<string, string> = {
   'index.exhibition_3_url': 'http://sendkushiro.com/?p=2751',
   'index.heading_contact': 'お問い合わせ',
   'index.contact_text': '',
-  'index.instagram_url': 'https://www.instagram.com/p/CzjLvCaPF2S/',
+  'index.instagram_url': 'https://www.instagram.com/takashima_sohei/',
   'index.copyright': '',
 
   // -- Work --
@@ -260,7 +260,7 @@ const DEFAULT_CONTENT: Record<string, string> = {
   'work.faq_q_5': '梅雨の時期はカビなどに注意して保管する',
   'work.faq_5':
     '長期間湿気に触れることでカビが生えたり欠けたりする原因になるので、理想は梅雨時期などは食器棚にしまわずにつねに表に出しておくか、しっかりと乾かして乾燥材とともに箱にしまっておくことをおすすめします。',
-  'work.instagram_url': '',
+  'work.instagram_url': 'https://www.instagram.com/takashima_sohei/',
 
   // -- Production --
   'production.heading_h1': '制作の様子',
@@ -299,7 +299,7 @@ const DEFAULT_CONTENT: Record<string, string> = {
     '温度が下がったら窯から作品を出していきます。どのように焼けたかチェックしながら、次の窯でどのようにするか考え、記録していきます。',
   'production.step_16':
     '焼き上がり、表面を綺麗にやすり掛けした後、水を入れて漏れがないか確認作業をします。300～400点ほどチェックしたのちに展示会場に並ぶことになります。',
-  'production.instagram_url': '',
+  'production.instagram_url': 'https://www.instagram.com/takashima_sohei/',
 
   // -- Interview --
   'interview.heading_h1': 'インタビュー',
@@ -321,7 +321,7 @@ const DEFAULT_CONTENT: Record<string, string> = {
   'interview.q_5': '修行中はどのような指導がありましたか？',
   'interview.a_5':
     '先生からは自分の作品作りに関しての具体的な指示はなく、作品の印象、焼き色との相性などのアドバイスを頂くことはありました。今考えれば、人の意見を十分に聞き、反芻し、その言葉に向き合い、その結果で自分から出てくるものからしか作品は生まれないと気付くきっかけになったと思います。',
-  'interview.instagram_url': '',
+  'interview.instagram_url': 'https://www.instagram.com/takashima_sohei/',
 
   // -- Artist --
   'artist.heading_h1': '作家紹介',
@@ -337,7 +337,7 @@ const DEFAULT_CONTENT: Record<string, string> = {
   'artist.timeline_4': '2012年　穴窯築窯',
   'artist.timeline_5': '2019年　日本陶磁協会誌「陶説」に掲載',
   'artist.timeline_6': '2023年　柿傳ギャラリーにて個展',
-  'artist.instagram_url': '',
+  'artist.instagram_url': 'https://www.instagram.com/takashima_sohei/',
 };
 
 // ============================================
