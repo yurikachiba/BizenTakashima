@@ -1,4 +1,5 @@
 {
+  "regions": ["sin1"],
   "framework": "nextjs",
   "outputDirectory": ".next",
   "headers": [
