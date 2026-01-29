@@ -58,7 +58,7 @@ export default function Footer() {
           <Link href="/artist">作家紹介</Link>
         </nav>
         <p className="footer__copyright" data-content-key="index.copyright">
-          {getContent('index.copyright', '\u00A9TakashimaSohei. 2023.')}
+          {getContent('index.copyright', `©TakashimaSohei. ${new Date().getFullYear()}.`)}
         </p>
       </div>
     </footer>
