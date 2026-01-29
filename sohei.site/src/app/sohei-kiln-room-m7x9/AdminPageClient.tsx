@@ -99,6 +99,7 @@ const PAGE_CONTENT_KEYS: Record<string, string[]> = {
     'work.faq_4',
     'work.faq_q_5',
     'work.faq_5',
+    'work.instagram_url',
   ],
   production: [
     'production.heading_h1',
@@ -124,6 +125,7 @@ const PAGE_CONTENT_KEYS: Record<string, string[]> = {
     'production.step_14',
     'production.step_15',
     'production.step_16',
+    'production.instagram_url',
   ],
   interview: [
     'interview.heading_h1',
@@ -139,6 +141,7 @@ const PAGE_CONTENT_KEYS: Record<string, string[]> = {
     'interview.a_4',
     'interview.q_5',
     'interview.a_5',
+    'interview.instagram_url',
   ],
   artist: [
     'artist.heading_h1',
@@ -153,6 +156,7 @@ const PAGE_CONTENT_KEYS: Record<string, string[]> = {
     'artist.timeline_4',
     'artist.timeline_5',
     'artist.timeline_6',
+    'artist.instagram_url',
   ],
 };
 
@@ -256,6 +260,7 @@ const DEFAULT_CONTENT: Record<string, string> = {
   'work.faq_q_5': '梅雨の時期はカビなどに注意して保管する',
   'work.faq_5':
     '長期間湿気に触れることでカビが生えたり欠けたりする原因になるので、理想は梅雨時期などは食器棚にしまわずにつねに表に出しておくか、しっかりと乾かして乾燥材とともに箱にしまっておくことをおすすめします。',
+  'work.instagram_url': '',
 
   // -- Production --
   'production.heading_h1': '制作の様子',
@@ -294,6 +299,7 @@ const DEFAULT_CONTENT: Record<string, string> = {
     '温度が下がったら窯から作品を出していきます。どのように焼けたかチェックしながら、次の窯でどのようにするか考え、記録していきます。',
   'production.step_16':
     '焼き上がり、表面を綺麗にやすり掛けした後、水を入れて漏れがないか確認作業をします。300～400点ほどチェックしたのちに展示会場に並ぶことになります。',
+  'production.instagram_url': '',
 
   // -- Interview --
   'interview.heading_h1': 'インタビュー',
@@ -315,6 +321,7 @@ const DEFAULT_CONTENT: Record<string, string> = {
   'interview.q_5': '修行中はどのような指導がありましたか？',
   'interview.a_5':
     '先生からは自分の作品作りに関しての具体的な指示はなく、作品の印象、焼き色との相性などのアドバイスを頂くことはありました。今考えれば、人の意見を十分に聞き、反芻し、その言葉に向き合い、その結果で自分から出てくるものからしか作品は生まれないと気付くきっかけになったと思います。',
+  'interview.instagram_url': '',
 
   // -- Artist --
   'artist.heading_h1': '作家紹介',
@@ -330,6 +337,7 @@ const DEFAULT_CONTENT: Record<string, string> = {
   'artist.timeline_4': '2012年　穴窯築窯',
   'artist.timeline_5': '2019年　日本陶磁協会誌「陶説」に掲載',
   'artist.timeline_6': '2023年　柿傳ギャラリーにて個展',
+  'artist.instagram_url': '',
 };
 
 // ============================================
@@ -435,6 +443,7 @@ const CONTENT_LABELS: Record<string, string> = {
   'work.faq_4': 'FAQ 5 回答',
   'work.faq_q_5': 'FAQ 6 質問',
   'work.faq_5': 'FAQ 6 回答',
+  'work.instagram_url': 'Instagram 投稿URL',
   'production.heading_h1': 'ページタイトル',
   'production.heading_h2': 'サブタイトル',
   'production.byline': '解説者名',
@@ -458,6 +467,7 @@ const CONTENT_LABELS: Record<string, string> = {
   'production.step_14': '工程 15 説明',
   'production.step_15': '工程 16 説明',
   'production.step_16': '工程 17 説明',
+  'production.instagram_url': 'Instagram 投稿URL',
   'interview.heading_h1': 'ページタイトル',
   'interview.q_0': '質問 1',
   'interview.a_0': '回答 1',
@@ -471,6 +481,7 @@ const CONTENT_LABELS: Record<string, string> = {
   'interview.a_4': '回答 5',
   'interview.q_5': '質問 6',
   'interview.a_5': '回答 6',
+  'interview.instagram_url': 'Instagram 投稿URL',
   'artist.heading_h1': 'ページタイトル',
   'artist.heading_profile': '「プロフィール」見出し',
   'artist.profile': 'プロフィール本文',
@@ -483,6 +494,7 @@ const CONTENT_LABELS: Record<string, string> = {
   'artist.timeline_4': '経歴 5',
   'artist.timeline_5': '経歴 6',
   'artist.timeline_6': '経歴 7',
+  'artist.instagram_url': 'Instagram 投稿URL',
 };
 
 const IMAGE_LABELS: Record<string, string> = {

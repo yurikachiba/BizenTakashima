@@ -4,6 +4,7 @@ import Image from 'next/image';
 import HamburgerMenu from '@/components/HamburgerMenu';
 import Footer from '@/components/Footer';
 import ScrollAnimations from '@/components/ScrollAnimations';
+import InstagramEmbed from '@/components/InstagramEmbed';
 import { useContentLoader, useAnalyticsLog } from '@/lib/content-loader';
 
 const DEFAULT_YOUTUBE_0 = 'https://www.youtube.com/embed/UINddZBlXKA?si=ONc5cd0J6_H_zpGw';
@@ -161,6 +162,15 @@ export default function ProcessPageClient() {
               })}
             </div>
           </section>
+
+          {/* Instagram */}
+          {getContent('production.instagram_url', '') && (
+            <section className="page-section">
+              <div className="page-instagram reveal">
+                <InstagramEmbed url={getContent('production.instagram_url', '')} />
+              </div>
+            </section>
+          )}
         </main>
       </div>
       <Footer />

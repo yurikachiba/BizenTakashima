@@ -4,6 +4,7 @@ import Image from 'next/image';
 import HamburgerMenu from '@/components/HamburgerMenu';
 import Footer from '@/components/Footer';
 import ScrollAnimations from '@/components/ScrollAnimations';
+import InstagramEmbed from '@/components/InstagramEmbed';
 import { useContentLoader, useAnalyticsLog } from '@/lib/content-loader';
 
 const WORKS = [
@@ -211,6 +212,15 @@ export default function WorkPageClient() {
               ))}
             </div>
           </section>
+
+          {/* Instagram */}
+          {getContent('work.instagram_url', '') && (
+            <section className="page-section">
+              <div className="page-instagram reveal">
+                <InstagramEmbed url={getContent('work.instagram_url', '')} />
+              </div>
+            </section>
+          )}
         </main>
       </div>
       <Footer />
