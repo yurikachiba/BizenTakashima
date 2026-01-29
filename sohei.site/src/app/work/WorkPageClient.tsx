@@ -131,7 +131,6 @@ export default function WorkPageClient() {
             width={1200}
             height={600}
             priority
-            unoptimized
           />
         </div>
         <div className="page-hero__overlay"></div>
@@ -157,7 +156,6 @@ export default function WorkPageClient() {
                       width={400}
                       height={400}
                       data-image-key={work.imageKey}
-                      unoptimized
                     />
                   </div>
                   <p className="work-gallery__caption" data-content-key={work.captionKey}>

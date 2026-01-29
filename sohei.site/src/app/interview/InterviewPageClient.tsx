@@ -66,7 +66,6 @@ export default function InterviewPageClient() {
             height={600}
             priority
             data-image-key="interview.top_image"
-            unoptimized
           />
         </div>
         <div className="page-hero__overlay"></div>

@@ -27,7 +27,6 @@ export default function ArtistPageClient() {
             height={600}
             priority
             data-image-key="artist.top_image"
-            unoptimized
           />
         </div>
         <div className="page-hero__overlay"></div>

@@ -111,7 +111,7 @@ export default function ProcessPageClient() {
       {/* Hero */}
       <div className="page-hero">
         <div className="page-hero__image">
-          <Image src="/img/kilnFiring.png" alt="窯焚きの写真" width={1200} height={600} priority unoptimized />
+          <Image src="/img/kilnFiring.png" alt="窯焚きの写真" width={1200} height={600} priority />
         </div>
         <div className="page-hero__overlay"></div>
         <h1 className="page-hero__title" data-content-key="production.heading_h1">
@@ -139,7 +139,6 @@ export default function ProcessPageClient() {
                         width={800}
                         height={600}
                         data-image-key={step.key}
-                        unoptimized
                       />
                     </div>
                     {(step as { youtubeKey?: string }).youtubeKey && (

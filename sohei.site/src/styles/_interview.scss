@@ -33,7 +33,7 @@
     }
 
     p {
-      font-family: 'Noto Sans JP', sans-serif;
+      font-family: $font-noto-sans;
       font-size: 14px;
       line-height: 2;
       color: $font-color-2;
@@ -62,7 +62,7 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    font-family: 'Shippori Mincho', serif;
+    font-family: $font-shippori;
     font-size: 14px;
     font-weight: 600;
     flex-shrink: 0;

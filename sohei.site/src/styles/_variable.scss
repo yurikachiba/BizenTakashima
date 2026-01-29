@@ -1,5 +1,10 @@
 // === Bizen-inspired Japanese Design System ===
 
+// Fonts (CSS variables from next/font)
+$font-shippori: var(--font-shippori-mincho), serif;
+$font-noto-sans: var(--font-noto-sans-jp), sans-serif;
+$font-zen-old: var(--font-zen-old-mincho), serif;
+
 // Base colors
 $color-ink: #1a1714; // 墨色 - deep ink black
 $color-charcoal: #2c2825; // 炭色 - charcoal
