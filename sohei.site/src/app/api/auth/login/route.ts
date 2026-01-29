@@ -11,6 +11,14 @@ if (!DEFAULT_ADMIN_PASSWORD) {
   console.warn('DEFAULT_ADMIN_PASSWORD environment variable is not set. Initial admin setup will fail until set.');
 }
 
+// Type for Admin model (matches Prisma schema)
+interface AdminRecord {
+  id: string;
+  passwordHash: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 type DbLoginResult =
   | { ok: true; token: string }
   | { ok: false; reason: 'wrong_password' }
@@ -19,14 +27,17 @@ type DbLoginResult =
 async function tryDatabaseLogin(password: string): Promise<DbLoginResult> {
   try {
     // Use timeout to prevent long waits when DB is unavailable
-    const admin = await withTimeout(prisma.admin.findFirst(), DB_TIMEOUT_MS);
+    const admin = (await withTimeout(prisma.admin.findFirst(), DB_TIMEOUT_MS)) as AdminRecord | null;
 
     if (!admin) {
       if (!DEFAULT_ADMIN_PASSWORD) {
         throw new Error('DEFAULT_ADMIN_PASSWORD environment variable is required for initial admin setup');
       }
       const passwordHash = await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, 12);
-      const newAdmin = await withTimeout(prisma.admin.create({ data: { passwordHash } }), DB_TIMEOUT_MS);
+      const newAdmin = (await withTimeout(
+        prisma.admin.create({ data: { passwordHash } }),
+        DB_TIMEOUT_MS,
+      )) as AdminRecord;
       const token = signToken(newAdmin.id);
       return { ok: true, token };
     }
