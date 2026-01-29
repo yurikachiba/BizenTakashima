@@ -279,7 +279,7 @@ export default function HomePageClient() {
                   </a>
                 </li>
                 <li>
-                  <a target="_blank" href={getContent('index.store_1_url', 'https://tourakuen.jp/products/search.php')}>
+                  <a target="_blank" href={getContent('index.store_1_url', 'https://tourakuen.jp/index.php')}>
                     {getContent('index.store_1_name', '川口陶楽苑')}
                   </a>
                 </li>

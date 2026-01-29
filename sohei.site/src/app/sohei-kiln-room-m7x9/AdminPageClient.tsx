@@ -201,7 +201,7 @@ const DEFAULT_CONTENT: Record<string, string> = {
   'index.store_0_name': '器まえさか',
   'index.store_0_url': 'https://rtrp.jp/spots/bfbacd09-9164-44f1-b30f-be4c8352fc1e/',
   'index.store_1_name': '川口陶楽苑',
-  'index.store_1_url': 'https://tourakuen.jp/products/search.php',
+  'index.store_1_url': 'https://tourakuen.jp/index.php',
   'index.store_2_name': 'うつわや涼一石',
   'index.store_2_url': 'https://ryoisseki.com/',
   'index.heading_exhibitions': '過去の展示会',
