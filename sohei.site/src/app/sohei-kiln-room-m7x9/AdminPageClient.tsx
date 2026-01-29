@@ -977,8 +977,8 @@ export default function AdminPageClient() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password }),
       });
-      const data = await res.json();
-      if (res.ok && data.token) {
+      const data = await res.json().catch(() => null);
+      if (res.ok && data?.token) {
         tokenRef.current = data.token;
         try {
           sessionStorage.setItem('admin_token', data.token);
@@ -989,7 +989,7 @@ export default function AdminPageClient() {
         loadContent();
         loadImages();
       } else {
-        showToast(data.error || 'ログイン失敗', 'error');
+        showToast(data?.error || 'ログイン失敗', 'error');
       }
     } catch {
       showToast('サーバーに接続できません', 'error');
@@ -1101,7 +1101,10 @@ export default function AdminPageClient() {
           showToast('画像を保存しました');
           const reader = new FileReader();
           reader.onload = () => {
-            setUploadedImages((prev) => ({ ...prev, [key]: reader.result as string }));
+            const result = reader.result;
+            if (typeof result === 'string') {
+              setUploadedImages((prev) => ({ ...prev, [key]: result }));
+            }
           };
           reader.readAsDataURL(file);
           return;
@@ -1136,12 +1139,12 @@ export default function AdminPageClient() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ currentPassword, newPassword }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => null);
       if (res.ok) {
         showToast('パスワードを変更しました');
         form.reset();
       } else {
-        showToast(data.error || '変更に失敗しました', 'error');
+        showToast(data?.error || '変更に失敗しました', 'error');
       }
     } catch {
       showToast('サーバーエラー', 'error');
