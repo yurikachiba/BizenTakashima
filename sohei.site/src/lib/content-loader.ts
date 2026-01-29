@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
+// Use Render.com server for content to ensure consistency with admin panel
+const API_BASE = 'https://bizentakashima.onrender.com';
+
 interface ContentData {
   [key: string]: string;
 }
@@ -15,7 +18,7 @@ export function useContentLoader(pageName?: string) {
 
     async function loadContent() {
       try {
-        const res = await fetch(`/api/content/${pageName}`);
+        const res = await fetch(`${API_BASE}/api/content/${pageName}`);
         if (res.ok) {
           const data = await res.json();
           setContent(data);
