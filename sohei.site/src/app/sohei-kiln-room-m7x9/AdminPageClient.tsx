@@ -220,7 +220,7 @@ const DEFAULT_CONTENT: Record<string, string> = {
   'index.exhibition_3_url': 'http://sendkushiro.com/?p=2751',
   'index.heading_contact': 'お問い合わせ',
   'index.contact_text': '',
-  'index.instagram_url': 'https://www.instagram.com/p/CzjLvCaPF2S/',
+  'index.instagram_url': 'https://www.instagram.com/takashima_sohei/',
   'index.copyright': '',
 
   // -- Work --

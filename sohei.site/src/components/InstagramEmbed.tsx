@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-const DEFAULT_INSTAGRAM_URL = 'https://www.instagram.com/p/CzjLvCaPF2S/';
+const DEFAULT_INSTAGRAM_URL = 'https://www.instagram.com/takashima_sohei/';
 
 interface InstagramEmbedProps {
   url?: string;
