@@ -62,8 +62,7 @@ const jsonLd = {
       '@type': 'CreativeWork',
       '@id': 'https://www.sohei-portfolio.com/#works',
       name: '高島聡平の備前焼作品',
-      description:
-        '伝統的な備前焼の技法を用いながら、現代的なデザインを取り入れた器や花器などの作品。',
+      description: '伝統的な備前焼の技法を用いながら、現代的なデザインを取り入れた器や花器などの作品。',
       creator: {
         '@id': 'https://www.sohei-portfolio.com/#person',
       },
@@ -85,10 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&family=Zen+Old+Mincho:wght@400;700&display=swap"
           rel="stylesheet"
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body>{children}</body>
     </html>
