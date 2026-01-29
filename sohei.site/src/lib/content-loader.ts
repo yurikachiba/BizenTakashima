@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-// Use relative URLs for API routes (Next.js API routes on same domain)
-const API_BASE = '';
+// Use Render.com backend for API
+const API_BASE = 'https://bizentakashima.onrender.com';
 
 interface ContentData {
   [key: string]: string;
