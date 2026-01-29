@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import '@/styles/admin/admin.css';
 
-const API_BASE = '';
+const API_BASE = 'https://bizentakashima.onrender.com';
 
 interface AnalyticsStats {
   totalVisits: number;
