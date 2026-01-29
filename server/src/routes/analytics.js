@@ -37,40 +37,76 @@ router.get('/stats', authenticateToken, async (req, res) => {
     const since = new Date();
     since.setDate(since.getDate() - days);
 
-    // Total visits in period
-    const totalVisits = await prisma.visitorLog.count({
-      where: { createdAt: { gte: since } }
-    });
-
-    // Unique visitors (by IP)
-    const uniqueIPs = await prisma.visitorLog.findMany({
-      where: { createdAt: { gte: since }, ipAddress: { not: null } },
-      distinct: ['ipAddress'],
-      select: { ipAddress: true }
-    });
-    const uniqueVisitors = uniqueIPs.length;
-
-    // Today's visits
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
-    const todayVisits = await prisma.visitorLog.count({
-      where: { createdAt: { gte: todayStart } }
-    });
 
-    // Visits grouped by page
-    const byPage = await prisma.visitorLog.groupBy({
-      by: ['page'],
-      _count: { id: true },
-      where: { createdAt: { gte: since } },
-      orderBy: { _count: { id: 'desc' } }
-    });
+    // Run all DB queries in parallel for better performance
+    const [
+      totalVisits,
+      uniqueIPs,
+      todayVisits,
+      byPage,
+      logs,
+      referrerLogs,
+      directCount,
+      deviceLogs,
+      contentCount,
+      lastUpdated
+    ] = await Promise.all([
+      // Total visits in period
+      prisma.visitorLog.count({
+        where: { createdAt: { gte: since } }
+      }),
+      // Unique visitors (by IP)
+      prisma.visitorLog.findMany({
+        where: { createdAt: { gte: since }, ipAddress: { not: null } },
+        distinct: ['ipAddress'],
+        select: { ipAddress: true }
+      }),
+      // Today's visits
+      prisma.visitorLog.count({
+        where: { createdAt: { gte: todayStart } }
+      }),
+      // Visits grouped by page
+      prisma.visitorLog.groupBy({
+        by: ['page'],
+        _count: { id: true },
+        where: { createdAt: { gte: since } },
+        orderBy: { _count: { id: 'desc' } }
+      }),
+      // Daily visits
+      prisma.visitorLog.findMany({
+        where: { createdAt: { gte: since } },
+        select: { createdAt: true, page: true }
+      }),
+      // Referrer logs
+      prisma.visitorLog.findMany({
+        where: { createdAt: { gte: since }, referrer: { not: null } },
+        select: { referrer: true }
+      }),
+      // Direct visits count
+      prisma.visitorLog.count({
+        where: {
+          createdAt: { gte: since },
+          OR: [{ referrer: null }, { referrer: '' }]
+        }
+      }),
+      // Device logs
+      prisma.visitorLog.findMany({
+        where: { createdAt: { gte: since }, userAgent: { not: null } },
+        select: { userAgent: true, screenSize: true }
+      }),
+      // Content stats
+      prisma.content.count(),
+      prisma.content.findFirst({
+        orderBy: { updatedAt: 'desc' },
+        select: { updatedAt: true }
+      })
+    ]);
 
-    // Daily visits
-    const logs = await prisma.visitorLog.findMany({
-      where: { createdAt: { gte: since } },
-      select: { createdAt: true, page: true }
-    });
+    const uniqueVisitors = uniqueIPs.length;
 
+    // Process daily stats
     const daily = {};
     for (const log of logs) {
       const dateKey = log.createdAt.toISOString().split('T')[0];
@@ -80,23 +116,13 @@ router.get('/stats', authenticateToken, async (req, res) => {
       daily[dateKey].total++;
     }
 
-    // Referrer stats
-    const referrerLogs = await prisma.visitorLog.findMany({
-      where: { createdAt: { gte: since }, referrer: { not: null } },
-      select: { referrer: true }
-    });
+    // Process referrer stats
     const referrerCounts = {};
     for (const log of referrerLogs) {
       const ref = log.referrer || '(direct)';
       if (!referrerCounts[ref]) referrerCounts[ref] = 0;
       referrerCounts[ref]++;
     }
-    const directCount = await prisma.visitorLog.count({
-      where: {
-        createdAt: { gte: since },
-        OR: [{ referrer: null }, { referrer: '' }]
-      }
-    });
     if (directCount > 0) {
       referrerCounts['(direct)'] = directCount;
     }
@@ -105,11 +131,7 @@ router.get('/stats', authenticateToken, async (req, res) => {
       .sort(function (a, b) { return b.count - a.count; })
       .slice(0, 20);
 
-    // Device stats (parsed from user agent)
-    const deviceLogs = await prisma.visitorLog.findMany({
-      where: { createdAt: { gte: since }, userAgent: { not: null } },
-      select: { userAgent: true, screenSize: true }
-    });
+    // Process device stats
     const deviceCounts = { mobile: 0, tablet: 0, desktop: 0 };
     const browserCounts = {};
     for (const log of deviceLogs) {
@@ -134,7 +156,7 @@ router.get('/stats', authenticateToken, async (req, res) => {
       .map(function (entry) { return { browser: entry[0], count: entry[1] }; })
       .sort(function (a, b) { return b.count - a.count; });
 
-    // Screen size stats
+    // Process screen size stats
     const screenCounts = {};
     for (const log of deviceLogs) {
       if (log.screenSize) {
@@ -146,13 +168,6 @@ router.get('/stats', authenticateToken, async (req, res) => {
       .map(function (entry) { return { size: entry[0], count: entry[1] }; })
       .sort(function (a, b) { return b.count - a.count; })
       .slice(0, 10);
-
-    // Content stats
-    const contentCount = await prisma.content.count();
-    const lastUpdated = await prisma.content.findFirst({
-      orderBy: { updatedAt: 'desc' },
-      select: { updatedAt: true }
-    });
 
     res.json({
       totalVisits,

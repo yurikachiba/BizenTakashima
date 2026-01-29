@@ -986,8 +986,8 @@ export default function AdminPageClient() {
           // sessionStorage may be unavailable in some browsers
         }
         setAuthenticated(true);
-        loadContent();
-        loadImages();
+        // Run loadContent and loadImages in parallel for faster login
+        Promise.all([loadContent(), loadImages()]);
       } else {
         showToast(data?.error || 'ログイン失敗', 'error');
       }
