@@ -31,6 +31,48 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': 'https://www.sohei-portfolio.com/#person',
+      name: '高島聡平',
+      alternateName: 'Takashima Sohei',
+      description: '備前焼作家。伝統的な技法を継承しながら、現代的な感性を融合させた作品を制作。',
+      url: 'https://www.sohei-portfolio.com',
+      image: 'https://www.sohei-portfolio.com/img/thumbnail.png',
+      jobTitle: '備前焼作家',
+      knowsAbout: ['備前焼', '陶芸', '日本の伝統工芸'],
+      sameAs: ['https://www.instagram.com/sohei_takashima/'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://www.sohei-portfolio.com/#website',
+      url: 'https://www.sohei-portfolio.com',
+      name: '備前焼作家 高島聡平 公式サイト',
+      description:
+        '備前焼作家、高島聡平の公式サイト。作品紹介、制作過程、インタビュー、プロフィール、販売店舗情報を掲載。',
+      publisher: {
+        '@id': 'https://www.sohei-portfolio.com/#person',
+      },
+      inLanguage: 'ja',
+    },
+    {
+      '@type': 'CreativeWork',
+      '@id': 'https://www.sohei-portfolio.com/#works',
+      name: '高島聡平の備前焼作品',
+      description:
+        '伝統的な備前焼の技法を用いながら、現代的なデザインを取り入れた器や花器などの作品。',
+      creator: {
+        '@id': 'https://www.sohei-portfolio.com/#person',
+      },
+      material: '備前土',
+      artform: '陶芸',
+    },
+  ],
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
@@ -42,6 +84,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link
           href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&family=Zen+Old+Mincho:wght@400;700&display=swap"
           rel="stylesheet"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body>{children}</body>
