@@ -14,7 +14,7 @@
   }
 
   p {
-    font-family: 'Shippori Mincho', serif;
+    font-family: $font-shippori;
     font-size: 14px;
     line-height: 2.2;
     color: $font-color-2;
@@ -41,7 +41,7 @@
     }
 
     p {
-      font-family: 'Noto Sans JP', sans-serif;
+      font-family: $font-noto-sans;
       font-size: 14px;
       line-height: 2;
       color: $font-color-2;

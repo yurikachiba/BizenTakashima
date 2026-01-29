@@ -138,7 +138,7 @@
 
   &__link-en {
     display: block;
-    font-family: 'Shippori Mincho', serif;
+    font-family: $font-shippori;
     font-size: 28px;
     font-weight: 600;
     letter-spacing: 0.15em;
@@ -151,7 +151,7 @@
 
   &__link-ja {
     display: block;
-    font-family: 'Noto Sans JP', sans-serif;
+    font-family: $font-noto-sans;
     font-size: 12px;
     font-weight: 300;
     letter-spacing: 0.2em;
@@ -263,7 +263,7 @@
 
   &__subtitle {
     margin-top: 16px;
-    font-family: 'Shippori Mincho', serif;
+    font-family: $font-shippori;
     font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.5em;
@@ -317,7 +317,7 @@
 // Section Heading (shared)
 // =============================================
 .section-heading {
-  font-family: 'Shippori Mincho', serif;
+  font-family: $font-shippori;
   font-size: 22px;
   font-weight: 600;
   color: $font-color;
@@ -442,7 +442,7 @@
   }
 
   &__number {
-    font-family: 'Shippori Mincho', serif;
+    font-family: $font-shippori;
     font-size: 48px;
     font-weight: 300;
     color: $color-ash;
@@ -457,7 +457,7 @@
   }
 
   &__title {
-    font-family: 'Shippori Mincho', serif;
+    font-family: $font-shippori;
     font-size: 24px;
     font-weight: 600;
     color: $font-color;
@@ -482,7 +482,7 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-family: 'Noto Sans JP', sans-serif;
+    font-family: $font-noto-sans;
     font-size: 13px;
     letter-spacing: 0.15em;
     color: $font-color;
@@ -556,7 +556,7 @@
   }
 
   &__title {
-    font-family: 'Shippori Mincho', serif;
+    font-family: $font-shippori;
     font-size: 20px;
     font-weight: 600;
     color: $font-color-light;
@@ -575,7 +575,7 @@
       margin-bottom: 16px;
 
       a {
-        font-family: 'Noto Sans JP', sans-serif;
+        font-family: $font-noto-sans;
         font-size: 14px;
         line-height: 2;
         color: $color-ash;
@@ -625,7 +625,7 @@
   }
 
   &__contact-title {
-    font-family: 'Shippori Mincho', serif;
+    font-family: $font-shippori;
     font-size: 22px;
     font-weight: 600;
     color: $font-color-light;
@@ -638,7 +638,7 @@
   }
 
   &__contact-text {
-    font-family: 'Noto Sans JP', sans-serif;
+    font-family: $font-noto-sans;
     font-size: 14px;
     line-height: 2;
     color: $color-ash;
@@ -684,7 +684,7 @@
     margin-bottom: 24px;
 
     a {
-      font-family: 'Noto Sans JP', sans-serif;
+      font-family: $font-noto-sans;
       font-size: 12px;
       color: $color-ash;
       letter-spacing: 0.1em;
@@ -697,7 +697,7 @@
   }
 
   &__copyright {
-    font-family: 'Noto Sans JP', sans-serif;
+    font-family: $font-noto-sans;
     font-size: 11px;
     color: $font-color-muted;
     letter-spacing: 0.05em;
@@ -742,7 +742,7 @@
     bottom: 40px;
     left: 24px;
     z-index: 2;
-    font-family: 'Shippori Mincho', serif;
+    font-family: $font-shippori;
     font-size: 28px;
     font-weight: 700;
     color: $font-color-light;
@@ -781,7 +781,7 @@
 }
 
 .page-section-heading {
-  font-family: 'Shippori Mincho', serif;
+  font-family: $font-shippori;
   font-size: 20px;
   font-weight: 600;
   color: $font-color;

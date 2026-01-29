@@ -28,7 +28,6 @@ export default function HomePageClient() {
               width={750}
               height={1000}
               priority
-              unoptimized
             />
             <Image
               className="hero__img hero__img--pc"
@@ -37,7 +36,6 @@ export default function HomePageClient() {
               width={1920}
               height={800}
               priority
-              unoptimized
             />
             <Image
               className="hero__img hero__img--tab"
@@ -46,7 +44,6 @@ export default function HomePageClient() {
               width={1024}
               height={600}
               priority
-              unoptimized
             />
           </div>
           <div className="hero__overlay"></div>
@@ -59,7 +56,6 @@ export default function HomePageClient() {
                 width={600}
                 height={200}
                 priority
-                unoptimized
               />
               <Image
                 className="hero__title-img hero__title-img--pc"
@@ -68,7 +64,6 @@ export default function HomePageClient() {
                 width={800}
                 height={200}
                 priority
-                unoptimized
               />
             </h1>
           </div>
@@ -87,7 +82,6 @@ export default function HomePageClient() {
                 width={800}
                 height={600}
                 data-image-key="index.philosophy_image"
-                unoptimized
               />
             </div>
             <div className="philosophy__text reveal reveal-delay-1">
@@ -118,7 +112,6 @@ export default function HomePageClient() {
                 width={800}
                 height={600}
                 data-image-key="index.work_image"
-                unoptimized
               />
             </div>
             <div className="section-card__body">
@@ -156,7 +149,6 @@ export default function HomePageClient() {
                 width={800}
                 height={600}
                 data-image-key="index.production_image"
-                unoptimized
               />
             </div>
             <div className="section-card__body">
@@ -194,7 +186,6 @@ export default function HomePageClient() {
                 width={800}
                 height={600}
                 data-image-key="index.interview_image"
-                unoptimized
               />
             </div>
             <div className="section-card__body">
@@ -229,7 +220,6 @@ export default function HomePageClient() {
                 width={800}
                 height={600}
                 data-image-key="index.artist_image"
-                unoptimized
               />
             </div>
             <div className="section-card__body">

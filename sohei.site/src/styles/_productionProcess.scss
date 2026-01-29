@@ -5,7 +5,7 @@
 // Process Page
 // =============================================
 .process-byline {
-  font-family: 'Shippori Mincho', serif;
+  font-family: $font-shippori;
   font-size: 16px;
   color: $font-color-muted;
   letter-spacing: 0.2em;
@@ -36,7 +36,7 @@
 
   &__number {
     display: block;
-    font-family: 'Shippori Mincho', serif;
+    font-family: $font-shippori;
     font-size: 36px;
     font-weight: 300;
     color: $color-ash;

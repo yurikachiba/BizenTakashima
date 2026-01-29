@@ -3,11 +3,11 @@
 
 // === Typography ===
 .font-mincho {
-  font-family: 'Shippori Mincho', 'Zen Old Mincho', serif;
+  font-family: $font-shippori;
 }
 
 .font-body {
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: $font-noto-sans;
 }
 
 // === Layout helpers ===
@@ -35,7 +35,7 @@
 
 // === Text styles ===
 .text-body {
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: $font-noto-sans;
   font-size: 14px;
   line-height: 2;
   color: $font-color-2;

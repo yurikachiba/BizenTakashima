@@ -1,5 +1,30 @@
 import type { Metadata } from 'next';
+import { Shippori_Mincho, Noto_Sans_JP, Zen_Old_Mincho } from 'next/font/google';
 import './globals.scss';
+
+const shipporiMincho = Shippori_Mincho({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  display: 'swap',
+  variable: '--font-shippori-mincho',
+  preload: true,
+});
+
+const notoSansJP = Noto_Sans_JP({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '700'],
+  display: 'swap',
+  variable: '--font-noto-sans-jp',
+  preload: true,
+});
+
+const zenOldMincho = Zen_Old_Mincho({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  display: 'swap',
+  variable: '--font-zen-old-mincho',
+  preload: true,
+});
 
 export const metadata: Metadata = {
   title: '備前焼作家 高島聡平 公式サイト',
@@ -74,16 +99,9 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ja">
+    <html lang="ja" className={`${shipporiMincho.variable} ${notoSansJP.variable} ${zenOldMincho.variable}`}>
       <head>
         <meta name="theme-color" content="#1a1714" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font -- App Router root layout applies to all pages */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&family=Zen+Old+Mincho:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body>{children}</body>
