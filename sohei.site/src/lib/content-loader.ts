@@ -103,9 +103,9 @@ export function useImageLoader(pageName: string) {
   const getImageSrc = useCallback(
     (imageKey: string, fallback: string): string => {
       // imageKey format: "page.key" (e.g., "index.philosophy_image")
-      const key = imageKey.includes('.') ? imageKey.split('.').slice(1).join('.') : imageKey;
-      if (customImageKeys.has(key)) {
-        return `${API_BASE}/api/images/${pageName}/${key}`;
+      // Stored in DB as: page="index", key="index.philosophy_image" (full key)
+      if (customImageKeys.has(imageKey)) {
+        return `${API_BASE}/api/images/${pageName}/${imageKey}`;
       }
       return fallback;
     },
