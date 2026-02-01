@@ -5,7 +5,7 @@ import HamburgerMenu from '@/components/HamburgerMenu';
 import Footer from '@/components/Footer';
 import ScrollAnimations from '@/components/ScrollAnimations';
 import InstagramEmbed from '@/components/InstagramEmbed';
-import { useContentLoader, useAnalyticsLog } from '@/lib/content-loader';
+import { useContentLoader, useAnalyticsLog, useImageLoader } from '@/lib/content-loader';
 
 const WORKS = [
   {
@@ -114,6 +114,7 @@ const FAQ_ITEMS = [
 
 export default function WorkPageClient() {
   const { getContent } = useContentLoader('work');
+  const { getImageSrc } = useImageLoader('work');
   useAnalyticsLog('work');
 
   return (
@@ -144,7 +145,14 @@ export default function WorkPageClient() {
               {WORKS.map((work, i) => (
                 <div key={i} className="work-gallery__item reveal">
                   <div className="work-gallery__image">
-                    <Image src={work.src} alt={work.alt} width={400} height={400} data-image-key={work.imageKey} />
+                    <Image
+                      src={getImageSrc(work.imageKey, work.src)}
+                      alt={work.alt}
+                      width={400}
+                      height={400}
+                      data-image-key={work.imageKey}
+                      unoptimized
+                    />
                   </div>
                   <p className="work-gallery__caption" data-content-key={work.captionKey}>
                     {getContent(work.captionKey, work.caption)}

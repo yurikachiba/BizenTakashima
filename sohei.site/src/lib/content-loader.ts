@@ -65,3 +65,52 @@ export function useAnalyticsLog(pageName: string) {
     logVisit();
   }, [pageName]);
 }
+
+// Cache for custom image keys per page (shared across hook instances)
+const imageKeysCache: { [page: string]: Set<string> } = {};
+
+export function useImageLoader(pageName: string) {
+  const [customImageKeys, setCustomImageKeys] = useState<Set<string>>(new Set());
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    // Use cached keys if available
+    if (imageKeysCache[pageName]) {
+      setCustomImageKeys(imageKeysCache[pageName]);
+      setLoaded(true);
+      return;
+    }
+
+    async function loadImageKeys() {
+      try {
+        const res = await fetch(`${API_BASE}/api/images/${pageName}/_list`);
+        if (res.ok) {
+          const data = await res.json();
+          const keysSet = new Set<string>(data.keys || []);
+          imageKeysCache[pageName] = keysSet;
+          setCustomImageKeys(keysSet);
+        }
+      } catch {
+        // Graceful fallback to default images
+      } finally {
+        setLoaded(true);
+      }
+    }
+
+    loadImageKeys();
+  }, [pageName]);
+
+  const getImageSrc = useCallback(
+    (imageKey: string, fallback: string): string => {
+      // imageKey format: "page.key" (e.g., "index.philosophy_image")
+      const key = imageKey.includes('.') ? imageKey.split('.').slice(1).join('.') : imageKey;
+      if (customImageKeys.has(key)) {
+        return `${API_BASE}/api/images/${pageName}/${key}`;
+      }
+      return fallback;
+    },
+    [pageName, customImageKeys],
+  );
+
+  return { loaded, getImageSrc, hasCustomImage: (key: string) => customImageKeys.has(key) };
+}

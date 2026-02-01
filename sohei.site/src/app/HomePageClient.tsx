@@ -5,10 +5,11 @@ import Link from 'next/link';
 import HamburgerMenu from '@/components/HamburgerMenu';
 import Footer from '@/components/Footer';
 import ScrollAnimations from '@/components/ScrollAnimations';
-import { useContentLoader, useAnalyticsLog } from '@/lib/content-loader';
+import { useContentLoader, useAnalyticsLog, useImageLoader } from '@/lib/content-loader';
 
 export default function HomePageClient() {
   const { getContent } = useContentLoader('index');
+  const { getImageSrc } = useImageLoader('index');
   useAnalyticsLog('index');
 
   return (
@@ -77,11 +78,12 @@ export default function HomePageClient() {
           <div className="philosophy__inner">
             <div className="philosophy__image reveal">
               <Image
-                src="/img/omoi.png"
+                src={getImageSrc('index.philosophy_image', '/img/omoi.png')}
                 alt="高島が作品を作っている写真"
                 width={800}
                 height={600}
                 data-image-key="index.philosophy_image"
+                unoptimized
               />
             </div>
             <div className="philosophy__text reveal reveal-delay-1">
@@ -107,11 +109,12 @@ export default function HomePageClient() {
           <div className="section-card reveal">
             <div className="section-card__image">
               <Image
-                src="/img/WorkIntroduction.png"
+                src={getImageSrc('index.work_image', '/img/WorkIntroduction.png')}
                 alt="焼く前の急須たち"
                 width={800}
                 height={600}
                 data-image-key="index.work_image"
+                unoptimized
               />
             </div>
             <div className="section-card__body">
@@ -144,11 +147,12 @@ export default function HomePageClient() {
           <div className="section-card section-card--reverse reveal">
             <div className="section-card__image">
               <Image
-                src="/img/kneadTheClay.png"
+                src={getImageSrc('index.production_image', '/img/kneadTheClay.png')}
                 alt="粘土を練っている様子"
                 width={800}
                 height={600}
                 data-image-key="index.production_image"
+                unoptimized
               />
             </div>
             <div className="section-card__body">
@@ -181,11 +185,12 @@ export default function HomePageClient() {
           <div className="section-card reveal">
             <div className="section-card__image">
               <Image
-                src="/img/interview.png"
+                src={getImageSrc('index.interview_image', '/img/interview.png')}
                 alt="高島の顔写真"
                 width={800}
                 height={600}
                 data-image-key="index.interview_image"
+                unoptimized
               />
             </div>
             <div className="section-card__body">
@@ -215,11 +220,12 @@ export default function HomePageClient() {
           <div className="section-card section-card--reverse reveal">
             <div className="section-card__image">
               <Image
-                src="/img/separate.png"
+                src={getImageSrc('index.artist_image', '/img/separate.png')}
                 alt="糸で作品と粘土を切り離している様子の写真"
                 width={800}
                 height={600}
                 data-image-key="index.artist_image"
+                unoptimized
               />
             </div>
             <div className="section-card__body">

@@ -5,7 +5,7 @@ import HamburgerMenu from '@/components/HamburgerMenu';
 import Footer from '@/components/Footer';
 import ScrollAnimations from '@/components/ScrollAnimations';
 import InstagramEmbed from '@/components/InstagramEmbed';
-import { useContentLoader, useAnalyticsLog } from '@/lib/content-loader';
+import { useContentLoader, useAnalyticsLog, useImageLoader } from '@/lib/content-loader';
 
 const QA_ITEMS = [
   {
@@ -48,6 +48,7 @@ const QA_ITEMS = [
 
 export default function InterviewPageClient() {
   const { getContent } = useContentLoader('interview');
+  const { getImageSrc } = useImageLoader('interview');
   useAnalyticsLog('interview');
 
   return (
@@ -60,12 +61,13 @@ export default function InterviewPageClient() {
       <div className="page-hero">
         <div className="page-hero__image">
           <Image
-            src="/img/interview_top.png"
+            src={getImageSrc('interview.top_image', '/img/interview_top.png')}
             alt="高島の顔写真"
             width={1200}
             height={600}
             priority
             data-image-key="interview.top_image"
+            unoptimized
           />
         </div>
         <div className="page-hero__overlay"></div>

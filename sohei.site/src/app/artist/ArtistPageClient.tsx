@@ -5,10 +5,11 @@ import HamburgerMenu from '@/components/HamburgerMenu';
 import Footer from '@/components/Footer';
 import ScrollAnimations from '@/components/ScrollAnimations';
 import InstagramEmbed from '@/components/InstagramEmbed';
-import { useContentLoader, useAnalyticsLog } from '@/lib/content-loader';
+import { useContentLoader, useAnalyticsLog, useImageLoader } from '@/lib/content-loader';
 
 export default function ArtistPageClient() {
   const { getContent } = useContentLoader('artist');
+  const { getImageSrc } = useImageLoader('artist');
   useAnalyticsLog('artist');
 
   return (
@@ -21,12 +22,13 @@ export default function ArtistPageClient() {
       <div className="page-hero">
         <div className="page-hero__image">
           <Image
-            src="/img/artistIntroduction_top.png"
+            src={getImageSrc('artist.top_image', '/img/artistIntroduction_top.png')}
             alt="高島聡平の写真"
             width={1200}
             height={600}
             priority
             data-image-key="artist.top_image"
+            unoptimized
           />
         </div>
         <div className="page-hero__overlay"></div>
