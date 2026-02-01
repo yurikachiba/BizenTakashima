@@ -671,6 +671,23 @@ const IconUpload = () => (
   </svg>
 );
 
+const IconDownload = () => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="8 17 12 21 16 17" />
+    <line x1="12" y1="12" x2="12" y2="21" />
+    <path d="M20.88 18.09A5 5 0 0018 9h-1.26A8 8 0 103 16.29" />
+  </svg>
+);
+
 const IconHeading = () => (
   <svg
     width="18"
@@ -1140,6 +1157,58 @@ export default function AdminPageClient() {
         showToast('サーバーに接続できません', 'error');
         return;
       }
+    }
+  };
+
+  const handleImageDownload = async (key: string) => {
+    const imgSrc = uploadedImages[key] || DEFAULT_IMAGES[key];
+    if (!imgSrc) {
+      showToast('ダウンロードする画像がありません', 'error');
+      return;
+    }
+
+    try {
+      const label = IMAGE_LABELS[key] || key;
+      let blob: Blob;
+      let extension = 'png';
+
+      if (imgSrc.startsWith('data:')) {
+        // Base64 data URL (uploaded image)
+        const res = await fetch(imgSrc);
+        blob = await res.blob();
+        const mimeMatch = imgSrc.match(/data:image\/(\w+);/);
+        if (mimeMatch) {
+          extension = mimeMatch[1] === 'jpeg' ? 'jpg' : mimeMatch[1];
+        }
+      } else {
+        // Default image URL
+        const res = await fetch(imgSrc);
+        if (!res.ok) {
+          showToast('画像の取得に失敗しました', 'error');
+          return;
+        }
+        blob = await res.blob();
+        const contentType = res.headers.get('content-type');
+        if (contentType?.includes('jpeg')) {
+          extension = 'jpg';
+        } else if (contentType?.includes('png')) {
+          extension = 'png';
+        } else if (contentType?.includes('webp')) {
+          extension = 'webp';
+        }
+      }
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${label}.${extension}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('画像をダウンロードしました');
+    } catch {
+      showToast('ダウンロードに失敗しました', 'error');
     }
   };
 
@@ -1761,19 +1830,31 @@ export default function AdminPageClient() {
                     </div>
                     <div className="image-card__info">
                       <div className="image-card__label">{label}</div>
-                      <label className="image-card__upload-btn">
-                        <IconUpload />
-                        変更
-                        <input
-                          type="file"
-                          accept="image/*"
-                          hidden
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) handleImageUpload(key.split('.')[0], key, file);
-                          }}
-                        />
-                      </label>
+                      <div className="image-card__actions">
+                        <label className="image-card__upload-btn">
+                          <IconUpload />
+                          変更
+                          <input
+                            type="file"
+                            accept="image/*"
+                            hidden
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleImageUpload(key.split('.')[0], key, file);
+                            }}
+                          />
+                        </label>
+                        {imgSrc && (
+                          <button
+                            type="button"
+                            className="image-card__download-btn"
+                            onClick={() => handleImageDownload(key)}
+                          >
+                            <IconDownload />
+                            保存
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
