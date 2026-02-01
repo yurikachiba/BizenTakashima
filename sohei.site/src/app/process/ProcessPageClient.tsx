@@ -5,7 +5,7 @@ import HamburgerMenu from '@/components/HamburgerMenu';
 import Footer from '@/components/Footer';
 import ScrollAnimations from '@/components/ScrollAnimations';
 import InstagramEmbed from '@/components/InstagramEmbed';
-import { useContentLoader, useAnalyticsLog } from '@/lib/content-loader';
+import { useContentLoader, useAnalyticsLog, useImageLoader } from '@/lib/content-loader';
 
 const DEFAULT_YOUTUBE_0 = 'https://www.youtube.com/embed/UINddZBlXKA?si=ONc5cd0J6_H_zpGw';
 const DEFAULT_YOUTUBE_1 = 'https://www.youtube.com/embed/i8zNkNUtsZI?si=Fkihce3k8HsTUReE';
@@ -79,6 +79,7 @@ const STEP_TEXTS: Record<string, string> = {
 
 export default function ProcessPageClient() {
   const { getContent } = useContentLoader('production');
+  const { getImageSrc } = useImageLoader('production');
   useAnalyticsLog('production');
 
   const stepTextKeys = [
@@ -133,7 +134,14 @@ export default function ProcessPageClient() {
                   <div key={i} className="process-step reveal">
                     <span className="process-step__number">{String(i + 1).padStart(2, '0')}</span>
                     <div className="process-step__image">
-                      <Image src={step.img} alt={step.alt} width={800} height={600} data-image-key={step.key} />
+                      <Image
+                        src={getImageSrc(step.key, step.img)}
+                        alt={step.alt}
+                        width={800}
+                        height={600}
+                        data-image-key={step.key}
+                        unoptimized
+                      />
                     </div>
                     {(step as { youtubeKey?: string }).youtubeKey && (
                       <iframe
