@@ -193,14 +193,5 @@ export function useImageLoader(pageName: string) {
     [pageName, customImageKeys, loaded],
   );
 
-  // Check if a specific image key is ready (keys loaded and custom image exists or fallback is ok)
-  const isImageReady = useCallback(
-    (imageKey: string): boolean => {
-      // Ready when keys are loaded (either custom exists or we know to use fallback)
-      return loaded;
-    },
-    [loaded],
-  );
-
-  return { loaded, getImageSrc, isImageReady, hasCustomImage: (key: string) => customImageKeys.has(key) };
+  return { loaded, getImageSrc, hasCustomImage: (key: string) => customImageKeys.has(key) };
 }
