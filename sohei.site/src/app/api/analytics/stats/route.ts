@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, withTimeout } from '@/lib/prisma';
+import { prisma, withRetry } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
-
-const DB_TIMEOUT_MS = 8000; // 8 second timeout for analytics queries
 
 export async function GET(request: NextRequest) {
   try {
@@ -24,7 +22,7 @@ export async function GET(request: NextRequest) {
     const yesterdayStart = new Date(todayStart);
     yesterdayStart.setDate(yesterdayStart.getDate() - 1);
 
-    // Execute all independent queries in parallel with timeout for serverless
+    // Execute all independent queries in parallel with retry for serverless cold-start
     const [
       totalVisits,
       prevTotalVisits,
@@ -40,7 +38,7 @@ export async function GET(request: NextRequest) {
       languageLogs,
       contentCount,
       lastUpdated,
-    ] = await withTimeout(
+    ] = await withRetry(() =>
       Promise.all([
         prisma.visitorLog.count({
           where: { createdAt: { gte: since } },
@@ -98,7 +96,6 @@ export async function GET(request: NextRequest) {
           select: { updatedAt: true },
         }),
       ]),
-      DB_TIMEOUT_MS,
     );
 
     const uniqueVisitors = uniqueIPs.length;
@@ -207,10 +204,13 @@ export async function GET(request: NextRequest) {
     });
   } catch (err) {
     console.error('Stats error:', err);
-    const message =
-      err instanceof Error && err.message === 'Database timeout'
-        ? 'データベースの応答がありません。しばらく待ってから再試行してください。'
-        : 'サーバーエラー';
+    const error = err as { code?: string; message?: string };
+    let message = 'サーバーエラー';
+    if (error.code === 'DATABASE_COLD_START') {
+      message = 'データベースがスリープ状態から復帰中です。数秒後に再度お試しください。';
+    } else if (error.message === 'Database timeout') {
+      message = 'データベースの応答がありません。しばらく待ってから再試行してください。';
+    }
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
