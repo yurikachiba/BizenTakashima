@@ -76,3 +76,14 @@
 .reveal-delay-3 {
   transition-delay: 0.45s;
 }
+
+// === Custom image smooth loading ===
+// Images with data-image-key attribute will fade in smoothly when loaded
+img[data-image-key] {
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+
+  &.is-loaded {
+    opacity: 1;
+  }
+}
