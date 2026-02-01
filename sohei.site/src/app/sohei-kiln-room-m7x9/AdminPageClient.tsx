@@ -940,25 +940,27 @@ export default function AdminPageClient() {
   );
 
   const loadImages = useCallback(async () => {
-    const allKeys = Object.values(PAGE_IMAGE_KEYS).flat();
-    // Load all images in parallel for better performance
+    // ページごとにカスタム画像キー一覧を取得してAPI URLを直接使用
+    const pages = Object.keys(PAGE_IMAGE_KEYS);
     const results = await Promise.allSettled(
-      allKeys.map(async (key) => {
-        const page = key.split('.')[0];
-        const res = await fetch(`${IMAGES_API_BASE}/api/images/${page}/${key}`);
+      pages.map(async (page) => {
+        const res = await fetch(`${IMAGES_API_BASE}/api/images/${page}/_list`);
         if (res.ok) {
-          const blob = await res.blob();
-          if (blob.size > 0) {
-            return { key, url: URL.createObjectURL(blob) };
-          }
+          const data = await res.json();
+          return { page, keys: data.keys || [] };
         }
-        return null;
+        return { page, keys: [] };
       }),
     );
+
     const loaded: Record<string, string> = {};
     for (const result of results) {
       if (result.status === 'fulfilled' && result.value) {
-        loaded[result.value.key] = result.value.url;
+        const { page, keys } = result.value;
+        for (const key of keys) {
+          // API URLを直接使用（Blob URLの無効化問題を回避）
+          loaded[key] = `${IMAGES_API_BASE}/api/images/${page}/${key}`;
+        }
       }
     }
     setUploadedImages(loaded);
