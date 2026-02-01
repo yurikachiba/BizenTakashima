@@ -68,46 +68,60 @@ export function useAnalyticsLog(pageName: string) {
 
 // Cache for custom image keys per page (shared across hook instances)
 const imageKeysCache: { [page: string]: Set<string> } = {};
-// Cache for preloaded images (to avoid re-preloading)
-const preloadedImagesCache: { [page: string]: Set<string> } = {};
 
-// Preload an image and return a promise that resolves when loaded
-function preloadImage(src: string): Promise<void> {
-  return new Promise((resolve) => {
-    const img = new window.Image();
-    img.onload = () => resolve();
-    img.onerror = () => resolve(); // Resolve even on error to not block
-    img.src = src;
-  });
+// Add is-loaded class to an image element
+function markImageLoaded(img: HTMLImageElement) {
+  img.classList.add('is-loaded');
+}
+
+// Setup load listener for an image
+function setupImageLoadListener(img: HTMLImageElement) {
+  if (img.complete && img.naturalWidth > 0) {
+    // Image already loaded
+    markImageLoaded(img);
+  } else {
+    img.addEventListener('load', () => markImageLoaded(img), { once: true });
+    img.addEventListener('error', () => markImageLoaded(img), { once: true }); // Show even on error
+  }
 }
 
 export function useImageLoader(pageName: string) {
   const [customImageKeys, setCustomImageKeys] = useState<Set<string>>(new Set());
-  const [readyImages, setReadyImages] = useState<Set<string>>(new Set());
   const [loaded, setLoaded] = useState(false);
 
+  // Setup image load listeners for smooth fade-in
   useEffect(() => {
-    // Use cached preloaded images if available
-    if (preloadedImagesCache[pageName]) {
-      setCustomImageKeys(imageKeysCache[pageName]);
-      setReadyImages(preloadedImagesCache[pageName]);
-      setLoaded(true);
-      return;
-    }
+    // Initial setup for existing images
+    const images = document.querySelectorAll<HTMLImageElement>('img[data-image-key]');
+    images.forEach(setupImageLoadListener);
 
-    // Use cached keys if available (but still need to preload)
+    // Watch for dynamically added images
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node instanceof HTMLElement) {
+            // Check if the node itself is an image
+            if (node.tagName === 'IMG' && node.hasAttribute('data-image-key')) {
+              setupImageLoadListener(node as HTMLImageElement);
+            }
+            // Check for images within the added node
+            const imgs = node.querySelectorAll<HTMLImageElement>('img[data-image-key]');
+            imgs.forEach(setupImageLoadListener);
+          }
+        });
+      });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    // Use cached keys if available
     if (imageKeysCache[pageName]) {
       setCustomImageKeys(imageKeysCache[pageName]);
       setLoaded(true);
-      // Preload images in background
-      preloadedImagesCache[pageName] = new Set();
-      for (const key of imageKeysCache[pageName]) {
-        const imgUrl = `${API_BASE}/api/images/${pageName}/${key}`;
-        preloadImage(imgUrl).then(() => {
-          preloadedImagesCache[pageName].add(key);
-          setReadyImages((prev) => new Set([...prev, key]));
-        });
-      }
       return;
     }
 
@@ -118,17 +132,7 @@ export function useImageLoader(pageName: string) {
           const data = await res.json();
           const keysSet = new Set<string>(data.keys || []);
           imageKeysCache[pageName] = keysSet;
-          preloadedImagesCache[pageName] = new Set();
           setCustomImageKeys(keysSet);
-
-          // Preload each custom image before making it available
-          for (const key of keysSet) {
-            const imgUrl = `${API_BASE}/api/images/${pageName}/${key}`;
-            preloadImage(imgUrl).then(() => {
-              preloadedImagesCache[pageName].add(key);
-              setReadyImages((prev) => new Set([...prev, key]));
-            });
-          }
         }
       } catch {
         // Graceful fallback to default images
@@ -144,13 +148,14 @@ export function useImageLoader(pageName: string) {
     (imageKey: string, fallback: string): string => {
       // imageKey format: "page.key" (e.g., "index.philosophy_image")
       // Stored in DB as: page="index", key="index.philosophy_image" (full key)
-      // Only return custom image URL after it's been preloaded to prevent flickering
-      if (readyImages.has(imageKey)) {
+      // Return custom image URL immediately if it exists (don't wait for preload)
+      // CSS transition will handle smooth fade-in
+      if (customImageKeys.has(imageKey)) {
         return `${API_BASE}/api/images/${pageName}/${imageKey}`;
       }
       return fallback;
     },
-    [pageName, readyImages],
+    [pageName, customImageKeys],
   );
 
   return { loaded, getImageSrc, hasCustomImage: (key: string) => customImageKeys.has(key) };
