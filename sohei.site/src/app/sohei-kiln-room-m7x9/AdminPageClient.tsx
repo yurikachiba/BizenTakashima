@@ -3,10 +3,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import '@/styles/admin/admin.css';
 
-// API_BASE for database operations (Render.com backend)
-const API_BASE = 'https://bizentakashima.onrender.com';
+// API_BASE for database operations (use relative URLs for Vercel deployment)
+const API_BASE = '';
 
-const IMAGES_API_BASE = 'https://bizentakashima.onrender.com';
+const IMAGES_API_BASE = '';
 
 interface AnalyticsStats {
   totalVisits: number;

@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-// Use Render.com backend for API
-const API_BASE = 'https://bizentakashima.onrender.com';
+// Use relative URLs for Vercel deployment
+const API_BASE = '';
 
 interface ContentData {
   [key: string]: string;
