@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { signToken } from '@/lib/auth';
-import { prisma, withTimeout } from '@/lib/prisma';
+import { prisma, withTimeout, ensureConnection } from '@/lib/prisma';
 
 const DEFAULT_ADMIN_PASSWORD = process.env.DEFAULT_ADMIN_PASSWORD;
 const FALLBACK_ADMIN_ID = 'env-admin';
-const DB_TIMEOUT_MS = 5000; // 5 second timeout for DB operations
+// Extended timeout for Render.com free tier cold start
+const DB_TIMEOUT_MS = 30000;
 
 if (!DEFAULT_ADMIN_PASSWORD) {
   console.warn('DEFAULT_ADMIN_PASSWORD environment variable is not set. Initial admin setup will fail until set.');
@@ -26,6 +27,9 @@ type DbLoginResult =
 
 async function tryDatabaseLogin(password: string): Promise<DbLoginResult> {
   try {
+    // Ensure database connection (handles Render.com cold start)
+    await ensureConnection();
+
     // Use timeout to prevent long waits when DB is unavailable
     const admin = (await withTimeout(prisma.admin.findFirst(), DB_TIMEOUT_MS)) as AdminRecord | null;
 

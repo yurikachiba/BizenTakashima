@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, withTimeout } from '@/lib/prisma';
+import { prisma, withTimeout, ensureConnection } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
 
-const DB_TIMEOUT_MS = 5000;
+// Extended timeout for Render.com free tier cold start
+const DB_TIMEOUT_MS = 30000;
 
 // Type for Content model (matches Prisma schema)
 interface ContentRecord {
@@ -21,6 +22,9 @@ interface DeleteManyResult {
 
 export async function GET() {
   try {
+    // Ensure database connection (handles Render.com cold start)
+    await ensureConnection();
+
     const contents = (await withTimeout(
       prisma.content.findMany({
         orderBy: [{ page: 'asc' }, { key: 'asc' }],
@@ -58,6 +62,9 @@ export async function DELETE(request: NextRequest) {
   try {
     const result = requireAuth(request);
     if (result instanceof NextResponse) return result;
+
+    // Ensure database connection (handles Render.com cold start)
+    await ensureConnection();
 
     const deleteResult = (await withTimeout(prisma.content.deleteMany(), DB_TIMEOUT_MS)) as DeleteManyResult;
     return NextResponse.json({ message: '全コンテンツを削除しました', count: deleteResult.count });

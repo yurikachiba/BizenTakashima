@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, withTimeout } from '@/lib/prisma';
+import { prisma, withTimeout, ensureConnection } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
 
-const DB_TIMEOUT_MS = 8000; // 8 second timeout for analytics queries
+// Extended timeout for Render.com free tier cold start (can take up to 30s to wake up)
+const DB_TIMEOUT_MS = 30000;
 
 export async function GET(request: NextRequest) {
   try {
@@ -23,6 +24,9 @@ export async function GET(request: NextRequest) {
     todayStart.setHours(0, 0, 0, 0);
     const yesterdayStart = new Date(todayStart);
     yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+
+    // Ensure database connection (handles Render.com cold start)
+    await ensureConnection();
 
     // Execute all independent queries in parallel with timeout for serverless
     const [
@@ -207,10 +211,17 @@ export async function GET(request: NextRequest) {
     });
   } catch (err) {
     console.error('Stats error:', err);
-    const message =
-      err instanceof Error && err.message === 'Database timeout'
-        ? 'データベースの応答がありません。しばらく待ってから再試行してください。'
-        : 'サーバーエラー';
+    const error = err as { code?: string; message?: string };
+    let message = 'サーバーエラー';
+
+    if (error.code === 'DATABASE_COLD_START' || error.message?.includes('スリープ状態')) {
+      message = 'データベースがスリープ状態から復帰中です。10秒後に再試行してください。';
+    } else if (error.message === 'Database timeout') {
+      message = 'データベースの応答がありません。しばらく待ってから再試行してください。';
+    } else if (error.code === 'P1001' || error.message?.includes("Can't reach database server")) {
+      message = 'データベースに接続できません。数秒後に再試行してください。';
+    }
+
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
