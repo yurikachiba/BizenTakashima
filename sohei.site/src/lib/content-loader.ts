@@ -69,19 +69,33 @@ export function useAnalyticsLog(pageName: string) {
 // Cache for custom image keys per page (shared across hook instances)
 const imageKeysCache: { [page: string]: Set<string> } = {};
 
+// Track the src that was loaded for each image
+const loadedSrcMap = new WeakMap<HTMLImageElement, string>();
+
 // Add is-loaded class to an image element
 function markImageLoaded(img: HTMLImageElement) {
+  loadedSrcMap.set(img, img.src);
   img.classList.add('is-loaded');
 }
 
 // Setup load listener for an image
 function setupImageLoadListener(img: HTMLImageElement) {
-  if (img.complete && img.naturalWidth > 0) {
-    // Image already loaded
+  // Check if src changed - if so, reset loaded state
+  const prevSrc = loadedSrcMap.get(img);
+  if (prevSrc && prevSrc !== img.src) {
+    img.classList.remove('is-loaded');
+  }
+
+  // If already loaded with current src, mark as loaded
+  if (img.complete && img.naturalWidth > 0 && loadedSrcMap.get(img) === img.src) {
+    markImageLoaded(img);
+  } else if (img.complete && img.naturalWidth > 0 && !loadedSrcMap.has(img)) {
+    // First time setup and already loaded
     markImageLoaded(img);
   } else {
+    // Wait for load event
     img.addEventListener('load', () => markImageLoaded(img), { once: true });
-    img.addEventListener('error', () => markImageLoaded(img), { once: true }); // Show even on error
+    img.addEventListener('error', () => markImageLoaded(img), { once: true });
   }
 }
 
@@ -95,24 +109,38 @@ export function useImageLoader(pageName: string) {
     const images = document.querySelectorAll<HTMLImageElement>('img[data-image-key]');
     images.forEach(setupImageLoadListener);
 
-    // Watch for dynamically added images
+    // Watch for dynamically added images and src changes
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
+        // Handle added nodes
         mutation.addedNodes.forEach((node) => {
           if (node instanceof HTMLElement) {
-            // Check if the node itself is an image
             if (node.tagName === 'IMG' && node.hasAttribute('data-image-key')) {
               setupImageLoadListener(node as HTMLImageElement);
             }
-            // Check for images within the added node
             const imgs = node.querySelectorAll<HTMLImageElement>('img[data-image-key]');
             imgs.forEach(setupImageLoadListener);
           }
         });
+
+        // Handle src attribute changes
+        if (
+          mutation.type === 'attributes' &&
+          mutation.attributeName === 'src' &&
+          mutation.target instanceof HTMLImageElement &&
+          mutation.target.hasAttribute('data-image-key')
+        ) {
+          setupImageLoadListener(mutation.target);
+        }
       });
     });
 
-    observer.observe(document.body, { childList: true, subtree: true });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['src'],
+    });
 
     return () => observer.disconnect();
   }, []);
@@ -148,14 +176,21 @@ export function useImageLoader(pageName: string) {
     (imageKey: string, fallback: string): string => {
       // imageKey format: "page.key" (e.g., "index.philosophy_image")
       // Stored in DB as: page="index", key="index.philosophy_image" (full key)
-      // Return custom image URL immediately if it exists (don't wait for preload)
-      // CSS transition will handle smooth fade-in
+
+      // Don't return any src until we know which images are custom
+      // This prevents default image from loading and showing briefly
+      if (!loaded) {
+        // Return transparent 1x1 pixel to prevent broken image icon
+        return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+      }
+
+      // Return custom image URL if it exists, otherwise fallback
       if (customImageKeys.has(imageKey)) {
         return `${API_BASE}/api/images/${pageName}/${imageKey}`;
       }
       return fallback;
     },
-    [pageName, customImageKeys],
+    [pageName, customImageKeys, loaded],
   );
 
   return { loaded, getImageSrc, hasCustomImage: (key: string) => customImageKeys.has(key) };
