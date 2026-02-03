@@ -10,10 +10,7 @@ export default function HomePage() {
 
   return (
     <Suspense fallback={<HomePageSkeleton />}>
-      <HomePageClient
-        contentPromise={contentPromise}
-        imageKeysPromise={imageKeysPromise}
-      />
+      <HomePageClient contentPromise={contentPromise} imageKeysPromise={imageKeysPromise} />
     </Suspense>
   );
 }

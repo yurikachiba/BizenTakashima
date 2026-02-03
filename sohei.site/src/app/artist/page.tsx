@@ -22,10 +22,7 @@ export default function ArtistPage() {
 
   return (
     <Suspense fallback={<PageSkeleton title="作家紹介" />}>
-      <ArtistPageClient
-        contentPromise={contentPromise}
-        imageKeysPromise={imageKeysPromise}
-      />
+      <ArtistPageClient contentPromise={contentPromise} imageKeysPromise={imageKeysPromise} />
     </Suspense>
   );
 }

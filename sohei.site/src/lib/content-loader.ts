@@ -217,10 +217,7 @@ export function useServerContent(contentPromise: Promise<ContentData>) {
 /**
  * React 19 use() hook: Server Componentから渡された画像キーPromiseを展開
  */
-export function useServerImageKeys(
-  imageKeysPromise: Promise<string[]>,
-  pageName: string,
-) {
+export function useServerImageKeys(imageKeysPromise: Promise<string[]>, pageName: string) {
   const imageKeys = use(imageKeysPromise);
   const customImageKeys = new Set(imageKeys);
 

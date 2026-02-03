@@ -22,10 +22,7 @@ export default function ProcessPage() {
 
   return (
     <Suspense fallback={<PageSkeleton title="制作の様子" />}>
-      <ProcessPageClient
-        contentPromise={contentPromise}
-        imageKeysPromise={imageKeysPromise}
-      />
+      <ProcessPageClient contentPromise={contentPromise} imageKeysPromise={imageKeysPromise} />
     </Suspense>
   );
 }

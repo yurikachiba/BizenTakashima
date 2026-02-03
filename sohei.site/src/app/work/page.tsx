@@ -22,10 +22,7 @@ export default function WorkPage() {
 
   return (
     <Suspense fallback={<PageSkeleton title="作品紹介" />}>
-      <WorkPageClient
-        contentPromise={contentPromise}
-        imageKeysPromise={imageKeysPromise}
-      />
+      <WorkPageClient contentPromise={contentPromise} imageKeysPromise={imageKeysPromise} />
     </Suspense>
   );
 }

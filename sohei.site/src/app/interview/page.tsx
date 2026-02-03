@@ -22,10 +22,7 @@ export default function InterviewPage() {
 
   return (
     <Suspense fallback={<PageSkeleton title="インタビュー" />}>
-      <InterviewPageClient
-        contentPromise={contentPromise}
-        imageKeysPromise={imageKeysPromise}
-      />
+      <InterviewPageClient contentPromise={contentPromise} imageKeysPromise={imageKeysPromise} />
     </Suspense>
   );
 }
