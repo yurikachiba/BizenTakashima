@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import InterviewPageClient from './InterviewPageClient';
+import { getPageContent, getPageImageKeys } from '@/lib/content-server';
+import PageSkeleton from '@/components/PageSkeleton';
 
 export const metadata: Metadata = {
   title: '備前焼作家 高島聡平 公式サイト | インタビュー',
@@ -14,5 +17,15 @@ export const metadata: Metadata = {
 };
 
 export default function InterviewPage() {
-  return <InterviewPageClient />;
+  const contentPromise = getPageContent('interview');
+  const imageKeysPromise = getPageImageKeys('interview');
+
+  return (
+    <Suspense fallback={<PageSkeleton title="インタビュー" />}>
+      <InterviewPageClient
+        contentPromise={contentPromise}
+        imageKeysPromise={imageKeysPromise}
+      />
+    </Suspense>
+  );
 }

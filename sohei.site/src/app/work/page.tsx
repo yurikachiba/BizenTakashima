@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import WorkPageClient from './WorkPageClient';
+import { getPageContent, getPageImageKeys } from '@/lib/content-server';
+import PageSkeleton from '@/components/PageSkeleton';
 
 export const metadata: Metadata = {
   title: '備前焼作家 高島聡平 公式サイト | 作品紹介',
@@ -14,5 +17,15 @@ export const metadata: Metadata = {
 };
 
 export default function WorkPage() {
-  return <WorkPageClient />;
+  const contentPromise = getPageContent('work');
+  const imageKeysPromise = getPageImageKeys('work');
+
+  return (
+    <Suspense fallback={<PageSkeleton title="作品紹介" />}>
+      <WorkPageClient
+        contentPromise={contentPromise}
+        imageKeysPromise={imageKeysPromise}
+      />
+    </Suspense>
+  );
 }

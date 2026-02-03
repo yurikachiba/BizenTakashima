@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import ProcessPageClient from './ProcessPageClient';
+import { getPageContent, getPageImageKeys } from '@/lib/content-server';
+import PageSkeleton from '@/components/PageSkeleton';
 
 export const metadata: Metadata = {
   title: '備前焼作家 高島聡平 公式サイト | 制作の様子',
@@ -14,5 +17,15 @@ export const metadata: Metadata = {
 };
 
 export default function ProcessPage() {
-  return <ProcessPageClient />;
+  const contentPromise = getPageContent('production');
+  const imageKeysPromise = getPageImageKeys('production');
+
+  return (
+    <Suspense fallback={<PageSkeleton title="制作の様子" />}>
+      <ProcessPageClient
+        contentPromise={contentPromise}
+        imageKeysPromise={imageKeysPromise}
+      />
+    </Suspense>
+  );
 }

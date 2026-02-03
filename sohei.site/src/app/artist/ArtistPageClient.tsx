@@ -5,11 +5,17 @@ import HamburgerMenu from '@/components/HamburgerMenu';
 import Footer from '@/components/Footer';
 import ScrollAnimations from '@/components/ScrollAnimations';
 import InstagramEmbed from '@/components/InstagramEmbed';
-import { useContentLoader, useAnalyticsLog, useImageLoader } from '@/lib/content-loader';
+import { useServerContent, useServerImageKeys, useAnalyticsLog } from '@/lib/content-loader';
+import type { ContentData } from '@/lib/content-server';
 
-export default function ArtistPageClient() {
-  const { getContent } = useContentLoader('artist');
-  const { getImageSrc } = useImageLoader('artist');
+interface ArtistPageClientProps {
+  contentPromise: Promise<ContentData>;
+  imageKeysPromise: Promise<string[]>;
+}
+
+export default function ArtistPageClient({ contentPromise, imageKeysPromise }: ArtistPageClientProps) {
+  const { getContent } = useServerContent(contentPromise);
+  const { getImageSrc } = useServerImageKeys(imageKeysPromise, 'artist');
   useAnalyticsLog('artist');
 
   return (

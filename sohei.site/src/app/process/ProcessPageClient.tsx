@@ -5,7 +5,13 @@ import HamburgerMenu from '@/components/HamburgerMenu';
 import Footer from '@/components/Footer';
 import ScrollAnimations from '@/components/ScrollAnimations';
 import InstagramEmbed from '@/components/InstagramEmbed';
-import { useContentLoader, useAnalyticsLog, useImageLoader } from '@/lib/content-loader';
+import { useServerContent, useServerImageKeys, useAnalyticsLog } from '@/lib/content-loader';
+import type { ContentData } from '@/lib/content-server';
+
+interface ProcessPageClientProps {
+  contentPromise: Promise<ContentData>;
+  imageKeysPromise: Promise<string[]>;
+}
 
 const DEFAULT_YOUTUBE_0 = 'https://www.youtube.com/embed/UINddZBlXKA?si=ONc5cd0J6_H_zpGw';
 const DEFAULT_YOUTUBE_1 = 'https://www.youtube.com/embed/i8zNkNUtsZI?si=Fkihce3k8HsTUReE';
@@ -77,9 +83,9 @@ const STEP_TEXTS: Record<string, string> = {
     '焼き上がり、表面を綺麗にやすり掛けした後、水を入れて漏れがないか確認作業をします。300～400点ほどチェックしたのちに展示会場に並ぶことになります。',
 };
 
-export default function ProcessPageClient() {
-  const { getContent } = useContentLoader('production');
-  const { getImageSrc } = useImageLoader('production');
+export default function ProcessPageClient({ contentPromise, imageKeysPromise }: ProcessPageClientProps) {
+  const { getContent } = useServerContent(contentPromise);
+  const { getImageSrc } = useServerImageKeys(imageKeysPromise, 'production');
   useAnalyticsLog('production');
 
   const stepTextKeys = [
