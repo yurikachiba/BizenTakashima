@@ -5,7 +5,13 @@ import HamburgerMenu from '@/components/HamburgerMenu';
 import Footer from '@/components/Footer';
 import ScrollAnimations from '@/components/ScrollAnimations';
 import InstagramEmbed from '@/components/InstagramEmbed';
-import { useContentLoader, useAnalyticsLog, useImageLoader } from '@/lib/content-loader';
+import { useServerContent, useServerImageKeys, useAnalyticsLog } from '@/lib/content-loader';
+import type { ContentData } from '@/lib/content-server';
+
+interface InterviewPageClientProps {
+  contentPromise: Promise<ContentData>;
+  imageKeysPromise: Promise<string[]>;
+}
 
 const QA_ITEMS = [
   {
@@ -46,9 +52,9 @@ const QA_ITEMS = [
   },
 ];
 
-export default function InterviewPageClient() {
-  const { getContent } = useContentLoader('interview');
-  const { getImageSrc } = useImageLoader('interview');
+export default function InterviewPageClient({ contentPromise, imageKeysPromise }: InterviewPageClientProps) {
+  const { getContent } = useServerContent(contentPromise);
+  const { getImageSrc } = useServerImageKeys(imageKeysPromise, 'interview');
   useAnalyticsLog('interview');
 
   return (

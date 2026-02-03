@@ -1,13 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, use } from 'react';
+import type { ContentData } from './content-server';
 
 // Use relative URLs for Vercel deployment
 const API_BASE = '';
-
-interface ContentData {
-  [key: string]: string;
-}
 
 export function useContentLoader(pageName?: string) {
   const [content, setContent] = useState<ContentData>({});
@@ -194,4 +191,50 @@ export function useImageLoader(pageName: string) {
   );
 
   return { loaded, getImageSrc, hasCustomImage: (key: string) => customImageKeys.has(key) };
+}
+
+// ============================================
+// React 19 use() hook based implementations
+// ============================================
+
+/**
+ * React 19 use() hook: Server Componentから渡されたPromiseを展開
+ * Suspenseと組み合わせて使用
+ */
+export function useServerContent(contentPromise: Promise<ContentData>) {
+  const content = use(contentPromise);
+
+  const getContent = useCallback(
+    (key: string, fallback: string): string => {
+      return content[key] || fallback;
+    },
+    [content],
+  );
+
+  return { content, getContent };
+}
+
+/**
+ * React 19 use() hook: Server Componentから渡された画像キーPromiseを展開
+ */
+export function useServerImageKeys(imageKeysPromise: Promise<string[]>, pageName: string) {
+  const imageKeys = use(imageKeysPromise);
+  const customImageKeys = new Set(imageKeys);
+
+  // Cache the keys for subsequent renders
+  if (!imageKeysCache[pageName]) {
+    imageKeysCache[pageName] = customImageKeys;
+  }
+
+  const getImageSrc = useCallback(
+    (imageKey: string, fallback: string): string => {
+      if (customImageKeys.has(imageKey)) {
+        return `${API_BASE}/api/images/${pageName}/${imageKey}`;
+      }
+      return fallback;
+    },
+    [customImageKeys, pageName],
+  );
+
+  return { getImageSrc, hasCustomImage: (key: string) => customImageKeys.has(key) };
 }

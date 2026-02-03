@@ -5,7 +5,13 @@ import HamburgerMenu from '@/components/HamburgerMenu';
 import Footer from '@/components/Footer';
 import ScrollAnimations from '@/components/ScrollAnimations';
 import InstagramEmbed from '@/components/InstagramEmbed';
-import { useContentLoader, useAnalyticsLog, useImageLoader } from '@/lib/content-loader';
+import { useServerContent, useServerImageKeys, useAnalyticsLog } from '@/lib/content-loader';
+import type { ContentData } from '@/lib/content-server';
+
+interface WorkPageClientProps {
+  contentPromise: Promise<ContentData>;
+  imageKeysPromise: Promise<string[]>;
+}
 
 const WORKS = [
   {
@@ -112,9 +118,9 @@ const FAQ_ITEMS = [
   },
 ];
 
-export default function WorkPageClient() {
-  const { getContent } = useContentLoader('work');
-  const { getImageSrc } = useImageLoader('work');
+export default function WorkPageClient({ contentPromise, imageKeysPromise }: WorkPageClientProps) {
+  const { getContent } = useServerContent(contentPromise);
+  const { getImageSrc } = useServerImageKeys(imageKeysPromise, 'work');
   useAnalyticsLog('work');
 
   return (

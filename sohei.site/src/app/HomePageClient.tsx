@@ -5,11 +5,18 @@ import Link from 'next/link';
 import HamburgerMenu from '@/components/HamburgerMenu';
 import Footer from '@/components/Footer';
 import ScrollAnimations from '@/components/ScrollAnimations';
-import { useContentLoader, useAnalyticsLog, useImageLoader } from '@/lib/content-loader';
+import { useServerContent, useServerImageKeys, useAnalyticsLog } from '@/lib/content-loader';
+import type { ContentData } from '@/lib/content-server';
 
-export default function HomePageClient() {
-  const { getContent } = useContentLoader('index');
-  const { getImageSrc } = useImageLoader('index');
+interface HomePageClientProps {
+  contentPromise: Promise<ContentData>;
+  imageKeysPromise: Promise<string[]>;
+}
+
+export default function HomePageClient({ contentPromise, imageKeysPromise }: HomePageClientProps) {
+  // React 19 use() hookでServer Componentから渡されたPromiseを展開
+  const { getContent } = useServerContent(contentPromise);
+  const { getImageSrc } = useServerImageKeys(imageKeysPromise, 'index');
   useAnalyticsLog('index');
 
   return (
