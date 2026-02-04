@@ -226,6 +226,48 @@ export function useServerImageKeys(imageKeysPromise: Promise<string[]>, pageName
     imageKeysCache[pageName] = customImageKeys;
   }
 
+  // Setup image load listeners for smooth fade-in (same as useImageLoader)
+  useEffect(() => {
+    // Initial setup for existing images
+    const images = document.querySelectorAll<HTMLImageElement>('img[data-image-key]');
+    images.forEach(setupImageLoadListener);
+
+    // Watch for dynamically added images and src changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        // Handle added nodes
+        mutation.addedNodes.forEach((node) => {
+          if (node instanceof HTMLElement) {
+            if (node.tagName === 'IMG' && node.hasAttribute('data-image-key')) {
+              setupImageLoadListener(node as HTMLImageElement);
+            }
+            const imgs = node.querySelectorAll<HTMLImageElement>('img[data-image-key]');
+            imgs.forEach(setupImageLoadListener);
+          }
+        });
+
+        // Handle src attribute changes
+        if (
+          mutation.type === 'attributes' &&
+          mutation.attributeName === 'src' &&
+          mutation.target instanceof HTMLImageElement &&
+          mutation.target.hasAttribute('data-image-key')
+        ) {
+          setupImageLoadListener(mutation.target);
+        }
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['src'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const getImageSrc = useCallback(
     (imageKey: string, fallback: string): string => {
       if (customImageKeys.has(imageKey)) {
