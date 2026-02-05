@@ -822,6 +822,154 @@ const IconText = () => (
   </svg>
 );
 
+const IconEdit = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+  </svg>
+);
+
+const IconGlobe = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <line x1="2" y1="12" x2="22" y2="12" />
+    <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+  </svg>
+);
+
+const IconRefresh = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="23 4 23 10 17 10" />
+    <polyline points="1 20 1 14 7 14" />
+    <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
+  </svg>
+);
+
+const IconCheck = () => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
+const IconDatabase = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <ellipse cx="12" cy="5" rx="9" ry="3" />
+    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+  </svg>
+);
+
+const IconServer = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
+    <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
+    <line x1="6" y1="6" x2="6.01" y2="6" />
+    <line x1="6" y1="18" x2="6.01" y2="18" />
+  </svg>
+);
+
+const IconExport = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+    <polyline points="17 8 12 3 7 8" />
+    <line x1="12" y1="3" x2="12" y2="15" />
+  </svg>
+);
+
+const IconClock = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </svg>
+);
+
+const IconActivity = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+  </svg>
+);
+
 function showToast(message: string, type: 'success' | 'error' = 'success') {
   const existing = document.querySelector('.toast');
   if (existing) existing.remove();
@@ -855,6 +1003,11 @@ export default function AdminPageClient() {
   const [uploadedImages, setUploadedImages] = useState<Record<string, string>>({});
   const [analyticsTab, setAnalyticsTab] = useState<'overview' | 'traffic' | 'audience'>('overview');
   const [savingPages, setSavingPages] = useState<Set<string>>(new Set());
+  const [systemStatus, setSystemStatus] = useState<{ api: boolean; db: boolean; lastCheck: Date | null }>({
+    api: false,
+    db: false,
+    lastCheck: null,
+  });
   const tokenRef = useRef<string>('');
 
   const forceLogout = useCallback((message: string) => {
@@ -939,6 +1092,119 @@ export default function AdminPageClient() {
     [fetchWithAuth],
   );
 
+  const checkSystemStatus = useCallback(async () => {
+    try {
+      const healthRes = await fetch(`${API_BASE}/api/analytics/health`);
+      if (healthRes.ok) {
+        setSystemStatus({
+          api: true,
+          db: true,
+          lastCheck: new Date(),
+        });
+      } else {
+        setSystemStatus({
+          api: true,
+          db: false,
+          lastCheck: new Date(),
+        });
+      }
+    } catch {
+      setSystemStatus({
+        api: false,
+        db: false,
+        lastCheck: new Date(),
+      });
+    }
+  }, []);
+
+  const exportAnalyticsCSV = useCallback(() => {
+    if (!analyticsStats) return;
+
+    const stats = analyticsStats;
+    const lines: string[] = [];
+
+    // Header
+    lines.push('分析レポート');
+    lines.push(`期間: 過去${analyticsPeriod}日間`);
+    lines.push(`生成日時: ${new Date().toLocaleString('ja-JP')}`);
+    lines.push('');
+
+    // Summary
+    lines.push('=== サマリー ===');
+    lines.push(`合計アクセス,${stats.totalVisits}`);
+    lines.push(`前期間アクセス,${stats.prevTotalVisits}`);
+    lines.push(`ユニーク訪問者,${stats.uniqueVisitors}`);
+    lines.push(`本日のアクセス,${stats.todayVisits}`);
+    lines.push(`昨日のアクセス,${stats.yesterdayVisits}`);
+    lines.push(`1日あたり平均,${stats.avgVisitsPerDay}`);
+    lines.push('');
+
+    // Daily breakdown
+    lines.push('=== 日別アクセス ===');
+    lines.push('日付,合計,' + stats.byPage.map((p) => PAGE_NAMES[p.page] || p.page).join(','));
+    Object.entries(stats.daily)
+      .sort()
+      .forEach(([date, data]) => {
+        const row = [date, data.total, ...stats.byPage.map((p) => data[p.page] || 0)];
+        lines.push(row.join(','));
+      });
+    lines.push('');
+
+    // Page breakdown
+    lines.push('=== ページ別アクセス ===');
+    lines.push('ページ,アクセス数,割合');
+    stats.byPage.forEach((p) => {
+      const pct = stats.totalVisits > 0 ? Math.round((p.count / stats.totalVisits) * 100) : 0;
+      lines.push(`${PAGE_NAMES[p.page] || p.page},${p.count},${pct}%`);
+    });
+    lines.push('');
+
+    // Hourly distribution
+    lines.push('=== 時間帯別アクセス ===');
+    lines.push('時間,アクセス数');
+    stats.hourly.forEach((count, hour) => {
+      lines.push(`${hour}時,${count}`);
+    });
+    lines.push('');
+
+    // Referrers
+    lines.push('=== 流入元 ===');
+    lines.push('リファラー,アクセス数');
+    stats.referrers.forEach((r) => {
+      lines.push(`${r.referrer},${r.count}`);
+    });
+    lines.push('');
+
+    // Devices
+    lines.push('=== デバイス ===');
+    lines.push('デバイス,アクセス数');
+    lines.push(`モバイル,${stats.devices.mobile}`);
+    lines.push(`タブレット,${stats.devices.tablet}`);
+    lines.push(`デスクトップ,${stats.devices.desktop}`);
+    lines.push('');
+
+    // Browsers
+    lines.push('=== ブラウザ ===');
+    lines.push('ブラウザ,アクセス数');
+    stats.browsers.forEach((b) => {
+      lines.push(`${b.browser},${b.count}`);
+    });
+
+    // Create and download CSV
+    const bom = '\uFEFF';
+    const csvContent = bom + lines.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `analytics_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('CSVファイルをダウンロードしました');
+  }, [analyticsStats, analyticsPeriod]);
+
   const loadImages = useCallback(async () => {
     // ページごとにカスタム画像キー一覧を取得してAPI URLを直接使用
     const pages = Object.keys(PAGE_IMAGE_KEYS);
@@ -996,8 +1262,11 @@ export default function AdminPageClient() {
   }, [loadContent, loadImages]);
 
   useEffect(() => {
-    if (authenticated) loadAnalytics(analyticsPeriod);
-  }, [authenticated, analyticsPeriod, loadAnalytics]);
+    if (authenticated) {
+      loadAnalytics(analyticsPeriod);
+      checkSystemStatus();
+    }
+  }, [authenticated, analyticsPeriod, loadAnalytics, checkSystemStatus]);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -1295,6 +1564,20 @@ export default function AdminPageClient() {
     const userTrend = stats ? getTrendPercent(stats.uniqueVisitors, stats.prevUniqueVisitors) : null;
     const todayTrend = stats ? getTrendPercent(stats.todayVisits, stats.yesterdayVisits) : null;
 
+    // Calculate page status summary
+    const pageStatusData = Object.keys(PAGE_NAMES).map((page) => {
+      const contentKeys = PAGE_CONTENT_KEYS[page] || [];
+      const imageKeys = PAGE_IMAGE_KEYS[page] || [];
+      const customImages = imageKeys.filter((key) => uploadedImages[key]).length;
+      return {
+        page,
+        name: PAGE_NAMES[page],
+        contentCount: contentKeys.length,
+        imageCount: imageKeys.length,
+        customImages,
+      };
+    });
+
     return (
       <div className="tab-content">
         <div className="page-header">
@@ -1302,17 +1585,157 @@ export default function AdminPageClient() {
           <div className="page-subtitle">サイト全体の状況を確認できます</div>
         </div>
 
-        {/* Period Selector */}
-        <div className="analytics-period-selector">
-          {[7, 14, 30, 90].map((d) => (
-            <button
-              key={d}
-              className={`period-btn ${analyticsPeriod === d ? 'active' : ''}`}
-              onClick={() => setAnalyticsPeriod(d)}
-            >
-              {d}日間
+        {/* Quick Actions & System Status Row */}
+        <div className="dashboard-top-row">
+          {/* Quick Actions Panel */}
+          <div className="quick-actions-panel">
+            <div className="quick-actions-panel__title">クイックアクション</div>
+            <div className="quick-actions-grid">
+              <a
+                href="/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="quick-action-btn quick-action-btn--primary"
+              >
+                <IconGlobe />
+                <span>サイトを表示</span>
+              </a>
+              <button
+                className="quick-action-btn"
+                onClick={() => {
+                  loadAnalytics(analyticsPeriod);
+                  checkSystemStatus();
+                  showToast('データを更新しました');
+                }}
+              >
+                <IconRefresh />
+                <span>データ更新</span>
+              </button>
+              <button className="quick-action-btn" onClick={exportAnalyticsCSV} disabled={!analyticsStats}>
+                <IconExport />
+                <span>CSV出力</span>
+              </button>
+            </div>
+            <div className="quick-actions-pages">
+              <div className="quick-actions-pages__label">ページ編集</div>
+              <div className="quick-actions-pages__buttons">
+                {Object.entries(PAGE_NAMES).map(([page, name]) => (
+                  <button key={page} className="quick-action-page-btn" onClick={() => setActiveTab(page as PageTab)}>
+                    <IconEdit />
+                    {name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* System Status Panel */}
+          <div className="system-status-panel">
+            <div className="system-status-panel__title">システムステータス</div>
+            <div className="system-status-items">
+              <div className="system-status-item">
+                <div className="system-status-item__icon">
+                  <IconServer />
+                </div>
+                <div className="system-status-item__info">
+                  <div className="system-status-item__label">APIサーバー</div>
+                  <div className={`system-status-item__status ${systemStatus.api ? 'online' : 'offline'}`}>
+                    <IconCheck />
+                    {systemStatus.api ? '正常' : 'オフライン'}
+                  </div>
+                </div>
+              </div>
+              <div className="system-status-item">
+                <div className="system-status-item__icon">
+                  <IconDatabase />
+                </div>
+                <div className="system-status-item__info">
+                  <div className="system-status-item__label">データベース</div>
+                  <div className={`system-status-item__status ${systemStatus.db ? 'online' : 'offline'}`}>
+                    <IconCheck />
+                    {systemStatus.db ? '接続済み' : 'オフライン'}
+                  </div>
+                </div>
+              </div>
+              <div className="system-status-item">
+                <div className="system-status-item__icon">
+                  <IconClock />
+                </div>
+                <div className="system-status-item__info">
+                  <div className="system-status-item__label">最終確認</div>
+                  <div className="system-status-item__value">
+                    {systemStatus.lastCheck ? systemStatus.lastCheck.toLocaleTimeString('ja-JP') : '-'}
+                  </div>
+                </div>
+              </div>
+              <div className="system-status-item">
+                <div className="system-status-item__icon">
+                  <IconActivity />
+                </div>
+                <div className="system-status-item__info">
+                  <div className="system-status-item__label">コンテンツ最終更新</div>
+                  <div className="system-status-item__value">
+                    {stats?.contentStats.lastUpdated
+                      ? new Date(stats.contentStats.lastUpdated).toLocaleDateString('ja-JP')
+                      : '-'}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button className="system-status-refresh" onClick={checkSystemStatus}>
+              <IconRefresh />
+              再チェック
             </button>
-          ))}
+          </div>
+        </div>
+
+        {/* Page Status Summary */}
+        <div className="page-status-summary">
+          <div className="page-status-summary__title">ページ管理状況</div>
+          <div className="page-status-cards">
+            {pageStatusData.map((page) => (
+              <button key={page.page} className="page-status-card" onClick={() => setActiveTab(page.page as PageTab)}>
+                <div className="page-status-card__name">{page.name}</div>
+                <div className="page-status-card__stats">
+                  <span className="page-status-card__stat">
+                    <IconText />
+                    {page.contentCount}項目
+                  </span>
+                  <span className="page-status-card__stat">
+                    <IconImage />
+                    {page.customImages}/{page.imageCount}画像
+                  </span>
+                </div>
+                <div className="page-status-card__action">
+                  <IconEdit />
+                  編集
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Period Selector with Export Button */}
+        <div className="analytics-header">
+          <div className="analytics-period-selector">
+            {[7, 14, 30, 90].map((d) => (
+              <button
+                key={d}
+                className={`period-btn ${analyticsPeriod === d ? 'active' : ''}`}
+                onClick={() => setAnalyticsPeriod(d)}
+              >
+                {d}日間
+              </button>
+            ))}
+          </div>
+          <button
+            className="toolbar-btn toolbar-btn--secondary analytics-export-btn"
+            onClick={exportAnalyticsCSV}
+            disabled={!analyticsStats}
+          >
+            <IconExport />
+            CSVエクスポート
+          </button>
         </div>
 
         {/* Summary Cards */}
