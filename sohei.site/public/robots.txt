@@ -4,3 +4,6 @@ Allow: /
 Disallow: /sohei-kiln-room-m7x9
 Disallow: /sohei-kiln-room-m7x9.html
 Disallow: /api/
+
+# Sitemap
+Sitemap: https://www.sohei-portfolio.com/sitemap.xml
