@@ -27,32 +27,86 @@ const zenOldMincho = Zen_Old_Mincho({
 });
 
 export const metadata: Metadata = {
-  title: '備前焼作家 高島聡平 公式サイト',
+  title: {
+    default: '備前焼作家 高島聡平 公式サイト',
+    template: '%s | 備前焼作家 高島聡平',
+  },
   description:
     '備前焼作家、高島聡平の公式サイトへようこそ。ここでは、彼の作品の特徴、新しい試み、使用する際の注意点、制作過程、インタビュー、プロフィール、そして販売店舗情報をご紹介しています。',
+  keywords: [
+    '備前焼',
+    '高島聡平',
+    '陶芸',
+    '陶芸家',
+    '備前焼作家',
+    '日本の伝統工芸',
+    '焼き物',
+    '器',
+    '花器',
+    '茶器',
+    '岡山',
+    'Bizen pottery',
+    'Japanese ceramics',
+  ],
+  authors: [{ name: '高島聡平', url: 'https://www.sohei-portfolio.com' }],
+  creator: '高島聡平',
+  publisher: '高島聡平',
   metadataBase: new URL('https://www.sohei-portfolio.com'),
+  alternates: {
+    canonical: '/',
+    languages: {
+      'ja-JP': '/',
+    },
+  },
   openGraph: {
     type: 'website',
+    locale: 'ja_JP',
     url: 'https://www.sohei-portfolio.com',
     title: '備前焼作家 高島聡平 公式サイト',
     description:
       '備前焼作家、高島聡平の公式サイトへようこそ。ここでは、彼の作品の特徴、新しい試み、使用する際の注意点、制作過程、インタビュー、プロフィール、そして販売店舗情報をご紹介しています。',
     siteName: '備前焼作家 高島聡平 公式サイト',
-    images: ['/img/thumbnail.png'],
+    images: [
+      {
+        url: '/img/thumbnail.png',
+        width: 1200,
+        height: 630,
+        alt: '備前焼作家 高島聡平の作品',
+        type: 'image/png',
+      },
+    ],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
+    title: '備前焼作家 高島聡平 公式サイト',
+    description: '備前焼作家、高島聡平の公式サイト。作品紹介、制作過程、インタビュー、プロフィールを掲載。',
+    images: ['/img/thumbnail.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
   icons: {
     icon: [
+      { url: '/img/favicon/favicon.ico', sizes: 'any' },
       { url: '/img/favicon/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
       { url: '/img/favicon/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
     ],
-    apple: '/img/favicon/apple-touch-icon.png',
+    apple: [{ url: '/img/favicon/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+    other: [{ rel: 'mask-icon', url: '/img/favicon/favicon-32x32.png', color: '#1a1714' }],
   },
   manifest: '/img/favicon/site.webmanifest',
+  category: 'art',
   other: {
     'msapplication-TileColor': '#da532c',
+    'format-detection': 'telephone=no',
   },
 };
 
