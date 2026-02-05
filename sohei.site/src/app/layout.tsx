@@ -79,8 +79,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: '備前焼作家 高島聡平 公式サイト',
-    description:
-      '備前焼作家、高島聡平の公式サイト。作品紹介、制作過程、インタビュー、プロフィールを掲載。',
+    description: '備前焼作家、高島聡平の公式サイト。作品紹介、制作過程、インタビュー、プロフィールを掲載。',
     images: ['/img/thumbnail.png'],
   },
   robots: {
@@ -101,9 +100,7 @@ export const metadata: Metadata = {
       { url: '/img/favicon/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
     ],
     apple: [{ url: '/img/favicon/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
-    other: [
-      { rel: 'mask-icon', url: '/img/favicon/favicon-32x32.png', color: '#1a1714' },
-    ],
+    other: [{ rel: 'mask-icon', url: '/img/favicon/favicon-32x32.png', color: '#1a1714' }],
   },
   manifest: '/img/favicon/site.webmanifest',
   category: 'art',
